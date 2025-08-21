@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora de Semana del Año</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .resultado {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <h1>Calculadora de Semana del Año</h1>
+    <p id="semanaActual"></p>
+    <label for="fecha">Introduce una fecha (DD-MM-AAAA):</label><br>
+    <input type="date" id="fecha">
+    <button onclick="calcularSemana()">Calcular semana</button>
+    <button onclick="resetearFormulario()">Resetear</button>
+    <div class="resultado" id="resultado"></div>
+
+    <script>
+        function formatoFecha(fecha) {
+            const dia = String(fecha.getDate()).padStart(2, '0');
+            const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+            const año = fecha.getFullYear();
+            return `${dia}/${mes}/${año}`;
+        }
+
+        function calcularSemana() {
+            const fechaInput = document.getElementById("fecha").value;
+            if (!fechaInput) {
+                alert("Por favor, introduce una fecha válida.");
+                return;
+            }
+            const fecha = new Date(fechaInput);
+            const primeraFecha = new Date(fecha.getFullYear(), 0, 1);
+            const dias = Math.floor((fecha - primeraFecha) / (24 * 60 * 60 * 1000));
+            const semana = Math.ceil((dias + primeraFecha.getDay() + 1) / 7);
+            document.getElementById("resultado").innerText = `La fecha ${formatoFecha(fecha)} corresponde a la semana número ${semana} del año.`;
+        }
+
+        function resetearFormulario() {
+            document.getElementById("fecha").value = "";
+            const hoy = new Date();
+            const primeraFecha = new Date(hoy.getFullYear(), 0, 1);
+            const dias = Math.floor((hoy - primeraFecha) / (24 * 60 * 60 * 1000));
+            const semanaActual = Math.ceil((dias + primeraFecha.getDay() + 1) / 7);
+            document.getElementById("semanaActual").innerText = `Hoy es ${formatoFecha(hoy)} y estamos en la semana número ${semanaActual} del año.`;
+            document.getElementById("resultado").innerText = "";
+        }
+
+        // Inicializar con la semana actual
+        resetearFormulario();
+    </script>
+</body>
+</html>
