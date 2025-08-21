@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculadora de Semana del Año</title>
+  <title>Calculadora de tiempo</title>
   <style>
     body {
       transition: background-color 0.3s, color 0.3s;
@@ -68,7 +68,7 @@
   </style>
 </head>
 <body>
-  <h1><span class="texto-azul">Calculadora de Semana del Año</span></h1>
+  <h1><span class="texto-azul">Calculadora de tiempo</span></h1>
   <div class="reloj" id="reloj"></div>
   <div class="zona" id="zonaHoraria"></div>
   <p id="semanaActual"></p>
@@ -103,6 +103,24 @@
   <div class="calendar-container">
     <iframe src="https://calendar.google.com/calendar/embed?src=es.spain%23holiday%40group.v.calendar.google.com&ctz=Europe%2FMadrid&showTitle=0&showTz=0"></iframe>
   </div>
+
+<!-- Firma / footer -->
+<footer class="firma">
+  <p>El sitio podría cometer errores, considera contrastar la información.</p>
+  <p>Calculadora de tiempo V3.0 por DGCSe7en - Github</p>
+</footer>
+
+<style>
+  .firma {
+    margin-top: 15px;
+    font-size: 11px;
+    text-align: center;
+    opacity: 0.7;
+  }
+  body.modo-claro .firma { color: #666; }
+  body.modo-oscuro .firma { color: #aaa; }
+</style>
+
 
   <button id="modo-toggle" onclick="toggleModo()">☀︎/☾</button>
 
