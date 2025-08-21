@@ -45,42 +45,11 @@
             font-size: 14px;
             color: #555;
         }
-        .calendario {
-            margin: 30px auto;
-            width: 320px;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            padding: 20px;
-        }
         .calendario-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
-        }
-        .dias-semana {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .dias {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-        }
-        .dia {
-            padding: 10px;
-            background-color: #ecf0f1;
-            border-radius: 5px;
-        }
-        .hoy {
-            background-color: #f39c12 !important;
-            color: white;
-        }
-        .fin-de-semana {
-            color: red;
         }
     </style>
 </head>
@@ -151,44 +120,6 @@
 
             const esVerano = ahora.getTimezoneOffset() === -120;
             document.getElementById("zonaHoraria").innerText = esVerano ? "Hora local de España (GMT+2)" : "Hora local de España (GMT+1)";
-        }
-
-        function renderizarCalendario() {
-            const diasDiv = document.getElementById("diasCalendario");
-            diasDiv.innerHTML = "";
-            const mes = fechaCalendario.getMonth();
-            const año = fechaCalendario.getFullYear();
-            const primerDia = (new Date(año, mes, 1).getDay() + 6) % 7;
-            const diasMes = new Date(año, mes + 1, 0).getDate();
-            const hoy = new Date();
-
-            const nombreMes = fechaCalendario.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
-            document.getElementById("mesActual").innerText = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1);
-
-            for (let i = 0; i < primerDia; i++) {
-                const vacio = document.createElement("div");
-                diasDiv.appendChild(vacio);
-            }
-
-            for (let d = 1; d <= diasMes; d++) {
-                const dia = document.createElement("div");
-                dia.className = "dia";
-                dia.innerText = d;
-                const fechaIterada = new Date(año, mes, d);
-                if (fechaIterada.toDateString() === hoy.toDateString()) {
-                    dia.classList.add("hoy");
-                }
-                const diaSemana = fechaIterada.getDay();
-                if (diaSemana === 0 || diaSemana === 6) {
-                    dia.classList.add("fin-de-semana");
-                }
-                diasDiv.appendChild(dia);
-            }
-        }
-
-        function cambiarMes(direccion) {
-            fechaCalendario.setMonth(fechaCalendario.getMonth() + direccion);
-            renderizarCalendario();
         }
 
         setInterval(actualizarReloj, 1000);
