@@ -1,9 +1,51 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
+<style>
+  body {
+    transition: background-color 0.3s, color 0.3s;
+  }
+  body.modo-oscuro {
+    background-color: #2e2e2e;
+    color: #e0e0e0;
+  }
+  body.modo-claro {
+    background-color: #f0f0f0;
+    color: #1a1a1a;
+  }
+  .modo-claro .texto-azul {
+    color: #041037;
+  }
+  .modo-oscuro .texto-azul {
+    color: #90D5FF;
+  }
+  .modo-claro .reloj {
+    color: #041037;
+  }
+  .modo-oscuro .reloj {
+    color: #90D5FF;
+  }
+  .modo-claro .zona {
+    color: #2e2e2e;
+  }
+  .modo-oscuro .zona {
+    color: #f0f0f0;
+  }
+  #modo-toggle {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 22px;
+    color: inherit;
+  }
+</style>
+
     <meta charset="UTF-8">
-    <title>Calculadora de Semana del Año</title>
+    <title><span class="texto-azul">Calculadora de Semana del Año</span></title>
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -39,7 +81,7 @@
         .reloj {
             margin-top: 30px;
             font-size: 30px;
-            color: #2c3e50;
+            color: #007BFF;
         }
         .zona {
             font-size: 14px;
@@ -48,7 +90,7 @@
     </style>
 </head>
 <body>
-    <h1>Calculadora de Semana del Año</h1>
+    <h1><span class="texto-azul">Calculadora de Semana del Año</span></h1>
     <p id="semanaActual"></p>
     <label for="fecha">Introduce una fecha (DD-MM-AAAA):</label><br>
     <input type="date" id="fecha">
@@ -107,6 +149,32 @@
         setInterval(actualizarReloj, 1000);
         resetearFormulario();
     </script>
+<button id="modo-toggle" onclick="toggleModo()">☀︎/☾</button>
+
+<script>
+  function toggleModo() {
+    const body = document.body;
+    if (body.classList.contains('modo-oscuro')) {
+      body.classList.remove('modo-oscuro');
+      body.classList.add('modo-claro');
+      localStorage.setItem('modo', 'claro');
+    } else {
+      body.classList.remove('modo-claro');
+      body.classList.add('modo-oscuro');
+      localStorage.setItem('modo', 'oscuro');
+    }
+  }
+  window.onload = function() {
+    const modoGuardado = localStorage.getItem('modo');
+    if (modoGuardado === 'oscuro') {
+      document.body.classList.add('modo-oscuro');
+    } else {
+      document.body.classList.add('modo-claro');
+    }
+  };
+</script>
+
+</body>
 </body>
 </html>
 
@@ -137,4 +205,3 @@
   <iframe 
     src="https://calendar.google.com/calendar/embed?src=es.spain%23holiday%40group.v.calendar.google.com&ctz=Europe%2FMadrid&showTitle=0&showTz=0">
   </iframe>
-</div>
