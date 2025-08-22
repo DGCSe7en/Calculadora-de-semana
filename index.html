@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de tiempo V4.0</title>
+<title>Calculadora de tiempo</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <style>
 body { font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; margin: 0; transition: background-color 0.3s, color 0.3s;}
@@ -22,7 +22,7 @@ input, button { padding: 10px; margin: 5px; font-size: 1em; border-radius: 5px; 
 button { background-color: #3498db; color: white; border: none; cursor: pointer; transition: background-color 0.2s;}
 button:hover { background-color: #2980b9; }
 
-#modo-toggle { position: fixed; bottom: 80px; right: 10px; font-size: 1.5em; background: none; border: none; cursor: pointer; color: inherit; z-index: 100; }
+#modo-toggle { position: fixed; bottom: 10px; right: 10px; font-size: 1.5em; background: none; border: none; cursor: pointer; color: inherit; z-index: 100; }
 
 .seccion { margin: 20px auto; padding: 15px; border-radius: 8px; max-width: 600px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.9);}
 body.modo-oscuro .seccion { background-color: rgba(50,50,50,0.9); }
@@ -61,12 +61,12 @@ body.modo-oscuro .firma { color: #aaa; }
   <img src="EUS.png" alt="Euskera" data-lang="eu" onclick="cambiarIdioma(this.dataset.lang)">
 </div>
 
-<div class="reloj texto-azul" id="reloj"></div>
-<div class="zona texto-azul" id="zonaHoraria"></div>
-<p class="texto-azul" id="semanaActual"></p>
+<div class="reloj" id="reloj"></div>
+<div class="zona" id="zonaHoraria"></div>
+<p id="semanaActual"></p>
 
 <div class="seccion">
-  <h3 class="texto-azul" id="h3Semana"></h3>
+  <h3 id="h3Semana"></h3>
   <input type="date" id="fecha">
   <button id="btnCalcularSemana" onclick="calcularSemana()"></button>
   <button id="btnResetSemana" onclick="resetearFormulario()"></button>
@@ -75,7 +75,7 @@ body.modo-oscuro .firma { color: #aaa; }
 </div>
 
 <div class="seccion">
-  <h3 class="texto-azul" id="h3Dias"></h3>
+  <h3 id="h3Dias"></h3>
   <input type="date" id="fechaInicio" placeholder="">
   a
   <input type="date" id="fechaFin" placeholder="">
@@ -86,8 +86,8 @@ body.modo-oscuro .firma { color: #aaa; }
 </div>
 
 <div class="seccion">
-  <h3 class="texto-azul" id="h3Rango"></h3>
-  <label class="texto-azul" id="labelSemana" for="semanaInput"></label>
+  <h3 id="h3Rango"></h3>
+  <label id="labelSemana" for="semanaInput"></label>
   <input type="number" id="semanaInput" min="1" max="53" placeholder="">
   <button id="btnMostrarRango" onclick="calcularRangoSemana()"></button>
   <button id="btnResetRango" onclick="resetSemana()"></button>
@@ -99,14 +99,137 @@ body.modo-oscuro .firma { color: #aaa; }
   <iframe src="https://calendar.google.com/calendar/embed?src=es.spain%23holiday%40group.v.calendar.google.com&ctz=Europe%2FMadrid&showTitle=0&showTz=0"></iframe>
 </div>
 
-<button id="modo-toggle" onclick="toggleModo()">☀︎/☾</button>
-
 <footer class="firma" id="footerFirma"></footer>
 
+<button id="modo-toggle" onclick="toggleModo()">☀︎/☾</button>
+
 <script>
-// Traducciones y resto del script, igual que en V3.7, adaptado para V4.0 y con colores azul en textos
-// Mantener funciones toggleModo, cambiarIdioma, calcularSemana, calcularDias, calcularRangoSemana, resetear formularios, mostrar errores y actualizar reloj
-// ...
+// Traducciones
+const traducciones = {
+es:{titulo:"Calculadora de tiempo",h3Semana:"Introduce una fecha",btnCalcularSemana:"Calcular semana",btnResetSemana:"Resetear",h3Dias:"Número de días entre dos fechas",btnCalcularDias:"Calcular días",btnResetDias:"Resetear",h3Rango:"Rango de fechas de una semana",labelSemana:"Semana del año (1-53):",btnMostrarRango:"Mostrar rango",btnResetRango:"Resetear",placeholderInicio:"Fecha inicio",placeholderFin:"Fecha fin",placeholderSemana:"Número de semana",errorFecha:"Introduce una fecha válida.",errorDias:"Introduce ambas fechas.",errorFinAntesInicio:"La fecha final no puede ser anterior a la inicial.",errorSemana:"Introduce un número de semana válido entre 1 y 53.",horaActual:"Hora actual:",zonaHoraria:"Hora local de España (GMT+2/1)",semanaActual:"Hoy es {fecha} y estamos en la semana número {semana} del año.",footer:"El sitio podría cometer errores, considera contrastar la información. Calculadora de tiempo V4.0 por DGCSe7en - Github"},
+ca:{titulo:"Calculadora de temps",h3Semana:"Introdueix una data",btnCalcularSemana:"Calcular setmana",btnResetSemana:"Reiniciar",h3Dias:"Nombre de dies entre dues dates",btnCalcularDias:"Calcular dies",btnResetDias:"Reiniciar",h3Rango:"Rang de dates d'una setmana",labelSemana:"Setmana de l'any (1-53):",btnMostrarRango:"Mostrar rang",btnResetRango:"Reiniciar",placeholderInicio:"Data inici",placeholderFin:"Data fi",placeholderSemana:"Número setmana",errorFecha:"Introdueix una data vàlida.",errorDias:"Introdueix ambdues dates.",errorFinAntesInicio:"La data final no pot ser anterior a l'inici.",errorSemana:"Introdueix un número de setmana vàlid entre 1 i 53.",horaActual:"Hora actual:",zonaHoraria:"Hora local d'Espanya (GMT+2/1)",semanaActual:"Avui és {fecha} i estem a la setmana número {semana} de l'any.",footer:"El lloc podria cometre errors, comprova la informació. Calculadora de temps V4.0 per DGCSe7en - Github"},
+gl:{titulo:"Calculadora de tempo",h3Semana:"Introduce unha data",btnCalcularSemana:"Calcular semana",btnResetSemana:"Restablecer",h3Dias:"Número de días entre dúas datas",btnCalcularDias:"Calcular días",btnResetDias:"Restablecer",h3Rango:"Rango de datas dunha semana",labelSemana:"Semana do ano (1-53):",btnMostrarRango:"Amosar rango",btnResetRango:"Restablecer",placeholderInicio:"Data inicio",placeholderFin:"Data fin",placeholderSemana:"Número semana",errorFecha:"Introduce unha data válida.",errorDias:"Introduce ambas datas.",errorFinAntesInicio:"A data final non pode ser anterior á inicial.",errorSemana:"Introduce un número de semana válido entre 1 e 53.",horaActual:"Hora actual:",zonaHoraria:"Hora local de España (GMT+2/1)",semanaActual:"Hoxe é {fecha} e estamos na semana número {semana} do ano.",footer:"O sitio pode cometer erros, comproba a información. Calculadora de tempo V4.0 por DGCSe7en - Github"},
+eu:{titulo:"Denbora kalkulagailua",h3Semana:"Sartu data bat",btnCalcularSemana:"Astea kalkulatu",btnResetSemana:"Berrezarri",h3Dias:"Bi daten arteko egun kopurua",btnCalcularDias:"Egunak kalkulatu",btnResetDias:"Berrezarri",h3Rango:"Asteko datak",labelSemana:"Urteko astea (1-53):",btnMostrarRango:"Rangoa erakutsi",btnResetRango:"Berrezarri",placeholderInicio:"Hasiera data",placeholderFin:"Amaiera data",placeholderSemana:"Aste zenbakia",errorFecha:"Sartu data egokia.",errorDias:"Sartu bi datak.",errorFinAntesInicio:"Amaiera data ezin da hasierakoa baino lehenagokoa izan.",errorSemana:"Sartu 1 eta 53 arteko aste zenbaki balioduna.",horaActual:"Ordua:",zonaHoraria:"Espainiako ordu lokala (GMT+2/1)",semanaActual:"Gaur {fecha} gara eta urteko {semana}. astean gaude.",footer:"Guneak akatsak izan ditzake, egiaztatu informazioa. Denbora kalkulagailua V4.0 DGCSe7en - Github"}
+};
+
+// --- Funciones ---
+let fechaCalendario = new Date();
+function formatoFecha(fecha){ const dia=String(fecha.getDate()).padStart(2,'0'); const mes=String(fecha.getMonth()+1).padStart(2,'0'); const año=fecha.getFullYear(); return `${dia}/${mes}/${año}`; }
+
+function actualizarReloj(){
+  const ahora=new Date();
+  const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
+  const t = traducciones[lang];
+  document.getElementById("reloj").innerText = `${t.horaActual} ${ahora.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false, timeZone:'Europe/Madrid'})}`;
+  document.getElementById("zonaHoraria").innerText = t.zonaHoraria;
+}
+setInterval(actualizarReloj,1000);
+
+function toggleModo(){const body=document.body; if(body.classList.contains('modo-oscuro')){body.classList.remove('modo-oscuro');body.classList.add('modo-claro');localStorage.setItem('modo','claro');}else{body.classList.remove('modo-claro');body.classList.add('modo-oscuro');localStorage.setItem('modo','oscuro');}}
+
+window.onload=function(){
+  const modoGuardado=localStorage.getItem('modo');
+  if(modoGuardado==='oscuro')document.body.classList.add('modo-oscuro'); else document.body.classList.add('modo-claro');
+  cambiarIdioma('es');
+};
+
+function cambiarIdioma(lang){
+  document.querySelectorAll('#idiomas img').forEach(img=>img.classList.remove('active'));
+  document.querySelector(`#idiomas img[data-lang="${lang}"]`).classList.add('active');
+  const t = traducciones[lang];
+  document.getElementById('titulo').innerText=t.titulo;
+  document.getElementById('h3Semana').innerText=t.h3Semana;
+  document.getElementById('btnCalcularSemana').innerText=t.btnCalcularSemana;
+  document.getElementById('btnResetSemana').innerText=t.btnResetSemana;
+  document.getElementById('h3Dias').innerText=t.h3Dias;
+  document.getElementById('btnCalcularDias').innerText=t.btnCalcularDias;
+  document.getElementById('btnResetDias').innerText=t.btnResetDias;
+  document.getElementById('h3Rango').innerText=t.h3Rango;
+  document.getElementById('labelSemana').innerText=t.labelSemana;
+  document.getElementById('btnMostrarRango').innerText=t.btnMostrarRango;
+  document.getElementById('btnResetRango').innerText=t.btnResetRango;
+  document.getElementById('fechaInicio').placeholder=t.placeholderInicio;
+  document.getElementById('fechaFin').placeholder=t.placeholderFin;
+  document.getElementById('semanaInput').placeholder=t.placeholderSemana;
+  document.getElementById('footerFirma').innerText=t.footer;
+  actualizarReloj();
+  mostrarSemanaActual(lang);
+}
+
+// --- Funciones de calculo y errores ---
+function mostrarError(inputId,errorId,mensaje){
+  const input=document.getElementById(inputId);
+  const error=document.getElementById(errorId);
+  input.classList.add('input-error');
+  error.querySelector('span').innerText='⚠️';
+  error.classList.add('visible');
+  error.innerHTML=`<span class="icono">⚠️</span>${mensaje}`;
+  setTimeout(()=>{input.classList.remove('input-error');},1200);
+  setTimeout(()=>{error.classList.remove('visible');},3000);
+}
+
+function calcularSemana(){
+  const fechaInput=document.getElementById("fecha").value;
+  const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
+  const t = traducciones[lang];
+  if(!fechaInput){ mostrarError("fecha","errorSemana",t.errorFecha); return; }
+  const fecha=new Date(fechaInput);
+  const primeraFecha=new Date(fecha.getFullYear(),0,1);
+  const dias=Math.floor((fecha-primeraFecha)/(24*60*60*1000));
+  const semana=Math.ceil((dias+(primeraFecha.getDay()+6)%7+1)/7);
+  document.getElementById("resultado").innerText=`${t.h3Semana}: ${formatoFecha(fecha)} → semana ${semana}`;
+}
+
+function resetearFormulario(){
+  document.getElementById("fecha").value="";
+  document.getElementById("resultado").innerText="";
+  mostrarSemanaActual(document.querySelector('#idiomas img.active')?.dataset.lang || 'es');
+}
+
+function mostrarSemanaActual(lang){
+  const hoy=new Date();
+  const primeraFecha=new Date(hoy.getFullYear(),0,1);
+  const dias=Math.floor((hoy-primeraFecha)/(24*60*60*1000));
+  const semanaActual=Math.ceil((dias+(primeraFecha.getDay()+6)%7+1)/7);
+  const t = traducciones[lang];
+  document.getElementById("semanaActual").innerText=t.semanaActual.replace("{fecha}",formatoFecha(hoy)).replace("{semana}",semanaActual);
+}
+
+function calcularDias(){
+  const inicio=document.getElementById("fechaInicio").value;
+  const fin=document.getElementById("fechaFin").value;
+  const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
+  const t = traducciones[lang];
+  if(!inicio || !fin){ mostrarError("fechaInicio","errorDias",t.errorDias); return; }
+  let fechaInicio=new Date(inicio);
+  let fechaFin=new Date(fin);
+  if(fechaFin<fechaInicio){ mostrarError("fechaFin","errorDias",t.errorFinAntesInicio); return; }
+  let años=fechaFin.getFullYear()-fechaInicio.getFullYear();
+  let meses=fechaFin.getMonth()-fechaInicio.getMonth();
+  let dias=fechaFin.getDate()-fechaInicio.getDate();
+  if(dias<0){ meses--; dias+=new Date(fechaFin.getFullYear(),fechaFin.getMonth(),0).getDate(); }
+  if(meses<0){ años--; meses+=12; }
+  const diasTotales=Math.round((fechaFin-fechaInicio)/(1000*60*60*24));
+  document.getElementById("resultadoDias").textContent=`${diasTotales} días (${años} años, ${meses} meses, ${dias} días)`;
+}
+
+function resetDias(){ document.getElementById("fechaInicio").value=""; document.getElementById("fechaFin").value=""; document.getElementById("resultadoDias").textContent=""; document.getElementById("errorDias").textContent=""; }
+
+function calcularRangoSemana(){
+  const semana=parseInt(document.getElementById("semanaInput").value);
+  const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
+  const t = traducciones[lang];
+  if(isNaN(semana)||semana<1||semana>53){ mostrarError("semanaInput","errorRangoSemana",t.errorSemana); return; }
+  const año=new Date().getFullYear();
+  const primerDia=new Date(año,0,1);
+  const diasOffset=(primerDia.getDay()<=4?0:7)-primerDia.getDay();
+  const inicioSemana=new Date(año,0,1+diasOffset+(semana-1)*7);
+  const finSemana=new Date(inicioSemana);
+  finSemana.setDate(inicioSemana.getDate()+6);
+  document.getElementById("resultadoSemana").textContent=`Semana ${semana}: del ${formatoFecha(inicioSemana)} al ${formatoFecha(finSemana)}`;
+}
+
+function resetSemana(){ document.getElementById("semanaInput").value=""; document.getElementById("resultadoSemana").textContent=""; document.getElementById("errorRangoSemana").textContent="";}
 </script>
 </body>
 </html>
