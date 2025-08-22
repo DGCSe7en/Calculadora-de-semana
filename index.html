@@ -22,7 +22,7 @@ input, button { padding: 10px; margin: 5px; font-size: 1em; border-radius: 5px; 
 button { background-color: #3498db; color: white; border: none; cursor: pointer; transition: background-color 0.2s;}
 button:hover { background-color: #2980b9; }
 
-#modo-toggle { position: fixed; bottom: 10px; right: 10px; font-size: 1.5em; background: none; border: none; cursor: pointer; color: inherit; z-index: 100; }
+#modo-toggle { position: absolute; bottom: 20px; right: 10px; font-size: 1.5em; background: none; border: none; cursor: pointer; color: inherit; z-index: 100; }
 
 .seccion { margin: 20px auto; padding: 15px; border-radius: 8px; max-width: 600px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.9);}
 body.modo-oscuro .seccion { background-color: rgba(50,50,50,0.9); }
@@ -61,12 +61,12 @@ body.modo-oscuro .firma { color: #aaa; }
   <img src="EUS.png" alt="Euskera" data-lang="eu" onclick="cambiarIdioma(this.dataset.lang)">
 </div>
 
-<div class="reloj" id="reloj"></div>
+<div class="reloj texto azul" id="reloj"></div>
 <div class="zona" id="zonaHoraria"></div>
 <p id="semanaActual"></p>
 
 <div class="seccion">
-  <h3 id="h3Semana"></h3>
+  <h3 class="texto azul" id="h3Semana"></h3>
   <input type="date" id="fecha">
   <button id="btnCalcularSemana" onclick="calcularSemana()"></button>
   <button id="btnResetSemana" onclick="resetearFormulario()"></button>
@@ -75,7 +75,7 @@ body.modo-oscuro .firma { color: #aaa; }
 </div>
 
 <div class="seccion">
-  <h3 id="h3Dias"></h3>
+  <h3 class="texto azul" id="h3Dias"></h3>
   <input type="date" id="fechaInicio" placeholder="">
   a
   <input type="date" id="fechaFin" placeholder="">
@@ -86,7 +86,7 @@ body.modo-oscuro .firma { color: #aaa; }
 </div>
 
 <div class="seccion">
-  <h3 id="h3Rango"></h3>
+  <h3 class="texto azul" id="h3Rango"></h3>
   <label id="labelSemana" for="semanaInput"></label>
   <input type="number" id="semanaInput" min="1" max="53" placeholder="">
   <button id="btnMostrarRango" onclick="calcularRangoSemana()"></button>
