@@ -28,7 +28,7 @@ button { background-color: #3498db; color: white; border: none; cursor: pointer;
 button:hover { background-color: #2980b9; }
 
 /* Botón modo claro/oscuro fijo */
-#modo-toggle { position: fixed; right: 20px; font-size: 1.5em; background: none; border: none; cursor: pointer; color: inherit; z-index: 1000; transition: bottom 0.2s;}
+#modo-toggle { position: fixed; right: 10px; bottom: 10px; font-size: 1.5em; background: none; border: none; cursor: pointer; color: inherit; z-index: 1000; transition: bottom 0.2s;}
 
 /* Calendario */
 .calendar-container { max-width: 90%; margin: 20px auto; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
@@ -238,33 +238,28 @@ function calcularRangoSemana(){
 function resetSemana(){ document.getElementById("semanaInput").value=""; document.getElementById("resultadoSemana").textContent=""; document.getElementById("errorRangoSemana").textContent="";}
 
 function ajustarBoton() {
-    const boton = document.getElementById('modo-toggle');
-    if (!boton) return;
-    const ventanaAltura = window.innerHeight;
-    const botonAltura = boton.offsetHeight;
-    let maxTop = ventanaAltura;
-    const elementos = Array.from(document.body.children)
-        .filter(el => {
-            const rect = el.getBoundingClientRect();
-            return rect.bottom > ventanaAltura - 50 && rect !== boton;
-        });
+  const boton = document.getElementById('modo-toggle'); if (!boton) return; const windowHeight = window.innerHeight; const botonHeight = boton.offsetHeight;
+  const elems = Array.from(document.body.children).filter(el => {if (el === boton) return false; const rect = el.getBoundingClientRect(); return rect.bottom > windowHeight - 1;
+  });
 
-    elementos.forEach(el => {
-        const rect = el.getBoundingClientRect();
-        if (rect.top < maxTop) {
-            maxTop = rect.top;
-        }
-    });
+  let minTop = windowHeight;
+  elems.forEach(el => {
+    const top = el.getBoundingClientRect().top;
+    if (top < minTop) minTop = top;
+  });
 
-    const espacioSeguro = 20;
-    const nuevaBottom = Math.max(espacioSeguro, ventanaAltura - maxTop + espacioSeguro);
-    boton.style.bottom = `${nuevaBottom}px`;
+  const safeMargin = 20;
+  const desiredBottom = windowHeight - minTop + safeMargin;
+  const baseBottom = safeMargin;
+  boton.style.bottom = `${Math.max(baseBottom, desiredBottom)}px`;
 }
 
 window.addEventListener('load', ajustarBoton);
 window.addEventListener('resize', ajustarBoton);
 window.addEventListener('scroll', ajustarBoton);
 
+const observer = new MutationObserver(ajustarBoton);
+observer.observe(document.body, { childList: true, subtree: true });
 
 </script>
 </body>
