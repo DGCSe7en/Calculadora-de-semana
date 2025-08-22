@@ -373,4 +373,45 @@ function calcularDias(){
 
   let años=fechaFin.getFullYear()-fechaInicio.getFullYear();
   let meses=fechaFin.getMonth()-fechaInicio.getMonth();
-  let dias=fechaFin.getDa
+  let dias=fechaFin.getDate()-fechaInicio.getDate();
+  if(dias<0){ meses--; dias+=new Date(fechaFin.getFullYear(),fechaFin.getMonth(),0).getDate(); }
+  if(meses<0){ años--; meses+=12; }
+  const diasTotales=Math.round((fechaFin-fechaInicio)/(1000*60*60*24));
+  document.getElementById("resultadoDias").textContent=`${diasTotales} días (${años} años, ${meses} meses, ${dias} días)`;
+}
+
+function resetDias(){
+  document.getElementById("fechaInicio").value="";
+  document.getElementById("fechaFin").value="";
+  document.getElementById("resultadoDias").textContent="";
+  const err = document.getElementById("errorDias"); if (err) err.textContent = "";
+}
+
+function calcularRangoSemana(){
+  const semanaInput = document.getElementById("semanaInput").value;
+  const semana = parseInt(semanaInput, 10);
+  const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
+  const t = traducciones[lang];
+
+  if(isNaN(semana) || semana < 1 || semana > 53){
+    mostrarError("semanaInput","errorRangoSemana", t.errorRango);
+    return;
+  }
+
+  const año = new Date().getFullYear();
+  const primerDia=new Date(año,0,1);
+  const diasOffset=(primerDia.getDay()<=4?0:7)-primerDia.getDay();
+  const inicioSemana=new Date(año,0,1+diasOffset+(semana-1)*7);
+  const finSemana=new Date(inicioSemana);
+  finSemana.setDate(inicioSemana.getDate()+6);
+  document.getElementById("resultadoSemana").textContent=`Semana ${semana}: del ${formatoFecha(inicioSemana)} al ${formatoFecha(finSemana)}`;
+}
+
+function resetSemana(){
+  document.getElementById("semanaInput").value="";
+  document.getElementById("resultadoSemana").textContent="";
+  const err = document.getElementById("errorRangoSemana"); if (err) err.textContent = "";
+}
+</script>
+</body>
+</html>
