@@ -13,23 +13,17 @@
       padding: 20px;
       margin: 0;
     }
-    body.modo-oscuro {
-      background-color: #2e2e2e;
-      color: #e0e0e0;
-    }
-    body.modo-claro {
-      background-color: #f0f0f0;
-      color: #1a1a1a;
-    }
+    body.modo-oscuro { background-color: #2e2e2e; color: #e0e0e0; }
+    body.modo-claro { background-color: #f0f0f0; color: #1a1a1a; }
     .modo-claro .texto-azul { color: #0D47A1; }
     .modo-oscuro .texto-azul { color: #90D5FF; }
     .modo-claro .reloj { color: #0D47A1; }
     .modo-oscuro .reloj { color: #90D5FF; }
 
     h1, h3 { margin: 10px 0; }
-
     .reloj { font-size: 2em; font-weight: bold; }
-    .resultado, .zona { margin-top: 15px; font-size: 1em; }
+    .resultado, .zona { margin-top: 15px; font-size: 1em; color: #333; }
+    body.modo-oscuro .resultado, body.modo-oscuro .zona { color: #ddd; }
 
     input, button {
       padding: 10px;
@@ -79,11 +73,7 @@
       overflow: hidden;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    .calendar-container iframe {
-      width: 100%;
-      height: 300px;
-      border: none;
-    }
+    .calendar-container iframe { width: 100%; height: 300px; border: none; }
 
     .firma {
       margin-top: 15px;
@@ -125,21 +115,21 @@
   <!-- Sección: Días entre dos fechas -->
   <div class="seccion">
     <h3><span class="texto-azul">Número de días entre dos fechas</span></h3>
-    <input type="date" id="fechaInicio"> a
-    <input type="date" id="fechaFin">
+    <input type="date" id="fechaInicio" placeholder="Fecha inicio"> a
+    <input type="date" id="fechaFin" placeholder="Fecha fin">
     <button onclick="calcularDias()">Calcular días</button>
     <button onclick="resetDias()">Resetear</button>
-    <p id="resultadoDias"></p>
+    <p class="resultado" id="resultadoDias"></p>
   </div>
 
   <!-- Sección: Rango de fechas por semana -->
   <div class="seccion">
     <h3><span class="texto-azul">Rango de fechas de una semana</span></h3>
-    <label for="semanaInput">Semana del año:</label>
-    <input type="number" id="semanaInput" min="1" max="53">
+    <label for="semanaInput">Semana del año (1-53):</label>
+    <input type="number" id="semanaInput" min="1" max="53" placeholder="Número de semana">
     <button onclick="calcularRangoSemana()">Mostrar rango</button>
     <button onclick="resetSemana()">Resetear</button>
-    <p id="resultadoSemana"></p>
+    <p class="resultado" id="resultadoSemana"></p>
   </div>
 
   <!-- Calendario -->
@@ -166,27 +156,6 @@
       return `${dia}/${mes}/${año}`;
     }
 
-    function calcularSemana() {
-      const fechaInput = document.getElementById("fecha").value;
-      if (!fechaInput) { alert("Por favor, introduce una fecha válida."); return; }
-      const fecha = new Date(fechaInput);
-      const primeraFecha = new Date(fecha.getFullYear(), 0, 1);
-      const dias = Math.floor((fecha - primeraFecha) / (24 * 60 * 60 * 1000));
-      const semana = Math.ceil((dias + (primeraFecha.getDay() + 6) % 7 + 1) / 7);
-      document.getElementById("resultado").innerText = `La fecha ${formatoFecha(fecha)} corresponde a la semana número ${semana} del año.`;
-    }
-
-    function resetearFormulario() {
-      document.getElementById("fecha").value = "";
-      const hoy = new Date();
-      const primeraFecha = new Date(hoy.getFullYear(), 0, 1);
-      const dias = Math.floor((hoy - primeraFecha) / (24 * 60 * 60 * 1000));
-      const semanaActual = Math.ceil((dias + (primeraFecha.getDay() + 6) % 7 + 1) / 7);
-      document.getElementById("semanaActual").innerText = `Hoy es ${formatoFecha(hoy)} y estamos en la semana número ${semanaActual} del año.`;
-      document.getElementById("resultado").innerText = "";
-      fechaCalendario = new Date();
-    }
-
     function actualizarReloj() {
       const ahora = new Date();
       const opciones = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Europe/Madrid' };
@@ -196,7 +165,6 @@
       document.getElementById("zonaHoraria").innerText = esVerano ? "Hora local de España (GMT+2)" : "Hora local de España (GMT+1)";
     }
     setInterval(actualizarReloj, 1000);
-    resetearFormulario();
 
     function toggleModo() {
       const body = document.body;
@@ -210,45 +178,42 @@
         localStorage.setItem('modo', 'oscuro');
       }
     }
+
     window.onload = function() {
       const modoGuardado = localStorage.getItem('modo');
       if (modoGuardado === 'oscuro') document.body.classList.add('modo-oscuro');
       else document.body.classList.add('modo-claro');
+      resetearFormulario();
     };
 
-    // Funciones nuevas
+    function calcularSemana() {
+      const fechaInput = document.getElementById("fecha").value;
+      if (!fechaInput) { alert("Por favor, introduce una fecha válida."); return; }
+      const fecha = new Date(fechaInput);
+      const primeraFecha = new Date(fecha.getFullYear(), 0, 1);
+      const dias = Math.floor((fecha - primeraFecha) / (24*60*60*1000));
+      const semana = Math.ceil((dias + (primeraFecha.getDay() + 6) % 7 + 1) / 7);
+      document.getElementById("resultado").innerText = `La fecha ${formatoFecha(fecha)} corresponde a la semana número ${semana} del año.`;
+    }
+
+    function resetearFormulario() {
+      document.getElementById("fecha").value = "";
+      const hoy = new Date();
+      const primeraFecha = new Date(hoy.getFullYear(),0,1);
+      const dias = Math.floor((hoy - primeraFecha)/(24*60*60*1000));
+      const semanaActual = Math.ceil((dias + (primeraFecha.getDay() + 6)%7 +1)/7);
+      document.getElementById("semanaActual").innerText = `Hoy es ${formatoFecha(hoy)} y estamos en la semana número ${semanaActual} del año.`;
+      document.getElementById("resultado").innerText = "";
+      fechaCalendario = new Date();
+    }
+
     function calcularDias() {
-      const inicio = new Date(document.getElementById("fechaInicio").value);
-      const fin = new Date(document.getElementById("fechaFin").value);
-      if (!isNaN(inicio) && !isNaN(fin)) {
-        const dias = Math.abs((fin - inicio) / (1000 * 60 * 60 * 24));
-        document.getElementById("resultadoDias").textContent = `Hay ${dias} días entre las fechas.`;
+      const inicioInput = document.getElementById("fechaInicio").value;
+      const finInput = document.getElementById("fechaFin").value;
+
+      if (!inicioInput || !finInput) {
+        alert("Por favor, introduce ambas fechas.");
+        return;
       }
-    }
 
-    function calcularRangoSemana() {
-      const semana = parseInt(document.getElementById("semanaInput").value);
-      const año = new Date().getFullYear();
-      if (semana >= 1 && semana <= 53) {
-        const primerDia = new Date(año, 0, 1);
-        const diasOffset = (primerDia.getDay() <= 4 ? 0 : 7) - primerDia.getDay();
-        const inicioSemana = new Date(año, 0, 1 + diasOffset + (semana - 1) * 7);
-        const finSemana = new Date(inicioSemana);
-        finSemana.setDate(inicioSemana.getDate() + 6);
-        document.getElementById("resultadoSemana").textContent = `Semana ${semana}: del ${inicioSemana.toLocaleDateString()} al ${finSemana.toLocaleDateString()}`;
-      }
-    }
-
-    function resetDias() {
-      document.getElementById("fechaInicio").value = "";
-      document.getElementById("fechaFin").value = "";
-      document.getElementById("resultadoDias").textContent = "";
-    }
-
-    function resetSemana() {
-      document.getElementById("semanaInput").value = "";
-      document.getElementById("resultadoSemana").textContent = "";
-    }
-  </script>
-</body>
-</html>
+      const inicio =
