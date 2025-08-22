@@ -1,20 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <link rel="icon" type="image/png" href="favicon.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calculadora de tiempo</title>
+  <link rel="icon" type="image/png" href="favicon.png">
   <style>
-    body {
-      transition: background-color 0.3s, color 0.3s;
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 20px;
-      margin: 0;
-    }
-    body.modo-oscuro { background-color: #2e2e2e; color: #e0e0e0; }
-    body.modo-claro { background-color: #f0f0f0; color: #1a1a1a; }
+    body { font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; margin: 0; transition: background-color 0.3s, color 0.3s;}
+    body.modo-oscuro { background-color: #2e2e2e; color: #e0e0e0;}
+    body.modo-claro { background-color: #f0f0f0; color: #1a1a1a;}
     .modo-claro .texto-azul { color: #0D47A1; }
     .modo-oscuro .texto-azul { color: #90D5FF; }
     .modo-claro .reloj { color: #0D47A1; }
@@ -25,238 +19,168 @@
     .resultado, .zona { margin-top: 15px; font-size: 1em; color: #333; }
     body.modo-oscuro .resultado, body.modo-oscuro .zona { color: #ddd; }
 
-    input, button {
-      padding: 10px;
-      margin: 5px;
-      font-size: 1em;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-      width: 90%;
-      max-width: 300px;
-    }
-
-    button {
-      background-color: #3498db;
-      color: white;
-      border: none;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
+    input, button { padding: 10px; margin: 5px; font-size: 1em; border-radius: 5px; border: 1px solid #ccc; width: 90%; max-width: 300px; box-sizing: border-box;}
+    button { background-color: #3498db; color: white; border: none; cursor: pointer; transition: background-color 0.2s;}
     button:hover { background-color: #2980b9; }
 
-    #modo-toggle {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1.5em;
-      color: inherit;
-    }
+    #modo-toggle { position: fixed; bottom: 10px; right: 10px; font-size: 1.5em; background: none; border: none; cursor: pointer; color: inherit; }
 
-    .seccion {
-      margin: 20px auto;
-      padding: 15px;
-      border-radius: 8px;
-      max-width: 600px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      background-color: rgba(255,255,255,0.9);
-    }
+    .seccion { margin: 20px auto; padding: 15px; border-radius: 8px; max-width: 600px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.9);}
     body.modo-oscuro .seccion { background-color: rgba(50,50,50,0.9); }
 
-    .calendar-container {
-      max-width: 90%;
-      margin: 20px auto;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
+    .calendar-container { max-width: 90%; margin: 20px auto; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
     .calendar-container iframe { width: 100%; height: 300px; border: none; }
 
-    .firma {
-      margin-top: 15px;
-      font-size: 0.8em;
-      text-align: center;
-      opacity: 0.7;
-    }
+    .firma { margin-top: 15px; font-size: 0.8em; text-align: center; opacity: 0.7; }
     body.modo-claro .firma { color: #666; }
     body.modo-oscuro .firma { color: #aaa; }
 
-    /* Media Queries */
-    @media (max-width: 480px) {
-      .reloj { font-size: 1.5em; }
-      input, button { width: 95%; }
-      .calendar-container iframe { height: 250px; }
-    }
-
-    @media (min-width: 481px) and (max-width: 768px) {
-      input, button { max-width: 90%; }
-      .calendar-container iframe { height: 300px; }
-    }
+    @media(max-width:480px) { .reloj { font-size: 1.5em;} input, button { width: 95%; } .calendar-container iframe { height: 250px; } }
+    @media(min-width:481px) and (max-width:768px) { input, button { max-width: 90%; } .calendar-container iframe { height: 300px; } }
   </style>
 </head>
 <body>
-  <h1><span class="texto-azul">Calculadora de tiempo</span></h1>
-  <div class="reloj" id="reloj"></div>
-  <div class="zona" id="zonaHoraria"></div>
-  <p id="semanaActual"></p>
+<h1><span class="texto-azul">Calculadora de tiempo</span></h1>
+<div class="reloj" id="reloj"></div>
+<div class="zona" id="zonaHoraria"></div>
+<p id="semanaActual"></p>
 
-  <!-- Sección: Fecha a semana -->
-  <div class="seccion">
-    <h3><span class="texto-azul">Introduce una fecha</span></h3>
-    <input type="date" id="fecha">
-    <button onclick="calcularSemana()">Calcular semana</button>
-    <button onclick="resetearFormulario()">Resetear</button>
-    <div class="resultado" id="resultado"></div>
-  </div>
+<div class="seccion">
+  <h3><span class="texto-azul">Introduce una fecha</span></h3>
+  <input type="date" id="fecha">
+  <button onclick="calcularSemana()">Calcular semana</button>
+  <button onclick="resetearFormulario()">Resetear</button>
+  <div class="resultado" id="resultado"></div>
+</div>
 
-  <!-- Sección: Días entre dos fechas -->
-  <div class="seccion">
-    <h3><span class="texto-azul">Número de días entre dos fechas</span></h3>
-    <input type="date" id="fechaInicio" placeholder="Fecha inicio"> a
-    <input type="date" id="fechaFin" placeholder="Fecha fin">
-    <button onclick="calcularDias()">Calcular días</button>
-    <button onclick="resetDias()">Resetear</button>
-    <p class="resultado" id="resultadoDias"></p>
-  </div>
+<div class="seccion">
+  <h3><span class="texto-azul">Número de días entre dos fechas</span></h3>
+  <input type="date" id="fechaInicio" placeholder="Fecha inicio"> a
+  <input type="date" id="fechaFin" placeholder="Fecha fin">
+  <button onclick="calcularDias()">Calcular días</button>
+  <button onclick="resetDias()">Resetear</button>
+  <p class="resultado" id="resultadoDias"></p>
+</div>
 
-  <!-- Sección: Rango de fechas por semana -->
-  <div class="seccion">
-    <h3><span class="texto-azul">Rango de fechas de una semana</span></h3>
-    <label for="semanaInput">Semana del año (1-53):</label>
-    <input type="number" id="semanaInput" min="1" max="53" placeholder="Número de semana">
-    <button onclick="calcularRangoSemana()">Mostrar rango</button>
-    <button onclick="resetSemana()">Resetear</button>
-    <p class="resultado" id="resultadoSemana"></p>
-  </div>
+<div class="seccion">
+  <h3><span class="texto-azul">Rango de fechas de una semana</span></h3>
+  <label for="semanaInput">Semana del año (1-53):</label>
+  <input type="number" id="semanaInput" min="1" max="53" placeholder="Número de semana">
+  <button onclick="calcularRangoSemana()">Mostrar rango</button>
+  <button onclick="resetSemana()">Resetear</button>
+  <p class="resultado" id="resultadoSemana"></p>
+</div>
 
-  <!-- Calendario -->
-  <div class="calendar-container">
-    <iframe src="https://calendar.google.com/calendar/embed?src=es.spain%23holiday%40group.v.calendar.google.com&ctz=Europe%2FMadrid&showTitle=0&showTz=0"></iframe>
-  </div>
+<div class="calendar-container">
+  <iframe src="https://calendar.google.com/calendar/embed?src=es.spain%23holiday%40group.v.calendar.google.com&ctz=Europe%2FMadrid&showTitle=0&showTz=0"></iframe>
+</div>
 
-  <!-- Footer / Firma -->
-  <footer class="firma">
-    <p>El sitio podría cometer errores, considera contrastar la información.</p>
-    <p>Calculadora de tiempo V3.0 por DGCSe7en - Github</p>
-  </footer>
+<footer class="firma">
+  <p>El sitio podría cometer errores, considera contrastar la información.</p>
+  <p>Calculadora de tiempo V3.0 por DGCSe7en - Github</p>
+</footer>
 
-  <!-- Botón modo oscuro / claro -->
-  <button id="modo-toggle" onclick="toggleModo()">☀︎/☾</button>
+<button id="modo-toggle" onclick="toggleModo()">☀︎/☾</button>
 
-  <script>
-    let fechaCalendario = new Date();
+<script>
+let fechaCalendario = new Date();
 
-    function formatoFecha(fecha) {
-      const dia = String(fecha.getDate()).padStart(2, '0');
-      const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-      const año = fecha.getFullYear();
-      return `${dia}/${mes}/${año}`;
-    }
+function formatoFecha(fecha){
+  const dia = String(fecha.getDate()).padStart(2,'0');
+  const mes = String(fecha.getMonth()+1).padStart(2,'0');
+  const año = fecha.getFullYear();
+  return `${dia}/${mes}/${año}`;
+}
 
-    function actualizarReloj() {
-      const ahora = new Date();
-      const opciones = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Europe/Madrid' };
-      const horaLocal = ahora.toLocaleTimeString('es-ES', opciones);
-      document.getElementById("reloj").innerText = `Hora actual: ${horaLocal}`;
-      const esVerano = ahora.getTimezoneOffset() === -120;
-      document.getElementById("zonaHoraria").innerText = esVerano ? "Hora local de España (GMT+2)" : "Hora local de España (GMT+1)";
-    }
-    setInterval(actualizarReloj, 1000);
+function actualizarReloj(){
+  const ahora = new Date();
+  const opciones = {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false, timeZone:'Europe/Madrid'};
+  document.getElementById("reloj").innerText = `Hora actual: ${ahora.toLocaleTimeString('es-ES', opciones)}`;
+  const esVerano = ahora.getTimezoneOffset() === -120;
+  document.getElementById("zonaHoraria").innerText = esVerano ? "Hora local de España (GMT+2)" : "Hora local de España (GMT+1)";
+}
+setInterval(actualizarReloj,1000);
 
-    function toggleModo() {
-      const body = document.body;
-      if (body.classList.contains('modo-oscuro')) {
-        body.classList.remove('modo-oscuro');
-        body.classList.add('modo-claro');
-        localStorage.setItem('modo', 'claro');
-      } else {
-        body.classList.remove('modo-claro');
-        body.classList.add('modo-oscuro');
-        localStorage.setItem('modo', 'oscuro');
-      }
-    }
-    window.onload = function() {
-      const modoGuardado = localStorage.getItem('modo');
-      if (modoGuardado === 'oscuro') document.body.classList.add('modo-oscuro');
-      else document.body.classList.add('modo-claro');
-      resetearFormulario();
-    };
+function toggleModo(){
+  const body = document.body;
+  if(body.classList.contains('modo-oscuro')){
+    body.classList.remove('modo-oscuro'); body.classList.add('modo-claro'); localStorage.setItem('modo','claro');
+  } else{
+    body.classList.remove('modo-claro'); body.classList.add('modo-oscuro'); localStorage.setItem('modo','oscuro');
+  }
+}
 
-    function calcularSemana() {
-      const fechaInput = document.getElementById("fecha").value;
-      if (!fechaInput) {
-        alert("Por favor, introduce una fecha válida.");
-        return;
-      }
-      const fecha = new Date(fechaInput);
-      const primeraFecha = new Date(fecha.getFullYear(), 0, 1);
-      const dias = Math.floor((fecha - primeraFecha) / (24*60*60*1000));
-      const semana = Math.ceil((dias + (primeraFecha.getDay() + 6) % 7 + 1) / 7);
-      document.getElementById("resultado").innerText = `La fecha ${formatoFecha(fecha)} corresponde a la semana número ${semana} del año.`;
-    }
+window.onload = function(){
+  const modoGuardado = localStorage.getItem('modo');
+  if(modoGuardado==='oscuro') document.body.classList.add('modo-oscuro');
+  else document.body.classList.add('modo-claro');
+  resetearFormulario();
+}
 
-    function resetearFormulario() {
-      document.getElementById("fecha").value = "";
-      const hoy = new Date();
-      const primeraFecha = new Date(hoy.getFullYear(),0,1);
-      const dias = Math.floor((hoy - primeraFecha)/(24*60*60*1000));
-      const semanaActual = Math.ceil((dias + (primeraFecha.getDay() + 6)%7 +1)/7);
-      document.getElementById("semanaActual").innerText = `Hoy es ${formatoFecha(hoy)} y estamos en la semana número ${semanaActual} del año.`;
-      document.getElementById("resultado").innerText = "";
-      fechaCalendario = new Date();
-    }
+function calcularSemana(){
+  const fechaInput = document.getElementById("fecha").value;
+  if(!fechaInput){ alert("Por favor, introduce una fecha válida."); return;}
+  const fecha = new Date(fechaInput);
+  const primeraFecha = new Date(fecha.getFullYear(),0,1);
+  const dias = Math.floor((fecha-primeraFecha)/(24*60*60*1000));
+  const semana = Math.ceil((dias + (primeraFecha.getDay()+6)%7 +1)/7);
+  document.getElementById("resultado").innerText = `La fecha ${formatoFecha(fecha)} corresponde a la semana número ${semana} del año.`;
+}
 
-    function calcularDias() {
-      const inicioInput = document.getElementById("fechaInicio").value;
-      const finInput = document.getElementById("fechaFin").value;
+function resetearFormulario(){
+  document.getElementById("fecha").value = "";
+  const hoy = new Date();
+  const primeraFecha = new Date(hoy.getFullYear(),0,1);
+  const dias = Math.floor((hoy - primeraFecha)/(24*60*60*1000));
+  const semanaActual = Math.ceil((dias + (primeraFecha.getDay()+6)%7 +1)/7);
+  document.getElementById("semanaActual").innerText = `Hoy es ${formatoFecha(hoy)} y estamos en la semana número ${semanaActual} del año.`;
+  document.getElementById("resultado").innerText = "";
+  fechaCalendario = new Date();
+}
 
-      if (!inicioInput || !finInput) {
-        alert("Por favor, introduce ambas fechas.");
-        return;
-      }
+// Función precisa para días -> años, meses, días exactos
+function calcularDias(){
+  const inicioInput = document.getElementById("fechaInicio").value;
+  const finInput = document.getElementById("fechaFin").value;
+  if(!inicioInput || !finInput){ alert("Introduce ambas fechas."); return; }
+  let inicio = new Date(inicioInput);
+  let fin = new Date(finInput);
+  if(fin<inicio){ alert("La fecha final no puede ser anterior a la inicial."); return; }
 
-      const inicio = new Date(inicioInput);
-      const fin = new Date(finInput);
+  // Cálculo exacto
+  let años = fin.getFullYear() - inicio.getFullYear();
+  let meses = fin.getMonth() - inicio.getMonth();
+  let dias = fin.getDate() - inicio.getDate();
 
-      if (fin < inicio) {
-        alert("La fecha final no puede ser anterior a la inicial.");
-        return;
-      }
+  if(dias<0){ meses--; dias += new Date(fin.getFullYear(), fin.getMonth(), 0).getDate(); }
+  if(meses<0){ años--; meses+=12; }
 
-      const dias = Math.round((fin - inicio) / (1000*60*60*24));
-      document.getElementById("resultadoDias").textContent = `Hay ${dias} días entre las fechas.`;
-    }
+  const diasTotales = Math.round((fin - inicio)/(1000*60*60*24));
+  document.getElementById("resultadoDias").textContent = `Hay ${diasTotales} días (${años} años, ${meses} meses, ${dias} días).`;
+}
 
-    function resetDias() {
-      document.getElementById("fechaInicio").value = "";
-      document.getElementById("fechaFin").value = "";
-      document.getElementById("resultadoDias").textContent = "";
-    }
+function resetDias(){
+  document.getElementById("fechaInicio").value = "";
+  document.getElementById("fechaFin").value = "";
+  document.getElementById("resultadoDias").textContent = "";
+}
 
-    function calcularRangoSemana() {
-      const semana = parseInt(document.getElementById("semanaInput").value);
-      if (isNaN(semana) || semana < 1 || semana > 53) {
-        alert("Introduce un número de semana válido entre 1 y 53.");
-        return;
-      }
+function calcularRangoSemana(){
+  const semana = parseInt(document.getElementById("semanaInput").value);
+  if(isNaN(semana)||semana<1||semana>53){ alert("Introduce un número de semana válido entre 1 y 53."); return; }
+  const año = new Date().getFullYear();
+  const primerDia = new Date(año,0,1);
+  const diasOffset = (primerDia.getDay()<=4?0:7)-primerDia.getDay();
+  const inicioSemana = new Date(año,0,1+diasOffset+(semana-1)*7);
+  const finSemana = new Date(inicioSemana);
+  finSemana.setDate(inicioSemana.getDate()+6);
+  document.getElementById("resultadoSemana").textContent = `Semana ${semana}: del ${inicioSemana.toLocaleDateString()} al ${finSemana.toLocaleDateString()}`;
+}
 
-      const año = new Date().getFullYear();
-      const primerDia = new Date(año, 0, 1);
-      const diasOffset = (primerDia.getDay() <= 4 ? 0 : 7) - primerDia.getDay();
-      const inicioSemana = new Date(año, 0, 1 + diasOffset + (semana-1)*7);
-      const finSemana = new Date(inicioSemana);
-      finSemana.setDate(inicioSemana.getDate()+6);
-
-      document.getElementById("resultadoSemana").textContent = `Semana ${semana}: del ${inicioSemana.toLocaleDateString()} al ${finSemana.toLocaleDateString()}`;
-    }
-
-    function resetSemana() {
-      document.getElementById("semanaInput").value = "";
-      document.getElementById("resultadoSemana").textContent = "";
-    }
-  </script>
+function resetSemana(){
+  document.getElementById("semanaInput").value="";
+  document.getElementById("resultadoSemana").textContent="";
+}
+</script>
 </body>
 </html>
