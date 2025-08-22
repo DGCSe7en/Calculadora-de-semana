@@ -170,6 +170,9 @@ function cambiarIdioma(lang){
   const t = traducciones[lang];
   if (!t) return;
 
+document.addEventListener('DOMContentLoaded', () => {
+  cambiarIdioma('es');
+});
   document.getElementById('titulo').innerText=t.titulo;
   document.getElementById('h3Semana').innerText=t.h3Semana;
   document.getElementById('btnCalcularSemana').innerText=t.btnCalcularSemana;
