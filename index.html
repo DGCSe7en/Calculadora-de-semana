@@ -28,7 +28,7 @@ button { background-color: #3498db; color: white; border: none; cursor: pointer;
 button:hover { background-color: #2980b9; }
 
 /* Botón modo claro/oscuro fijo */
-#modo-toggle { position: fixed; right: 10px; font-size: 1.3em; background: none; border: none; cursor: pointer; color: inherit; z-index: 1000; transition: bottom 0.2s;}
+#modo-toggle { position: fixed; right: 20px; font-size: 1.5em; background: none; border: none; cursor: pointer; color: inherit; z-index: 1000; transition: bottom 0.2s;}
 
 /* Calendario */
 .calendar-container { max-width: 90%; margin: 20px auto; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
@@ -240,22 +240,31 @@ function resetSemana(){ document.getElementById("semanaInput").value=""; documen
 function ajustarBoton() {
     const boton = document.getElementById('modo-toggle');
     if (!boton) return;
-    const elementosInferiores = document.querySelectorAll('footer, .bottom-item');
-    let maxTop = window.innerHeight;
-elementosInferiores.forEach(el => {
+    const ventanaAltura = window.innerHeight;
+    const botonAltura = boton.offsetHeight;
+    let maxTop = ventanaAltura;
+    const elementos = Array.from(document.body.children)
+        .filter(el => {
+            const rect = el.getBoundingClientRect();
+            return rect.bottom > ventanaAltura - 50 && rect !== boton;
+        });
+
+    elementos.forEach(el => {
         const rect = el.getBoundingClientRect();
         if (rect.top < maxTop) {
             maxTop = rect.top;
         }
     });
-    const espacioSeguro = 10;
-    const distanciaBottom = window.innerHeight - maxTop + espacioSeguro;
-    boton.style.bottom = `${distanciaBottom}px`;
+
+    const espacioSeguro = 20;
+    const nuevaBottom = Math.max(espacioSeguro, ventanaAltura - maxTop + espacioSeguro);
+    boton.style.bottom = `${nuevaBottom}px`;
 }
 
 window.addEventListener('load', ajustarBoton);
 window.addEventListener('resize', ajustarBoton);
 window.addEventListener('scroll', ajustarBoton);
+
 
 </script>
 </body>
