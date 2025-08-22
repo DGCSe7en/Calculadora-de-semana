@@ -28,7 +28,7 @@ button { background-color: #3498db; color: white; border: none; cursor: pointer;
 button:hover { background-color: #2980b9; }
 
 /* Botón modo claro/oscuro fijo */
-#modo-toggle { position: fixed; bottom: 10px; right: 10px; font-size: 1.0em; background: none; border: none; cursor: pointer; color: inherit; z-index: 1000; }
+#modo-toggle { position: fixed; right: 10px; font-size: 1.3em; background: none; border: none; cursor: pointer; color: inherit; z-index: 1000; transition: bottom 0.2s;}
 
 /* Calendario */
 .calendar-container { max-width: 90%; margin: 20px auto; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
@@ -105,9 +105,9 @@ body.modo-oscuro .firma { color: #aaa; }
   <iframe src="https://calendar.google.com/calendar/embed?src=es.spain%23holiday%40group.v.calendar.google.com&ctz=Europe%2FMadrid&showTitle=0&showTz=0"></iframe>
 </div>
 
+<button id="modo-toggle" onclick="toggleModo()">☀︎/☾</button>  
+  
 <footer class="firma" id="footerFirma"></footer>
-
-<button id="modo-toggle" onclick="toggleModo()">☀︎/☾</button>
 
 <script>
 // Traducciones
@@ -236,6 +236,27 @@ function calcularRangoSemana(){
 }
 
 function resetSemana(){ document.getElementById("semanaInput").value=""; document.getElementById("resultadoSemana").textContent=""; document.getElementById("errorRangoSemana").textContent="";}
+
+function ajustarBoton() {
+    const boton = document.getElementById('modo-toggle');
+    if (!boton) return;
+    const elementosInferiores = document.querySelectorAll('footer, .bottom-item');
+    let maxTop = window.innerHeight;
+elementosInferiores.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < maxTop) {
+            maxTop = rect.top;
+        }
+    });
+    const espacioSeguro = 10;
+    const distanciaBottom = window.innerHeight - maxTop + espacioSeguro;
+    boton.style.bottom = `${distanciaBottom}px`;
+}
+
+window.addEventListener('load', ajustarBoton);
+window.addEventListener('resize', ajustarBoton);
+window.addEventListener('scroll', ajustarBoton);
+
 </script>
 </body>
 </html>
