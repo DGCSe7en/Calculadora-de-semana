@@ -35,7 +35,41 @@
     body.modo-claro .firma { color: #666; }
     body.modo-oscuro .firma { color: #aaa; }
 
-    .error { color: red; font-size: 0.9em; margin-top: 5px; }
+    /* Estilos para mensajes de error visuales */
+    .error {
+      color: orange;
+      font-weight: bold;
+      font-style: italic;
+      font-size: 0.9em;
+      margin-top: 5px;
+      opacity: 0;
+      transition: opacity 0.4s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .error.visible { opacity: 1; }
+    .icono { margin-right: 5px; }
+
+    /* Resaltar input con parpadeo */
+    .input-error {
+      border: 2px solid orange;
+      animation: parpadeo 0.6s ease-in-out 2;
+    }
+    @keyframes parpadeo {
+      0%,100% { border-color: transparent; }
+      50% { border-color: orange; }
+    }
+
+    /* Overlay difuminado */
+    .overlay-error {
+      position: fixed;
+      top:0; left:0; right:0; bottom:0;
+      background: rgba(0,0,0,0.2);
+      backdrop-filter: blur(2px);
+      z-index: 1000;
+      pointer-events: none;
+    }
 
     @media(max-width:480px) { .reloj { font-size: 1.5em;} input, button { width: 95%; } .calendar-container iframe { height: 250px; } }
     @media(min-width:481px) and (max-width:768px) { input, button { max-width: 90%; } .calendar-container iframe { height: 300px; } }
@@ -53,7 +87,7 @@
   <button onclick="calcularSemana()">Calcular semana</button>
   <button onclick="resetearFormulario()">Resetear</button>
   <div class="resultado" id="resultado"></div>
-  <p class="error" id="errorSemana"></p>
+  <p class="error" id="errorSemana"><span class="icono">⚠️</span></p>
 </div>
 
 <div class="seccion">
@@ -63,7 +97,7 @@
   <button onclick="calcularDias()">Calcular días</button>
   <button onclick="resetDias()">Resetear</button>
   <p class="resultado" id="resultadoDias"></p>
-  <p class="error" id="errorDias"></p>
+  <p class="error" id="errorDias"><span class="icono">⚠️</span></p>
 </div>
 
 <div class="seccion">
@@ -73,7 +107,7 @@
   <button onclick="calcularRangoSemana()">Mostrar rango</button>
   <button onclick="resetSemana()">Resetear</button>
   <p class="resultado" id="resultadoSemana"></p>
-  <p class="error" id="errorRangoSemana"></p>
+  <p class="error" id="errorRangoSemana"><span class="icono">⚠️</span></p>
 </div>
 
 <div class="calendar-container">
@@ -86,6 +120,8 @@
 </footer>
 
 <button id="modo-toggle" onclick="toggleModo()">☀︎/☾</button>
+
+<div class="overlay-error" id="overlayError" style="display:none;"></div>
 
 <script>
 let fechaCalendario = new Date();
@@ -122,11 +158,29 @@ window.onload = function(){
   resetearFormulario();
 }
 
+/* Función para mostrar errores visuales */
+function mostrarError(idInput, idError, mensaje){
+  const errorElem = document.getElementById(idError);
+  const inputElem = document.getElementById(idInput);
+  const overlay = document.getElementById("overlayError");
+
+  // Mostrar overlay
+  overlay.style.display = "block";
+  setTimeout(()=>{ overlay.style.display = "none"; }, 2500);
+
+  // Mostrar mensaje
+  errorElem.innerHTML = `⚠️ ${mensaje}`;
+  errorElem.classList.add("visible");
+  setTimeout(()=>{ errorElem.classList.remove("visible"); }, 2500);
+
+  // Resaltar input con parpadeo
+  inputElem.classList.add("input-error");
+  setTimeout(()=>{ inputElem.classList.remove("input-error"); }, 1200);
+}
+
 function calcularSemana(){
   const fechaInput = document.getElementById("fecha").value;
-  const errorSemana = document.getElementById("errorSemana");
-  errorSemana.textContent = '';
-  if(!fechaInput){ errorSemana.textContent = "Por favor, introduce una fecha válida."; return;}
+  if(!fechaInput){ mostrarError("fecha","errorSemana","Introduce una fecha válida."); return;}
   const fecha = new Date(fechaInput);
   const primeraFecha = new Date(fecha.getFullYear(),0,1);
   const dias = Math.floor((fecha-primeraFecha)/(24*60*60*1000));
@@ -142,26 +196,21 @@ function resetearFormulario(){
   const dias = Math.floor((hoy - primeraFecha)/(24*60*60*1000));
   const semanaActual = Math.ceil((dias + (primeraFecha.getDay()+6)%7 +1)/7);
   document.getElementById("semanaActual").innerText = `Hoy es ${formatoFecha(hoy)} y estamos en la semana número ${semanaActual} del año.`;
-  document.getElementById("resultado").innerText = "";
-  fechaCalendario = new Date();
 }
 
-// Función precisa para días -> años, meses, días exactos
+// Función para calcular días exactos
 function calcularDias(){
   const inicioInput = document.getElementById("fechaInicio").value;
   const finInput = document.getElementById("fechaFin").value;
-  const errorDias = document.getElementById("errorDias");
-  errorDias.textContent = '';
-  if(!inicioInput || !finInput){ errorDias.textContent = "Introduce ambas fechas."; return; }
+  if(!inicioInput || !finInput){ mostrarError("fechaInicio","errorDias","Introduce ambas fechas."); return; }
+
   let inicio = new Date(inicioInput);
   let fin = new Date(finInput);
-  if(fin<inicio){ errorDias.textContent = "La fecha final no puede ser anterior a la inicial."; return; }
+  if(fin<inicio){ mostrarError("fechaFin","errorDias","La fecha final no puede ser anterior a la inicial."); return; }
 
-  // Cálculo exacto
   let años = fin.getFullYear() - inicio.getFullYear();
   let meses = fin.getMonth() - inicio.getMonth();
   let dias = fin.getDate() - inicio.getDate();
-
   if(dias<0){ meses--; dias += new Date(fin.getFullYear(), fin.getMonth(), 0).getDate(); }
   if(meses<0){ años--; meses+=12; }
 
@@ -176,11 +225,10 @@ function resetDias(){
   document.getElementById("errorDias").textContent = "";
 }
 
+// Función para rango de semanas
 function calcularRangoSemana(){
   const semana = parseInt(document.getElementById("semanaInput").value);
-  const errorRango = document.getElementById("errorRangoSemana");
-  errorRango.textContent = '';
-  if(isNaN(semana)||semana<1||semana>53){ errorRango.textContent = "Introduce un número de semana válido entre 1 y 53."; return; }
+  if(isNaN(semana)||semana<1||semana>53){ mostrarError("semanaInput","errorRangoSemana","Introduce un número de semana válido entre 1 y 53."); return; }
   const año = new Date().getFullYear();
   const primerDia = new Date(año,0,1);
   const diasOffset = (primerDia.getDay()<=4?0:7)-primerDia.getDay();
