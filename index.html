@@ -178,7 +178,6 @@
         localStorage.setItem('modo', 'oscuro');
       }
     }
-
     window.onload = function() {
       const modoGuardado = localStorage.getItem('modo');
       if (modoGuardado === 'oscuro') document.body.classList.add('modo-oscuro');
@@ -188,7 +187,10 @@
 
     function calcularSemana() {
       const fechaInput = document.getElementById("fecha").value;
-      if (!fechaInput) { alert("Por favor, introduce una fecha válida."); return; }
+      if (!fechaInput) {
+        alert("Por favor, introduce una fecha válida.");
+        return;
+      }
       const fecha = new Date(fechaInput);
       const primeraFecha = new Date(fecha.getFullYear(), 0, 1);
       const dias = Math.floor((fecha - primeraFecha) / (24*60*60*1000));
@@ -216,4 +218,45 @@
         return;
       }
 
-      const inicio =
+      const inicio = new Date(inicioInput);
+      const fin = new Date(finInput);
+
+      if (fin < inicio) {
+        alert("La fecha final no puede ser anterior a la inicial.");
+        return;
+      }
+
+      const dias = Math.round((fin - inicio) / (1000*60*60*24));
+      document.getElementById("resultadoDias").textContent = `Hay ${dias} días entre las fechas.`;
+    }
+
+    function resetDias() {
+      document.getElementById("fechaInicio").value = "";
+      document.getElementById("fechaFin").value = "";
+      document.getElementById("resultadoDias").textContent = "";
+    }
+
+    function calcularRangoSemana() {
+      const semana = parseInt(document.getElementById("semanaInput").value);
+      if (isNaN(semana) || semana < 1 || semana > 53) {
+        alert("Introduce un número de semana válido entre 1 y 53.");
+        return;
+      }
+
+      const año = new Date().getFullYear();
+      const primerDia = new Date(año, 0, 1);
+      const diasOffset = (primerDia.getDay() <= 4 ? 0 : 7) - primerDia.getDay();
+      const inicioSemana = new Date(año, 0, 1 + diasOffset + (semana-1)*7);
+      const finSemana = new Date(inicioSemana);
+      finSemana.setDate(inicioSemana.getDate()+6);
+
+      document.getElementById("resultadoSemana").textContent = `Semana ${semana}: del ${inicioSemana.toLocaleDateString()} al ${finSemana.toLocaleDateString()}`;
+    }
+
+    function resetSemana() {
+      document.getElementById("semanaInput").value = "";
+      document.getElementById("resultadoSemana").textContent = "";
+    }
+  </script>
+</body>
+</html>
