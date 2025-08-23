@@ -86,9 +86,7 @@ body.modo-oscuro .firma { color: #aaa; }
 </div>
 
 <div class="calendar-container">
-  <iframe
-    src="https://calendar.google.com/calendar/embed?src=es.spain.official%23holiday%40group.v.calendar.google.com&ctz=Europe%2FMadrid&showTitle=0&showTz=0">
-  </iframe>
+  <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230b8043" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
 </div>
 
 <button id="modo-toggle" onclick="toggleModo()" aria-label="Cambiar modo claro/oscuro">☀︎/☾</button>  
@@ -99,16 +97,16 @@ body.modo-oscuro .firma { color: #aaa; }
 const traducciones = {
   es: {
     titulo: "Calculadora de tiempo",
-    h3Semana: "Introduce una fecha",
+    h3Semana: "Número de semana",
     btnCalcularSemana: "Calcular semana",
     btnResetSemana: "Resetear",
     semanaDe: "{fecha} > Semana {semana}",
     diasEntre: "{total} días ({años} años, {meses} meses, {dias} días)",
     rangoSemana: "Semana {semana}: del {inicio} al {fin}",
-    h3Dias: "Número de días entre dos fechas",
+    h3Dias: "Tiempo entre dos fechas",
     btnCalcularDias: "Calcular días",
     btnResetDias: "Resetear",
-    h3Rango: "Rango de fechas de una semana",
+    h3Rango: "Fechas de una semana",
     labelSemana: "Semana del año (1-53):",
     btnMostrarRango: "Mostrar rango",
     btnResetRango: "Resetear",
@@ -126,16 +124,16 @@ const traducciones = {
   },
   ca: {
     titulo: "Calculadora de temps",
-    h3Semana: "Introdueix una data",
+    h3Semana: "Número de setmana",
     btnCalcularSemana: "Calcular setmana",
     btnResetSemana: "Restablir",
     semanaDe: "{fecha} > Setmana {semana}",
     diasEntre: "{total} dies ({años} anys, {meses} mesos, {dias} dies)",
     rangoSemana: "Setmana {semana}: del {inicio} al {fin}",
-    h3Dias: "Nombre de dies entre dues dates",
+    h3Dias: "Temps entre dues dates",
     btnCalcularDias: "Calcular dies",
     btnResetDias: "Restablir",
-    h3Rango: "Interval de dates d’una setmana",
+    h3Rango: "Dates d’una setmana",
     labelSemana: "Setmana de l’any (1-53):",
     btnMostrarRango: "Mostrar interval",
     btnResetRango: "Restablir",
@@ -147,22 +145,22 @@ const traducciones = {
     errorFinAntesInicio: "La data final no pot ser anterior a la inicial.",
     errorSemana: "Introdueix un número de setmana vàlid entre 1 i 53.",
     horaActual: "Hora actual:",
-    zonaHorariaTpl: "Hora local de Catalunya ({gmt})",
+    zonaHorariaTpl: "Hora local d'Espanya ({gmt})",
     semanaActual: "Avui és {fecha} i estem a la setmana número {semana} de l’any.",
     footer: "El lloc podria contenir errors, considera contrastar la informació. Calculadora de temps V4.5 per DGCSe7en - Github"
   },
   gl: {
     titulo: "Calculadora de tempo",
-    h3Semana: "Introduce unha data",
+    h3Semana: "Número de semana",
     btnCalcularSemana: "Calcular semana",
     btnResetSemana: "Restablecer",
     semanaDe: "{fecha} > Semana {semana}",
     diasEntre: "{total} días ({años} anos, {meses} meses, {dias} días)",
     rangoSemana: "Semana {semana}: do {inicio} ao {fin}",
-    h3Dias: "Número de días entre dúas datas",
+    h3Dias: "Tempo entre dúas datas",
     btnCalcularDias: "Calcular días",
     btnResetDias: "Restablecer",
-    h3Rango: "Intervalo de datas dunha semana",
+    h3Rango: "Datas dunha semana",
     labelSemana: "Semana do ano (1-53):",
     btnMostrarRango: "Mostrar intervalo",
     btnResetRango: "Restablecer",
@@ -174,22 +172,22 @@ const traducciones = {
     errorFinAntesInicio: "A data final non pode ser anterior á inicial.",
     errorSemana: "Introduce un número de semana válido entre 1 e 53.",
     horaActual: "Hora actual:",
-    zonaHorariaTpl: "Hora local de Galicia ({gmt})",
+    zonaHorariaTpl: "Hora local de España ({gmt})",
     semanaActual: "Hoxe é {fecha} e estamos na semana número {semana} do ano.",
     footer: "O sitio podería conter erros, considera contrastar a información. Calculadora de tempo V4.5 por DGCSe7en - Github"
   },
   eu: {
     titulo: "Denboraren kalkulagailua",
-    h3Semana: "Sartu data bat",
+    h3Semana: "Aste zenbakia",
     btnCalcularSemana: "Astea kalkulatu",
     btnResetSemana: "Berrezarri",
     semanaDe: "{fecha} > {semana}. astea",
     diasEntre: "{total} egun ({años} urte, {meses} hilabete, {dias} egun)",
     rangoSemana: "{semana}. astea: {inicio}tik {fin}ra",
-    h3Dias: "Bi daten arteko egun kopurua",
+    h3Dias: "Bi daten arteko denbora",
     btnCalcularDias: "Egunak kalkulatu",
     btnResetDias: "Berrezarri",
-    h3Rango: "Aste bateko datu tartea",
+    h3Rango: "Aste bateko datak",
     labelSemana: "Urteko astea (1-53):",
     btnMostrarRango: "Tartea erakutsi",
     btnResetRango: "Berrezarri",
@@ -201,7 +199,7 @@ const traducciones = {
     errorFinAntesInicio: "Amaiera data ezin da hasierakoa baino lehenagokoa izan.",
     errorSemana: "Sartu 1 eta 53 arteko aste-zenbaki baliozkoa.",
     horaActual: "Ordu orain:",
-    zonaHorariaTpl: "Euskal Herriko tokiko ordua ({gmt})",
+    zonaHorariaTpl: "Espainiako tokiko ordua ({gmt})",
     semanaActual: "Gaur {fecha} da eta urteko {semana}. astean gaude.",
     footer: "Guneak akatsak izan ditzake, kontrastatu informazioa. Denboraren kalkulagailua V4.5 DGCSe7en - Github"
   }
