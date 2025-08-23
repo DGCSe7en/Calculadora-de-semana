@@ -44,10 +44,10 @@ body.modo-oscuro .firma { color: #aaa; }
 <h1 class="texto-azul" id="titulo"></h1>
 
 <div id="idiomas">
-  <img src="ESP.png" alt="Español" data-lang="es" onclick="cambiarIdioma(this.dataset.lang)">
-  <img src="CAT.png" alt="Català" data-lang="ca" onclick="cambiarIdioma(this.dataset.lang)">
-  <img src="GAL.png" alt="Galego" data-lang="gl" onclick="cambiarIdioma(this.dataset.lang)">
-  <img src="EUS.png" alt="Euskera" data-lang="eu" onclick="cambiarIdioma(this.dataset.lang)">
+  <img src="ESP.png" alt="Español" data-lang="es" onclick="cambiarIdioma('es')">
+  <img src="CAT.png" alt="Català" data-lang="ca" onclick="cambiarIdioma('ca')">
+  <img src="GAL.png" alt="Galego" data-lang="gl" onclick="cambiarIdioma('gl')">
+  <img src="EUS.png" alt="Euskera" data-lang="eu" onclick="cambiarIdioma('eu')">
 </div>
 
 <div class="reloj texto-azul" id="reloj"></div>
@@ -94,8 +94,114 @@ body.modo-oscuro .firma { color: #aaa; }
 <script>
 // --- Traducciones ---
 const traducciones = {
-  es:{titulo:"Calculadora de tiempo",h3Semana:"Introduce una fecha",btnCalcularSemana:"Calcular semana",btnResetSemana:"Resetear",semanaDe: "{fecha} > Semana {semana}", diasEntre: "{total} días ({años} años, {meses} meses, {dias} días)",  rangoSemana: "Semana {semana}: del {inicio} al {fin}",h3Dias:"Número de días entre dos fechas",btnCalcularDias:"Calcular días",btnResetDias:"Resetear",h3Rango:"Rango de fechas de una semana",labelSemana:"Semana del año (1-53):",btnMostrarRango:"Mostrar rango",btnResetRango:"Resetear",placeholderInicio:"Fecha inicio",placeholderFin:"Fecha fin",placeholderSemana:"Número de semana",errorFecha:"Introduce una fecha válida.",errorFechas:"Introduce fechas válidas en ambos campos.",errorFinAntesInicio:"La fecha final no puede ser anterior a la inicial.",errorSemana:"Introduce un número de semana válido entre 1 y 53.",horaActual:"Hora actual:",zonaHorariaTpl:"Hora local de España ({gmt})",semanaActual:"Hoy es {fecha} y estamos en la semana número {semana} del año.",footer:"El sitio podría cometer errores, considera contrastar la información. Calculadora de tiempo V4.5 por DGCSe7en - Github"},
-  // ... aquí irían los otros idiomas (ca, gl, eu) con la misma estructura
+  es: {
+    titulo: "Calculadora de tiempo",
+    h3Semana: "Introduce una fecha",
+    btnCalcularSemana: "Calcular semana",
+    btnResetSemana: "Resetear",
+    semanaDe: "{fecha} > Semana {semana}",
+    diasEntre: "{total} días ({años} años, {meses} meses, {dias} días)",
+    rangoSemana: "Semana {semana}: del {inicio} al {fin}",
+    h3Dias: "Número de días entre dos fechas",
+    btnCalcularDias: "Calcular días",
+    btnResetDias: "Resetear",
+    h3Rango: "Rango de fechas de una semana",
+    labelSemana: "Semana del año (1-53):",
+    btnMostrarRango: "Mostrar rango",
+    btnResetRango: "Resetear",
+    placeholderInicio: "Fecha inicio",
+    placeholderFin: "Fecha fin",
+    placeholderSemana: "Número de semana",
+    errorFecha: "Introduce una fecha válida.",
+    errorFechas: "Introduce fechas válidas en ambos campos.",
+    errorFinAntesInicio: "La fecha final no puede ser anterior a la inicial.",
+    errorSemana: "Introduce un número de semana válido entre 1 y 53.",
+    horaActual: "Hora actual:",
+    zonaHorariaTpl: "Hora local de España ({gmt})",
+    semanaActual: "Hoy es {fecha} y estamos en la semana número {semana} del año.",
+    footer: "El sitio podría cometer errores, considera contrastar la información. Calculadora de tiempo V4.5 por DGCSe7en - Github"
+  },
+  ca: {
+    titulo: "Calculadora de temps",
+    h3Semana: "Introdueix una data",
+    btnCalcularSemana: "Calcular setmana",
+    btnResetSemana: "Restablir",
+    semanaDe: "{fecha} > Setmana {semana}",
+    diasEntre: "{total} dies ({años} anys, {meses} mesos, {dias} dies)",
+    rangoSemana: "Setmana {semana}: del {inicio} al {fin}",
+    h3Dias: "Nombre de dies entre dues dates",
+    btnCalcularDias: "Calcular dies",
+    btnResetDias: "Restablir",
+    h3Rango: "Interval de dates d’una setmana",
+    labelSemana: "Setmana de l’any (1-53):",
+    btnMostrarRango: "Mostrar interval",
+    btnResetRango: "Restablir",
+    placeholderInicio: "Data inici",
+    placeholderFin: "Data fi",
+    placeholderSemana: "Número de setmana",
+    errorFecha: "Introdueix una data vàlida.",
+    errorFechas: "Introdueix dates vàlides en tots dos camps.",
+    errorFinAntesInicio: "La data final no pot ser anterior a la inicial.",
+    errorSemana: "Introdueix un número de setmana vàlid entre 1 i 53.",
+    horaActual: "Hora actual:",
+    zonaHorariaTpl: "Hora local de Catalunya ({gmt})",
+    semanaActual: "Avui és {fecha} i estem a la setmana número {semana} de l’any.",
+    footer: "El lloc podria contenir errors, considera contrastar la informació. Calculadora de temps V4.5 per DGCSe7en - Github"
+  },
+  gl: {
+    titulo: "Calculadora de tempo",
+    h3Semana: "Introduce unha data",
+    btnCalcularSemana: "Calcular semana",
+    btnResetSemana: "Restablecer",
+    semanaDe: "{fecha} > Semana {semana}",
+    diasEntre: "{total} días ({años} anos, {meses} meses, {dias} días)",
+    rangoSemana: "Semana {semana}: do {inicio} ao {fin}",
+    h3Dias: "Número de días entre dúas datas",
+    btnCalcularDias: "Calcular días",
+    btnResetDias: "Restablecer",
+    h3Rango: "Intervalo de datas dunha semana",
+    labelSemana: "Semana do ano (1-53):",
+    btnMostrarRango: "Mostrar intervalo",
+    btnResetRango: "Restablecer",
+    placeholderInicio: "Data inicio",
+    placeholderFin: "Data fin",
+    placeholderSemana: "Número de semana",
+    errorFecha: "Introduce unha data válida.",
+    errorFechas: "Introduce datas válidas en ambos campos.",
+    errorFinAntesInicio: "A data final non pode ser anterior á inicial.",
+    errorSemana: "Introduce un número de semana válido entre 1 e 53.",
+    horaActual: "Hora actual:",
+    zonaHorariaTpl: "Hora local de Galicia ({gmt})",
+    semanaActual: "Hoxe é {fecha} e estamos na semana número {semana} do ano.",
+    footer: "O sitio podería conter erros, considera contrastar a información. Calculadora de tempo V4.5 por DGCSe7en - Github"
+  },
+  eu: {
+    titulo: "Denboraren kalkulagailua",
+    h3Semana: "Sartu data bat",
+    btnCalcularSemana: "Astea kalkulatu",
+    btnResetSemana: "Berrezarri",
+    semanaDe: "{fecha} > {semana}. astea",
+    diasEntre: "{total} egun ({años} urte, {meses} hilabete, {dias} egun)",
+    rangoSemana: "{semana}. astea: {inicio}tik {fin}ra",
+    h3Dias: "Bi daten arteko egun kopurua",
+    btnCalcularDias: "Egunak kalkulatu",
+    btnResetDias: "Berrezarri",
+    h3Rango: "Aste bateko datu tartea",
+    labelSemana: "Urteko astea (1-53):",
+    btnMostrarRango: "Tartea erakutsi",
+    btnResetRango: "Berrezarri",
+    placeholderInicio: "Hasiera data",
+    placeholderFin: "Amaiera data",
+    placeholderSemana: "Aste zenbakia",
+    errorFecha: "Sartu baliozko data bat.",
+    errorFechas: "Sartu baliozko datak bi eremuetan.",
+    errorFinAntesInicio: "Amaiera data ezin da hasierakoa baino lehenagokoa izan.",
+    errorSemana: "Sartu 1 eta 53 arteko aste-zenbaki baliozkoa.",
+    horaActual: "Ordu orain:",
+    zonaHorariaTpl: "Euskal Herriko tokiko ordua ({gmt})",
+    semanaActual: "Gaur {fecha} da eta urteko {semana}. astean gaude.",
+    footer: "Guneak akatsak izan ditzake, kontrastatu informazioa. Denboraren kalkulagailua V4.5 DGCSe7en - Github"
+  }
 };
 
 // --- Funciones auxiliares ---
@@ -163,34 +269,32 @@ window.onload=function(){
 };
 
 // --- Cambio de idioma ---
-function cambiarIdioma(lang){
-  document.querySelectorAll('#idiomas img').forEach(img=>img.classList.remove('active'));
+function cambiarIdioma(lang) {
+  // Quitar "active" de todas las banderas
+  document.querySelectorAll('#idiomas img').forEach(img => {
+    img.classList.remove('active');
+  });
+
+  // Poner "active" en la bandera seleccionada
   const img = document.querySelector(`#idiomas img[data-lang="${lang}"]`);
   if (img) img.classList.add('active');
+
+  // Aplicar traducciones
   const t = traducciones[lang];
-  if (!t) return;
+  if (!t) return; // seguridad extra
 
-document.addEventListener('DOMContentLoaded', () => {
-  cambiarIdioma('es');
-});
-  document.getElementById('titulo').innerText=t.titulo;
-  document.getElementById('h3Semana').innerText=t.h3Semana;
-  document.getElementById('btnCalcularSemana').innerText=t.btnCalcularSemana;
-  document.getElementById('btnResetSemana').innerText=t.btnResetSemana;
-  document.getElementById('h3Dias').innerText=t.h3Dias;
-  document.getElementById('btnCalcularDias').innerText=t.btnCalcularDias;
-  document.getElementById('btnResetDias').innerText=t.btnResetDias;
-  document.getElementById('h3Rango').innerText=t.h3Rango;
-  document.getElementById('labelSemana').innerText=t.labelSemana;
-  document.getElementById('btnMostrarRango').innerText=t.btnMostrarRango;
-  document.getElementById('btnResetRango').innerText=t.btnResetRango;
-  document.getElementById('fechaInicio').placeholder=t.placeholderInicio;
-  document.getElementById('fechaFin').placeholder=t.placeholderFin;
-  document.getElementById('semanaInput').placeholder=t.placeholderSemana;
-  document.getElementById('footerFirma').innerText=t.footer;
-
-  actualizarReloj();
-  mostrarSemanaActual(lang);
+  document.querySelector('#titulo').textContent = t.titulo;
+  document.querySelector('#hora-actual-label').textContent = t.horaActual;
+  document.querySelector('#hora-local-label').textContent = t.horaLocal;
+  document.querySelector('#introducir-fecha-label').textContent = t.introducirFecha;
+  document.querySelector('#calcular-semana-btn').textContent = t.calcularSemana;
+  document.querySelector('#resetear-btn').textContent = t.resetear;
+  document.querySelector('#dias-entre-label').textContent = t.diasEntre;
+  document.querySelector('#calcular-dias-btn').textContent = t.calcularDias;
+  document.querySelector('#resetear-dias-btn').textContent = t.resetear;
+  document.querySelector('#rango-semana-label').textContent = t.rangoSemana;
+  document.querySelector('#calcular-rango-btn').textContent = t.calcularRango;
+  document.querySelector('#resetear-rango-btn').textContent = t.resetear;
 }
 
 // --- Funciones de cálculo ---
@@ -290,7 +394,7 @@ function calcularRangoSemana(){
     return;
   }
 
-  const año = new Date().getFullYear();
+  const año = new Date().getFullYear();();
   const primerJueves = new Date(año,0,4);
   const diaSemana = (primerJueves.getDay() + 6) % 7;
   const inicioSemana = new Date(primerJueves);
