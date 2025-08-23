@@ -22,6 +22,7 @@ input, button { padding: 10px; margin: 5px; font-size: 1em; border-radius: 5px; 
 button { background-color: #3498db; color: white; border: none; cursor: pointer; transition: background-color 0.2s; }
 button:hover { background-color: #2980b9; }
 #modo-toggle { position: fixed; right: clamp(10px, 2vw, 24px); bottom: clamp(10px, 2vw, 24px); font-size: clamp(1.25rem, 0.9rem + 1vw, 1.75rem); background: none; border: none; cursor: pointer; color: inherit; z-index: 1000; line-height: 1; -webkit-tap-highlight-color: transparent; }
+#modo-toggle:focus { outline: 2px solid #3498db; }
 .calendar-container { max-width: 90%; margin: 20px auto; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 .calendar-container iframe { width: 100%; height: 300px; border: none; }
 .firma { margin-top: 15px; font-size: 0.8em; text-align: center; opacity: 0.7; }
@@ -44,10 +45,10 @@ body.modo-oscuro .firma { color: #aaa; }
 <h1 class="texto-azul" id="titulo"></h1>
 
 <div id="idiomas">
-  <img src="ESP.png" alt="Español" data-lang="es" onclick="cambiarIdioma('es')">
-  <img src="CAT.png" alt="Català" data-lang="ca" onclick="cambiarIdioma('ca')">
-  <img src="GAL.png" alt="Galego" data-lang="gl" onclick="cambiarIdioma('gl')">
-  <img src="EUS.png" alt="Euskera" data-lang="eu" onclick="cambiarIdioma('eu')">
+  <img src="ESP.png" alt="Español" data-lang="es" onclick="cambiarIdioma('es')" title="Español">
+  <img src="CAT.png" alt="Català" data-lang="ca" onclick="cambiarIdioma('ca')" title="Català">
+  <img src="GAL.png" alt="Galego" data-lang="gl" onclick="cambiarIdioma('gl')" title="Galego">
+  <img src="EUS.png" alt="Euskera" data-lang="eu" onclick="cambiarIdioma('eu')" title="Euskera">
 </div>
 
 <div class="reloj texto-azul" id="reloj"></div>
@@ -58,18 +59,18 @@ body.modo-oscuro .firma { color: #aaa; }
   <h3 class="texto-azul" id="h3Semana"></h3>
   <input type="date" id="fecha">
   <button id="btnCalcularSemana" onclick="calcularSemana()"></button>
-  <button id="btnResetSemana" onclick="resetearFormulario()">Resetear</button>
+  <button id="btnResetSemana" onclick="resetearFormulario()"></button>
   <div class="resultado" id="resultado"></div>
   <p class="error" id="errorSemana"><span class="icono">⚠️</span></p>
 </div>
 
 <div class="seccion">
   <h3 class="texto-azul" id="h3Dias"></h3>
-  <input type="date" id="fechaInicio" placeholder="">
-  a
-  <input type="date" id="fechaFin" placeholder="">
+  <input type="date" id="fechaInicio">
+  <span id="a-label">a</span>
+  <input type="date" id="fechaFin">
   <button id="btnCalcularDias" onclick="calcularDias()"></button>
-  <button id="btnResetDias" onclick="resetDias()">Resetear</button>
+  <button id="btnResetDias" onclick="resetDias()"></button>
   <p class="resultado" id="resultadoDias"></p>
   <p class="error" id="errorDias"><span class="icono">⚠️</span></p>
 </div>
@@ -77,9 +78,9 @@ body.modo-oscuro .firma { color: #aaa; }
 <div class="seccion">
   <h3 class="texto-azul" id="h3Rango"></h3>
   <label id="labelSemana" for="semanaInput"></label>
-  <input type="number" id="semanaInput" min="1" max="53" placeholder="">
+  <input type="number" id="semanaInput" min="1" max="53">
   <button id="btnMostrarRango" onclick="calcularRangoSemana()"></button>
-  <button id="btnResetRango" onclick="resetSemana()">Resetear</button>
+  <button id="btnResetRango" onclick="resetSemana()"></button>
   <p class="resultado" id="resultadoSemana"></p>
   <p class="error" id="errorRangoSemana"><span class="icono">⚠️</span></p>
 </div>
@@ -88,7 +89,7 @@ body.modo-oscuro .firma { color: #aaa; }
   <iframe src="https://calendar.google.com/calendar/embed?src=es.spain%23holiday%40group.v.calendar.google.com&ctz=Europe%2FMadrid&showTitle=0&showTz=0"></iframe>
 </div>
 
-<button id="modo-toggle" onclick="toggleModo()">☀︎/☾</button>  
+<button id="modo-toggle" onclick="toggleModo()" aria-label="Cambiar modo claro/oscuro">☀︎/☾</button>  
 <footer class="firma" id="footerFirma"></footer>
 
 <script>
@@ -224,7 +225,7 @@ function actualizarReloj(){
   const t = traducciones[lang];
   document.getElementById("reloj").innerText =
     `${t.horaActual} ${ahora.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false, timeZone:'Europe/Madrid'})}`;
-const gmt = obtenerGMTMadrid();
+  const gmt = obtenerGMTMadrid();
   document.getElementById("zonaHoraria").innerText =
     t.zonaHorariaTpl.replace("{gmt}", gmt);
 }
@@ -270,11 +271,13 @@ window.onload=function(){
 
 // --- Cambio de idioma ---
 function cambiarIdioma(lang) {
+  // Cambiar atributo lang en el HTML
+  document.documentElement.lang = lang;
+
   // Quitar "active" de todas las banderas
   document.querySelectorAll('#idiomas img').forEach(img => {
     img.classList.remove('active');
   });
-
   // Poner "active" en la bandera seleccionada
   const img = document.querySelector(`#idiomas img[data-lang="${lang}"]`);
   if (img) img.classList.add('active');
@@ -283,18 +286,40 @@ function cambiarIdioma(lang) {
   const t = traducciones[lang];
   if (!t) return; // seguridad extra
 
-  document.querySelector('#titulo').textContent = t.titulo;
-  document.querySelector('#hora-actual-label').textContent = t.horaActual;
-  document.querySelector('#hora-local-label').textContent = t.horaLocal;
-  document.querySelector('#introducir-fecha-label').textContent = t.introducirFecha;
-  document.querySelector('#calcular-semana-btn').textContent = t.calcularSemana;
-  document.querySelector('#resetear-btn').textContent = t.resetear;
-  document.querySelector('#dias-entre-label').textContent = t.diasEntre;
-  document.querySelector('#calcular-dias-btn').textContent = t.calcularDias;
-  document.querySelector('#resetear-dias-btn').textContent = t.resetear;
-  document.querySelector('#rango-semana-label').textContent = t.rangoSemana;
-  document.querySelector('#calcular-rango-btn').textContent = t.calcularRango;
-  document.querySelector('#resetear-rango-btn').textContent = t.resetear;
+  document.getElementById('titulo').textContent = t.titulo;
+  document.getElementById('h3Semana').textContent = t.h3Semana;
+  document.getElementById('btnCalcularSemana').textContent = t.btnCalcularSemana;
+  document.getElementById('btnResetSemana').textContent = t.btnResetSemana;
+  document.getElementById('h3Dias').textContent = t.h3Dias;
+  document.getElementById('btnCalcularDias').textContent = t.btnCalcularDias;
+  document.getElementById('btnResetDias').textContent = t.btnResetDias;
+  document.getElementById('h3Rango').textContent = t.h3Rango;
+  document.getElementById('labelSemana').textContent = t.labelSemana;
+  document.getElementById('btnMostrarRango').textContent = t.btnMostrarRango;
+  document.getElementById('btnResetRango').textContent = t.btnResetRango;
+  document.getElementById('footerFirma').textContent = t.footer;
+
+  // Placeholders
+  document.getElementById('fechaInicio').placeholder = t.placeholderInicio;
+  document.getElementById('fechaFin').placeholder = t.placeholderFin;
+  document.getElementById('semanaInput').placeholder = t.placeholderSemana;
+
+  // Traducir el "a" entre fechas si lo quieres traducible
+  document.getElementById('a-label').textContent = (lang === 'ca') ? 'a' : (lang === 'gl') ? 'a' : (lang === 'eu') ? 'eta' : 'a';
+
+  // Mostrar semana actual en el idioma seleccionado
+  mostrarSemanaActual(lang);
+
+  // Limpiar resultados y errores visibles
+  ['resultado', 'resultadoDias', 'resultadoSemana'].forEach(id => {
+    if(document.getElementById(id)) document.getElementById(id).textContent = "";
+  });
+  ['errorSemana', 'errorDias', 'errorRangoSemana'].forEach(id => {
+    if(document.getElementById(id)) document.getElementById(id).textContent = "";
+  });
+
+  // Actualizar reloj y zona horaria inmediatamente
+  actualizarReloj();
 }
 
 // --- Funciones de cálculo ---
@@ -394,7 +419,7 @@ function calcularRangoSemana(){
     return;
   }
 
-  const año = new Date().getFullYear();();
+  const año = new Date().getFullYear();
   const primerJueves = new Date(año,0,4);
   const diaSemana = (primerJueves.getDay() + 6) % 7;
   const inicioSemana = new Date(primerJueves);
