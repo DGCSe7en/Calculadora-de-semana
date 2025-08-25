@@ -215,7 +215,7 @@ body.modo-oscuro .firma { color: #aaa; }
 </div>
 
 <div class="calendar-container" aria-label="Calendario de festivos" role="region">
-  <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhb[...]
+  <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmNvbQ&color=%230B8043&bgcolor=%23ffffff" frameborder="0" scrolling="no"></iframe>
 </div>
 
 <div class="seccion" aria-label="Cálculo de número de semana" role="region">
@@ -250,22 +250,22 @@ body.modo-oscuro .firma { color: #aaa; }
 <footer class="firma" id="footerFirma" tabindex="0" aria-label="Pie de página"></footer>
 
 <script>
-// Traducciones simplificadas de botones
+// --- Traducciones coherentes ---
 const traducciones = {
   es: {
     lugarLabel: "Lugar:",
     buscarBtn: "Buscar",
     titulo: "Calculadora de tiempo",
     h3Semana: "Número de semana",
-    btnCalcularSemana: "Calcular",
+    btnCalcularSemana: "Calcular semana",
     semanaDe: "{fecha} > Semana {semana}",
     diasEntre: "{total} días ({años} años, {meses} meses, {dias} días)",
     rangoSemana: "Semana {semana}: del {inicio} al {fin}",
     h3Dias: "Tiempo entre dos fechas",
-    btnCalcularDias: "Calcular",
+    btnCalcularDias: "Calcular días",
     h3Rango: "Fechas de una semana",
     labelSemana: "Semana del año (1-53):",
-    btnMostrarRango: "Mostrar",
+    btnMostrarRango: "Mostrar rango",
     placeholderInicio: "Fecha de inicio",
     placeholderFin: "Fecha de fin",
     placeholderSemana: "Número de semana",
@@ -284,15 +284,15 @@ const traducciones = {
     buscarBtn: "Cercar",
     titulo: "Calculadora de temps",
     h3Semana: "Número de setmana",
-    btnCalcularSemana: "Calcular",
+    btnCalcularSemana: "Calcular setmana",
     semanaDe: "{fecha} > Setmana {semana}",
     diasEntre: "{total} dies ({años} anys, {meses} mesos, {dias} dies)",
     rangoSemana: "Setmana {semana}: del {inicio} al {fin}",
     h3Dias: "Temps entre dues dates",
-    btnCalcularDias: "Calcular",
+    btnCalcularDias: "Calcular dies",
     h3Rango: "Dates d’una setmana",
     labelSemana: "Setmana de l’any (1-53):",
-    btnMostrarRango: "Mostrar",
+    btnMostrarRango: "Mostrar rang",
     placeholderInicio: "Data d'inici",
     placeholderFin: "Data de fi",
     placeholderSemana: "Número de setmana",
@@ -311,15 +311,15 @@ const traducciones = {
     buscarBtn: "Buscar",
     titulo: "Calculadora de tempo",
     h3Semana: "Número de semana",
-    btnCalcularSemana: "Calcular",
+    btnCalcularSemana: "Calcular semana",
     semanaDe: "{fecha} > Semana {semana}",
     diasEntre: "{total} días ({años} anos, {meses} meses, {dias} días)",
     rangoSemana: "Semana {semana}: do {inicio} ao {fin}",
     h3Dias: "Tempo entre dúas datas",
-    btnCalcularDias: "Calcular",
+    btnCalcularDias: "Calcular días",
     h3Rango: "Datas dunha semana",
     labelSemana: "Semana do ano (1-53):",
-    btnMostrarRango: "Amosar",
+    btnMostrarRango: "Mostrar rango",
     placeholderInicio: "Data de inicio",
     placeholderFin: "Data de fin",
     placeholderSemana: "Número de semana",
@@ -338,15 +338,15 @@ const traducciones = {
     buscarBtn: "Bilatu",
     titulo: "Denboraren kalkulagailua",
     h3Semana: "Aste zenbakia",
-    btnCalcularSemana: "Kalkulatu",
+    btnCalcularSemana: "Astea kalkulatu",
     semanaDe: "{fecha} > {semana}. astea",
     diasEntre: "{total} egun ({años} urte, {meses} hilabete, {dias} egun)",
     rangoSemana: "{semana}. astea: {inicio}tik {fin}ra",
     h3Dias: "Bi daten arteko denbora",
-    btnCalcularDias: "Kalkulatu",
+    btnCalcularDias: "Egunak kalkulatu",
     h3Rango: "Aste bateko datak",
     labelSemana: "Urteko astea (1-53):",
-    btnMostrarRango: "Erakutsi",
+    btnMostrarRango: "Tartea erakutsi",
     placeholderInicio: "Hasiera data",
     placeholderFin: "Amaiera data",
     placeholderSemana: "Aste zenbakia",
@@ -479,25 +479,6 @@ function limpiarInputs(ids) {
     if (el) el.value = '';
   });
 }
-
-// --- Limpiar resultado al enfocar inputs ---
-document.addEventListener("DOMContentLoaded", function() {
-  // Número de semana
-  document.getElementById("fecha").addEventListener("focus", function() {
-    document.getElementById("resultado").textContent = "";
-  });
-  // Tiempo entre dos fechas
-  document.getElementById("fechaInicio").addEventListener("focus", function() {
-    document.getElementById("resultadoDias").textContent = "";
-  });
-  document.getElementById("fechaFin").addEventListener("focus", function() {
-    document.getElementById("resultadoDias").textContent = "";
-  });
-  // Fechas de una semana
-  document.getElementById("semanaInput").addEventListener("focus", function() {
-    document.getElementById("resultadoSemana").textContent = "";
-  });
-});
 
 // --- Funciones de cálculo ---
 function getSemanaISO(fecha){
@@ -839,6 +820,27 @@ function actualizarIdiomaCiudad(idioma) {
   const ciudadGuardada = localStorage.getItem("ciudadGuardada") || "Madrid";
   obtenerClima(ciudadGuardada);
 }
+
+// --- Limpiar resultados al enfocar inputs ---
+document.getElementById("fecha").addEventListener("focus", () => {
+  document.getElementById("resultado").textContent = "";
+  document.getElementById("errorSemana").textContent = "";
+});
+document.getElementById("fechaInicio").addEventListener("focus", () => {
+  document.getElementById("resultadoDias").textContent = "";
+  document.getElementById("errorDias").textContent = "";
+});
+document.getElementById("fechaFin").addEventListener("focus", () => {
+  document.getElementById("resultadoDias").textContent = "";
+  document.getElementById("errorDias").textContent = "";
+});
+document.getElementById("semanaInput").addEventListener("focus", () => {
+  document.getElementById("resultadoSemana").textContent = "";
+  document.getElementById("errorRangoSemana").textContent = "";
+});
+document.getElementById("city-input").addEventListener("focus", () => {
+  document.getElementById("suggestions").innerHTML = "";
+});
 </script>
 </body>
 </html>
