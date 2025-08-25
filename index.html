@@ -13,7 +13,7 @@ body.modo-oscuro { background-image: url('./DARK.webp'); background-size: cover;
 .texto-azul { color: inherit; }
 body.modo-claro .texto-azul { color: #0D47A1; }
 body.modo-oscuro .texto-azul { color: #90D5FF; }
-h1, h3 { margin: 10px 0; }
+h1, h3 { font-size: 1.2em; margin: 10px 0; }
 .reloj { font-size: 1.8em; font-weight: bold; margin: 10px 0; }
 .zona, #semanaActual { font-size: 1em; font-weight: normal; margin: 10px 0; color: inherit; }
 .seccion { margin: 20px auto; padding: 15px; border-radius: 8px; max-width: 600px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.9);}
@@ -41,7 +41,7 @@ body.modo-oscuro .firma { color: #aaa; }
 #weather-widget {margin: 20px auto; display: flex; justify-content: center;}
 .weather-main {display: flex; align-items: center; gap: 15px;}
 #weather-icon {width: 60px; height: 60px;}
-#temperature {font-size: 2.5rem; font-weight: bold;}
+#temperature {font-size: 1.8rem; font-weight: bold;}
 .weather-info {display: flex; flex-direction: column;}
 #city-name {font-size: 1.2rem; font-weight: 600; color: color: inherit; font-weight: bold;}
 #details {font-size: 0.9rem; color: var(--text-color); /* b/n según modo */}
@@ -69,9 +69,9 @@ body.modo-oscuro .firma { color: #aaa; }
 <div id="weather-widget">
   <div class="weather-main">
     <img id="weather-icon" alt="icono clima" />
-    <span id="temperature"></span>
+    <span id="temperature" class="texto-azul"></span>
     <div class="weather-info">
-      <span id="city-name"></span>
+      <span id="city-name" class="texto-azul"></span>
       <small id="details"></small>
     </div>
     <button id="toggle-city" class="icon-btn">⚙️</button>
