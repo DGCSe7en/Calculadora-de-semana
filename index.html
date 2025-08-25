@@ -38,6 +38,16 @@ body.modo-oscuro .firma { color: #aaa; }
 #idiomas img:hover, #idiomas img.active { transform: scale(1.1); border: 2px solid #3498db; }
 @media(max-width:480px) { .reloj { font-size: 1.5em;} input, button { width: 95%; } .calendar-container iframe { height: 250px; } }
 @media(min-width:481px) and (max-width:768px) { input, button { max-width: 90%; } .calendar-container iframe { height: 300px; } }
+#climaAnimado {position: relative; width: 100%; height: 100px; margin-top: 10px; overflow: hidden; border-radius: 8px;}
+.nube, .sol, .gota, .nieve {position: absolute;}
+.nube {width: 60px; height: 40px; background: #fff; border-radius: 50%; animation: moverNube 10s linear infinite; top: 20px;}
+@keyframes moverNube { 0%{left:-80px;} 100%{left:100%;} }
+.sol {width: 60px; height: 60px; background: yellow; border-radius: 50%; animation: brillar 2s infinite alternate; top: 10px; left: calc(50% - 30px);}
+@keyframes brillar { 0%{transform: scale(1);} 100%{transform: scale(1.2);} }
+.gota {width: 6px; height: 12px; background: #0cf; border-radius: 50%; animation: caer 1s linear infinite;}
+@keyframes caer { 0%{top:-20px;} 100%{top:100px;} }
+.nieve {width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: nevar 2s linear infinite;}
+@keyframes nevar { 0%{top:-10px;} 100%{top:100px;} }
 </style>
 </head>
 <body>
@@ -57,6 +67,16 @@ body.modo-oscuro .firma { color: #aaa; }
 
 <div class="calendar-container">
 <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230b8043" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+</div>
+
+<div class="seccion" id="weather-section">
+  <h3 class="texto-azul" id="h3Clima"></h3>
+  <input type="text" id="ciudad" placeholder="">
+  <button id="btnConsultarClima"></button>
+  <div class="resultado" id="resultadoClima">
+    <div id="climaAnimado"></div>
+  </div>
+  <p class="error" id="errorClima"><span class="icono">⚠️</span></p>
 </div>
 
 <div class="seccion">
@@ -89,7 +109,8 @@ body.modo-oscuro .firma { color: #aaa; }
   <p class="error" id="errorRangoSemana"><span class="icono">⚠️</span></p>
 </div>
 
-<button id="modo-toggle" onclick="toggleModo()" aria-label="Cambiar modo claro/oscuro">☀︎/☾</button>  
+<button id="modo-toggle" onclick="toggleModo()" aria-label="Cambiar modo claro/oscuro">☀︎/☾</button> 
+  
 <footer class="firma" id="footerFirma"></footer>
 
 <script>
@@ -437,6 +458,140 @@ function resetSemana(){
   document.getElementById("semanaInput").value="";
   document.getElementById("resultadoSemana").textContent="";
   const err = document.getElementById("errorRangoSemana"); if (err) err.textContent = "";
+}
+// --- Traducciones específicas de clima ---
+const traduccionesClima = {
+  es: { h3: "Clima", placeholder: "Introduce tu ciudad", btn: "Consultar", errorCiudad: "Introduce una ciudad válida.", errorNoEncontrada: "Ciudad no encontrada.", errorAPI: "Error al obtener el clima." },
+  ca: { h3: "Clima", placeholder: "Introdueix la ciutat", btn: "Consultar", errorCiudad: "Introdueix una ciutat vàlida.", errorNoEncontrada: "Ciutat no trobada.", errorAPI: "Error en obtenir el clima." },
+  gl: { h3: "Clima", placeholder: "Introduce a túa cidade", btn: "Consultar", errorCiudad: "Introduce unha cidade válida.", errorNoEncontrada: "Cidade non atopada.", errorAPI: "Erro ao obter o clima." },
+  eu: { h3: "Klima", placeholder: "Sartu hiria", btn: "Kontsultatu", errorCiudad: "Sartu baliozko hiria.", errorNoEncontrada: "Hiria ez da aurkitu.", errorAPI: "Akatsa klimaren informazioa jasotzean." }
+};
+
+const apiKey = "6190233d77058dc3f79f839252cc0058";
+
+// --- Función principal para obtener clima ---
+function obtenerClima() {
+  const ciudad = document.getElementById('ciudad').value.trim();
+  const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
+  const t = traduccionesClima[lang];
+  const errorEl = document.getElementById('errorClima');
+  const resultadoEl = document.getElementById('resultadoClima');
+
+  errorEl.textContent = '';
+  resultadoEl.textContent = '';
+  resultadoEl.style.backgroundColor = 'transparent';
+
+  if (!ciudad) {
+    mostrarError('ciudad', 'errorClima', t.errorCiudad);
+    return;
+  }
+
+  localStorage.setItem('ultimaCiudad', ciudad);
+
+  fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(ciudad)}&appid=${apiKey}&units=metric&lang=${lang}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.cod !== 200) {
+        mostrarError('ciudad', 'errorClima', t.errorNoEncontrada);
+        return;
+      }
+
+      const temp = data.main.temp;
+      let colorFondo;
+      if (temp <= 0) colorFondo = '#74c0fc';
+      else if (temp <= 15) colorFondo = '#a5d8ff';
+      else if (temp <= 25) colorFondo = '#fff3bf';
+      else colorFondo = '#ff6b6b';
+
+      const iconUrl = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+      resultadoEl.innerHTML = `
+        <p><strong>${data.name}, ${data.sys.country}</strong></p>
+        <p>🌡️ ${temp}°C - ${data.weather[0].description}
+           <img src="${iconUrl}" alt="${data.weather[0].description}" style="vertical-align:middle;">
+        </p>
+        <p>🌬️ Viento: ${data.wind.speed} m/s</p>
+      `;
+      resultadoEl.style.backgroundColor = colorFondo;
+      resultadoEl.style.padding = '10px';
+      resultadoEl.style.borderRadius = '8px';
+
+      mostrarAnimacionClima(data.weather[0].icon);
+    })
+    .catch(err => {
+      mostrarError('ciudad', 'errorClima', t.errorAPI);
+      console.error(err);
+    });
+}
+
+// --- Botón consultar ---
+document.getElementById('btnConsultarClima').addEventListener('click', obtenerClima);
+
+// --- Cargar última ciudad al iniciar ---
+window.addEventListener('load', () => {
+  const ciudadGuardada = localStorage.getItem('ultimaCiudad');
+  if (ciudadGuardada) {
+    document.getElementById('ciudad').value = ciudadGuardada;
+    obtenerClima();
+  }
+});
+
+// --- Actualizar traducciones de clima según idioma ---
+function actualizarClimaIdioma(lang) {
+  const t = traduccionesClima[lang];
+  document.getElementById('h3Clima').textContent = t.h3;
+  document.getElementById('ciudad').placeholder = t.placeholder;
+  document.getElementById('btnConsultarClima').textContent = t.btn;
+}
+
+// Integrar con cambiarIdioma
+const originalCambiarIdioma = cambiarIdioma;
+cambiarIdioma = function(lang) {
+  originalCambiarIdioma(lang);
+  actualizarClimaIdioma(lang);
+};
+
+// --- Animaciones según el clima ---
+function mostrarAnimacionClima(iconCode) {
+  const anim = document.getElementById('climaAnimado');
+  anim.innerHTML = '';
+
+  if (iconCode.startsWith('01')) { // cielo despejado
+    const sol = document.createElement('div');
+    sol.className = 'sol';
+    anim.appendChild(sol);
+  } 
+  else if (iconCode.startsWith('02') || iconCode.startsWith('03') || iconCode.startsWith('04')) { // nubes
+    for (let i=0; i<3; i++) {
+      const nube = document.createElement('div');
+      nube.className = 'nube';
+      nube.style.top = `${20 + i*20}px`;
+      nube.style.animationDelay = `${i*2}s`;
+      anim.appendChild(nube);
+    }
+  } 
+  else if (iconCode.startsWith('09') || iconCode.startsWith('10')) { // lluvia
+    for (let i=0; i<20; i++) {
+      const gota = document.createElement('div');
+      gota.className = 'gota';
+      gota.style.left = `${i*5}%`;
+      gota.style.animationDelay = `${Math.random()*1}s`;
+      anim.appendChild(gota);
+    }
+  } 
+  else if (iconCode.startsWith('13')) { // nieve
+    for (let i=0; i<20; i++) {
+      const copo = document.createElement('div');
+      copo.className = 'nieve';
+      copo.style.left = `${i*5}%`;
+      copo.style.animationDelay = `${Math.random()*2}s`;
+      anim.appendChild(copo);
+    }
+  } 
+  else { // nublado genérico
+    const nube = document.createElement('div');
+    nube.className = 'nube';
+    anim.appendChild(nube);
+  }
 }
 </script>
 </body>
