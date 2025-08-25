@@ -13,46 +13,110 @@ body.modo-oscuro { background-image: url('./DARK.webp'); background-size: cover;
 .texto-azul { color: inherit; }
 body.modo-claro .texto-azul { color: #0D47A1; }
 body.modo-oscuro .texto-azul { color: #90D5FF; }
+
 h1, h3 { font-size: 1.2em; margin: 10px 0; }
 .reloj { font-size: 1.8em; font-weight: bold; margin: 10px 0; }
 .zona, #semanaActual { font-size: 1em; font-weight: normal; margin: 10px 0; color: inherit; }
+
 .seccion { margin: 20px auto; padding: 15px; border-radius: 8px; max-width: 600px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.9);}
 body.modo-oscuro .seccion { background-color: rgba(50,50,50,0.9); }
+
 input, button { padding: 10px; margin: 5px; font-size: 1em; border-radius: 5px; border: 1px solid #ccc; width: 90%; max-width: 300px; box-sizing: border-box;}
 button { background-color: #3498db; color: white; border: none; cursor: pointer; transition: background-color 0.2s; }
 button:hover { background-color: #2980b9; }
+
 #modo-toggle { position: fixed; right: clamp(10px, 2vw, 24px); bottom: clamp(10px, 2vw, 24px); font-size: clamp(1.25rem, 0.9rem + 1vw, 1.75rem); background: none; border: none; cursor: pointer; color: inherit; z-index: 1000; line-height: 1; -webkit-tap-highlight-color: transparent; }
 #modo-toggle:focus { outline: 2px solid #3498db; }
+
 .calendar-container { max-width: 90%; margin: 20px auto; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 .calendar-container iframe { width: 100%; height: 300px; border: none; }
+
 .firma { margin-top: 15px; font-size: 0.8em; text-align: center; opacity: 0.7; }
 body.modo-claro .firma { color: #666; }
 body.modo-oscuro .firma { color: #aaa; }
+
 .error { color: orange; font-weight: bold; font-style: italic; font-size: 0.9em; margin-top: 5px; opacity: 0; transition: opacity 0.4s; display: flex; align-items: center; justify-content: center; }
 .error.visible { opacity: 1; }
 .icono { margin-right: 5px; }
 .input-error { border: 2px solid orange; animation: parpadeo 0.6s ease-in-out 2; }
 @keyframes parpadeo { 0%,100%{ border-color: transparent;} 50%{ border-color: orange; } }
+
 #idiomas { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
 #idiomas img { width: 40px; height: 26px; cursor: pointer; border-radius: 4px; transition: transform 0.2s; }
 #idiomas img:hover, #idiomas img.active { transform: scale(1.1); border: 2px solid #3498db; }
-@media(max-width:480px) { .reloj { font-size: 1.5em;} input, button { width: 95%; } .calendar-container iframe { height: 250px; } }
-@media(min-width:481px) and (max-width:768px) { input, button { max-width: 90%; } .calendar-container iframe { height: 300px; } }
-#weather-widget {margin: 20px auto; display: flex; justify-content: center;}
-.weather-main {display: flex; align-items: center; gap: 15px;}
-#weather-icon {width: 60px; height: 60px;}
-#temperature {font-size: 1.8rem; font-weight: bold;}
-.weather-info {display: flex; flex-direction: column;}
-#city-name {font-size: 1.2rem; font-weight: 600; color: inherit; font-weight: bold;}
-#details { font-size: 0.9rem; color: inherit; }
-#city-name { font-size: 1.2rem; font-weight: bold; color: inherit; }
-.icon-btn {background: none; border: none; font-size: 1.2rem; cursor: pointer; margin-left: 10px;}
-#city-selector {margin-top: 10px; display: none;}
-#city-selector.hidden {display: none;}
-#city-selector.show {display: block;}
-.suggestions-list {list-style: none; margin: 0; padding: 0; max-height: 150px; overflow-y: auto; background-color: rgba(255,255,255,0.9); border: 1px solid #ccc; border-radius: 4px; position: absolute; width: calc(100% - 20px); z-index: 10;}
-.suggestions-list li {padding: 5px 10px; cursor: pointer;}
-.suggestions-list li:hover {background-color: #3498db; color: white;}
+
+/* --- Responsive para móviles --- */
+@media(max-width:480px) { 
+  .reloj { font-size: 1.5em;} 
+  input, button { width: 95%; } 
+  .calendar-container iframe { height: 250px; } 
+  #weather-widget { flex-direction: column; align-items: center; gap: 10px; }
+  #weather-widget .weather-main { flex-direction: column; align-items: center; gap: 5px; }
+}
+
+@media(min-width:481px) and (max-width:768px) { 
+  input, button { max-width: 90%; } 
+  .calendar-container iframe { height: 300px; } 
+}
+
+.weather-widget-seccion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin: 20px auto;
+}
+
+.weather-main {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.weather-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.city-search {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.city-search label {
+  font-weight: bold;
+  min-width: 50px;
+}
+
+.city-search input {
+  flex: 1;
+  min-width: 150px;
+}
+
+.city-search button {
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.suggestions-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 150px;
+  overflow-y: auto;
+  background-color: rgba(255,255,255,0.9);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  z-index: 10;
+}
 </style>
 </head>
 <body>
@@ -70,27 +134,29 @@ body.modo-oscuro .firma { color: #aaa; }
 <div class="zona" id="zonaHoraria"></div>
 <p id="semanaActual"></p>
 
-<div id="weather-widget">
+<div id="weather-widget" class="weather-widget-seccion">
   <div class="weather-main">
     <img id="weather-icon" alt="icono clima" />
-    <span id="temperature" class="texto-azul"></span>
     <div class="weather-info">
       <span id="city-name" class="texto-azul"></span>
       <small id="details"></small>
     </div>
-    <button id="toggle-city" class="icon-btn">⚙️</button>
   </div>
-<div id="city-selector" class="hidden">
-  <input type="text" id="city-input" placeholder="Escribir ciudad..." autocomplete="off" />
-  <ul id="suggestions" class="suggestions-list"></ul>
-  <button id="save-city">OK</button>
-</div>
+
+  <!-- Bloque de búsqueda integrado -->
+  <div class="city-search">
+    <label id="labelLugar" for="city-input">Lugar:</label>
+    <input type="text" id="city-input" placeholder="Escribir ciudad..." autocomplete="off" />
+    <ul id="suggestions" class="suggestions-list"></ul>
+    <button id="save-city">Buscar</button>
+  </div>
 </div>
 
 <div class="calendar-container">
-<iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230b8043" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+  <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230b8043" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
 </div>  
 
+<!-- Resto de secciones sin cambios -->
 <div class="seccion">
   <h3 class="texto-azul" id="h3Semana"></h3>
   <input type="date" id="fecha">
@@ -128,8 +194,7 @@ body.modo-oscuro .firma { color: #aaa; }
 <script>
 // --- Traducciones ---
 const traducciones = {
-  es: {
-    titulo: "Calculadora de tiempo",
+  es: { lugarLabel: "Lugar:", buscarBtn: "Buscar", titulo: "Calculadora de tiempo",
     h3Semana: "Número de semana",
     btnCalcularSemana: "Calcular semana",
     btnResetSemana: "Resetear",
@@ -153,10 +218,9 @@ const traducciones = {
     horaActual: "Hora actual:",
     zonaHorariaTpl: "Hora local de España ({gmt})",
     semanaActual: "Hoy es {fecha} y estamos en la semana número {semana} del año.",
-    footer: "El sitio podría cometer errores, considera contrastar la información. Calculadora de tiempo V4.5 por DGCSe7en - Github"
+    footer: "El sitio podría cometer errores, considera contrastar la información. Calculadora de tiempo V5.0 por DGCSe7en - Github"
   },
-  ca: {
-    titulo: "Calculadora de temps",
+  ca: { lugarLabel: "Lloc:", buscarBtn: "Cercar", titulo: "Calculadora de temps",
     h3Semana: "Número de setmana",
     btnCalcularSemana: "Calcular setmana",
     btnResetSemana: "Restablir",
@@ -180,10 +244,9 @@ const traducciones = {
     horaActual: "Hora actual:",
     zonaHorariaTpl: "Hora local d'Espanya ({gmt})",
     semanaActual: "Avui és {fecha} i estem a la setmana número {semana} de l’any.",
-    footer: "El lloc podria contenir errors, considera contrastar la informació. Calculadora de temps V4.5 per DGCSe7en - Github"
+    footer: "El lloc podria contenir errors, considera contrastar la informació. Calculadora de temps V5.0 per DGCSe7en - Github"
   },
-  gl: {
-    titulo: "Calculadora de tempo",
+  gl: { lugarLabel: "Lugar:", buscarBtn: "Buscar", titulo: "Calculadora de tempo",
     h3Semana: "Número de semana",
     btnCalcularSemana: "Calcular semana",
     btnResetSemana: "Restablecer",
@@ -207,10 +270,9 @@ const traducciones = {
     horaActual: "Hora actual:",
     zonaHorariaTpl: "Hora local de España ({gmt})",
     semanaActual: "Hoxe é {fecha} e estamos na semana número {semana} do ano.",
-    footer: "O sitio podería conter erros, considera contrastar a información. Calculadora de tempo V4.5 por DGCSe7en - Github"
+    footer: "O sitio podería conter erros, considera contrastar a información. Calculadora de tempo V5.0 por DGCSe7en - Github"
   },
-  eu: {
-    titulo: "Denboraren kalkulagailua",
+  eu: { lugarLabel: "Lekua:", buscarBtn: "Bilatu", titulo: "Denboraren kalkulagailua",
     h3Semana: "Aste zenbakia",
     btnCalcularSemana: "Astea kalkulatu",
     btnResetSemana: "Berrezarri",
@@ -234,7 +296,7 @@ const traducciones = {
     horaActual: "Ordu orain:",
     zonaHorariaTpl: "Espainiako tokiko ordua ({gmt})",
     semanaActual: "Gaur {fecha} da eta urteko {semana}. astean gaude.",
-    footer: "Guneak akatsak izan ditzake, kontrastatu informazioa. Denboraren kalkulagailua V4.5 DGCSe7en - Github"
+    footer: "Guneak akatsak izan ditzake, kontrastatu informazioa. Denboraren kalkulagailua V5.0 DGCSe7en - Github"
   }
 };
 
@@ -314,6 +376,10 @@ function cambiarIdioma(lang) {
   // Poner "active" en la bandera seleccionada
   const img = document.querySelector(`#idiomas img[data-lang="${lang}"]`);
   if (img) img.classList.add('active');
+
+// Traducir label y botón de ciudad
+document.getElementById("labelLugar").textContent = t.lugarLabel;
+document.getElementById("save-city").textContent = t.buscarBtn;
 
   // Aplicar traducciones
   const t = traducciones[lang];
@@ -623,6 +689,82 @@ cambiarIdioma = function(lang) {
   originalCambiarIdioma(lang);
   actualizarIdiomaCiudad(lang);
 };
+// --- NUEVO BLOQUE DE AUTOCOMPLETADO LOCAL PROVINCIAS CON NORMALIZACIÓN ---
+const provinciasES = [
+  "Álava","Albacete","Alicante","Almería","Asturias","Ávila","Badajoz",
+  "Barcelona","Burgos","Cáceres","Cádiz","Cantabria","Castellón","Ceuta",
+  "Ciudad Real","Córdoba","Cuenca","Gerona","Granada","Guadalajara",
+  "Guipúzcoa","Huelva","Huesca","Islas Baleares","Jaén","La Coruña",
+  "La Rioja","Las Palmas","León","Lérida","Lugo","Madrid","Málaga","Melilla",
+  "Murcia","Navarra","Orense","Palencia","Pontevedra","Salamanca","Sta Cruz de Tenerife",
+  "Segovia","Sevilla","Soria","Tarragona","Teruel","Toledo","Valencia",
+  "Valladolid","Vizcaya","Zamora","Zaragoza"
+];
+
+// Elementos DOM
+const inputLugar = document.getElementById("input-lugar");
+const btnBuscarLugar = document.getElementById("btn-buscar-lugar");
+const buscadorList = document.createElement("ul");
+buscadorList.className = "suggestions-list";
+inputLugar.parentNode.appendChild(buscadorList);
+
+// Función para normalizar texto (elimina acentos y pasa a minúsculas)
+function normalizar(texto) {
+  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+}
+
+// Autocompletar local para provincias
+inputCity.addEventListener("input", () => {
+  const query = inputCity.value.trim().toLowerCase();
+  const lista = document.getElementById("suggestions");
+  lista.innerHTML = "";
+  if (!query) return;
+
+  const matches = provinciasES.filter(p => p.toLowerCase().includes(query));
+  matches.forEach(provincia => {
+    const li = document.createElement("li");
+    li.textContent = provincia;
+    li.addEventListener("click", () => {
+      inputCity.value = provincia;
+      lista.innerHTML = "";
+      // Aquí puedes llamar a tu función de mostrar clima si quieres más adelante
+    });
+    lista.appendChild(li);
+  });
+});
+
+// Cerrar lista al hacer click fuera
+document.addEventListener("click", (e) => {
+  if (!selector.contains(e.target)) {
+    document.getElementById("suggestions").innerHTML = "";
+  }
+});
+
+// Traducción de "Lugar:" y botón "Buscar"
+function actualizarIdiomaLugar(lang) {
+  const textos = {
+    es: { label: "Lugar:", boton: "Buscar" },
+    ca: { label: "Lloc:", boton: "Cercar" },
+    gl: { label: "Lugar:", boton: "Buscar" },
+    eu: { label: "Lekua:", boton: "Bilatu" }
+  };
+  const t = textos[lang] || textos.es;
+  document.getElementById("label-lugar").textContent = t.label;
+  btnBuscarLugar.textContent = t.boton;
+}
+
+// Integrar con cambiarIdioma
+const originalCambiarIdioma2 = cambiarIdioma;
+cambiarIdioma = function(lang){
+  originalCambiarIdioma2(lang);
+  actualizarIdiomaLugar(lang);
+};
+
+// Evento de botón Buscar (solo ejemplo)
+btnBuscarLugar.addEventListener("click", () => {
+  const valor = inputLugar.value.trim();
+  if (valor) alert(`Buscando: ${valor}`);
+});
 </script>
 </body>
 </html>
