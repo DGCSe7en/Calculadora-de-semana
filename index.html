@@ -1,4 +1,3 @@
-```html name=index.html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,8 +11,8 @@ body { font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; m
 body.modo-claro { background-image: url('./LIGHT.webp'); background-size: cover; background-position: center; background-repeat: no-repeat; color: #1a1a1a; }
 body.modo-oscuro { background-image: url('./DARK.webp'); background-size: cover; background-position: center; background-repeat: no-repeat; color: #e0e0e0; }
 .texto-azul { color: inherit; }
-body.modo-claro .texto-azul { color: #0D47A1; }
-body.modo-oscuro .texto-azul { color: #90D5FF; }
+body.modo-claro .texto-azul { color: #0D47A1 !important; }
+body.modo-oscuro .texto-azul { color: #90D5FF !important; }
 
 h1, h3 { font-size: 1.2em; margin: 10px 0; }
 .reloj { font-size: 1.8em; font-weight: bold; margin: 10px 0; }
@@ -52,12 +51,21 @@ body.modo-oscuro .firma { color: #aaa; }
   input, button { width: 95%; } 
   .calendar-container iframe { height: 250px; } 
   #weather-widget { flex-direction: column; align-items: center; gap: 10px; }
-  #weather-widget .weather-main { flex-direction: column; align-items: center; gap: 5px; }
+  #weather-widget .weather-main { 
+    flex-direction: row !important; /* Siempre fila, incluso en móvil */
+    align-items: center; 
+    gap: 5px; 
+  }
 }
 
 @media(min-width:481px) and (max-width:768px) { 
   input, button { max-width: 90%; } 
   .calendar-container iframe { height: 300px; } 
+  #weather-widget .weather-main {
+    flex-direction: row !important; /* Siempre fila, incluso en tablet */
+    align-items: center;
+    gap: 15px;
+  }
 }
 
 .weather-widget-seccion {
@@ -72,6 +80,7 @@ body.modo-oscuro .firma { color: #aaa; }
   display: flex;
   align-items: center;
   gap: 15px;
+  flex-direction: row; /* Siempre fila por defecto */
 }
 
 .weather-info {
@@ -89,11 +98,6 @@ body.modo-oscuro .firma { color: #aaa; }
   position: relative;
   width: 100%;
   max-width: 400px;
-}
-
-.city-search label {
-  font-weight: bold;
-  min-width: 50px;
 }
 
 .city-search input {
@@ -189,8 +193,7 @@ body.modo-oscuro .firma { color: #aaa; }
 
   <!-- Bloque de búsqueda integrado -->
   <div class="city-search" aria-label="Buscador de ciudad" role="search">
-    <label id="labelLugar" for="city-input">Lugar:</label>
-    <input type="text" id="city-input" placeholder="Escribir ciudad..." autocomplete="off"
+    <input type="text" id="city-input" placeholder="Buscar ciudad" autocomplete="off"
      aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="suggestions" aria-label="Campo de búsqueda de ciudad" />
     <ul id="suggestions" class="suggestions-list" role="listbox" aria-label="Sugerencias de ciudad"></ul>
     <button id="save-city" aria-label="Buscar ciudad">Buscar</button>
@@ -198,7 +201,7 @@ body.modo-oscuro .firma { color: #aaa; }
 </div>
 
 <div class="calendar-container" aria-label="Calendario de festivos" role="region">
-  <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyaW8uZXM&color=%230B8043"
+  <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmZl&color=%230B8043"
     style="border:solid 1px #777" width="100%" height="300" frameborder="0" scrolling="no" title="Calendario Festivos" aria-label="Calendario de festivos"></iframe>
 </div>  
 
@@ -234,6 +237,7 @@ body.modo-oscuro .firma { color: #aaa; }
 </div>
 
 <button id="modo-toggle" onclick="toggleModo()" aria-label="Cambiar modo claro/oscuro" title="Cambiar modo claro/oscuro">☀︎/☾</button> 
+
   
 <footer class="firma" id="footerFirma" tabindex="0" aria-label="Pie de página"></footer>
 
@@ -440,7 +444,6 @@ function cambiarIdioma(lang) {
   actualizarRadiosIdioma(lang);
   const t = traducciones[lang];
   if (!t) return;
-  document.getElementById("labelLugar").textContent = t.lugarLabel;
   document.getElementById("save-city").textContent = t.buscarBtn;
   document.getElementById('titulo').textContent = t.titulo;
   document.getElementById('h3Semana').textContent = t.h3Semana;
@@ -804,9 +807,8 @@ saveBtn.addEventListener("click", () => {
 
 // Cambiar placeholder según idioma
 function actualizarPlaceholderCiudad() {
-  const idioma = localStorage.getItem("idiomaSeleccionado") || "es";
-  const textos = { es:"Escribir ciudad...", ca:"Escriure ciutat...", gl:"Escribir cidade...", eu:"Hiria idatzi..." };
-  inputCity.placeholder = textos[idioma] || textos.es;
+  // Todos los idiomas: "Buscar ciudad"
+  inputCity.placeholder = "Buscar ciudad";
 }
 
 // Actualizar placeholder al cargar o cambiar idioma
@@ -826,4 +828,3 @@ function actualizarIdiomaCiudad(idioma) {
 </script>
 </body>
 </html>
-```
