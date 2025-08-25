@@ -21,7 +21,8 @@ h1, h3 { font-size: 1.2em; margin: 10px 0; }
 .seccion { margin: 20px auto; padding: 15px; border-radius: 8px; max-width: 600px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.9);}
 body.modo-oscuro .seccion { background-color: rgba(50,50,50,0.9); }
 
-input, button { padding: 10px; margin: 5px; font-size: 1em; border-radius: 5px; border: 1px solid #ccc; width: 90%; max-width: 300px; box-sizing: border-box;}
+input, button { padding: 10px; margin: 5px; font-size: 1em; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box;}
+input { width: 90%; max-width: 300px; }
 button { background-color: #3498db; color: white; border: none; cursor: pointer; transition: background-color 0.2s; }
 button:hover { background-color: #2980b9; }
 
@@ -58,56 +59,45 @@ body.modo-oscuro .firma { color: #aaa; }
   }
 }
 
-@media(min-width:481px) and (max-width:768px) { 
-  input, button { max-width: 90%; } 
-  .calendar-container iframe { height: 300px; } 
-  #weather-widget .weather-main {
-    flex-direction: row !important; /* Siempre fila, incluso en tablet */
-    align-items: center;
-    gap: 15px;
-  }
-}
-
-.weather-widget-seccion {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-  margin: 20px auto;
-}
-
-.weather-main {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  flex-direction: row; /* Siempre fila por defecto */
-}
-
-.weather-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
+/* --- CAMBIO: Widget buscador de ciudad siempre en fila --- */
 .city-search {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: row;
+  flex-wrap: nowrap;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
   gap: 10px;
   position: relative;
   width: 100%;
   max-width: 400px;
 }
-
 .city-search input {
-  flex: 1;
-  min-width: 150px;
+  flex: 1 1 0;
+  min-width: 0;
+  margin-right: 0;
+  margin-left: 0;
+  width: 100%;
+  max-width: none;
 }
-
 .city-search button {
-  padding: 10px 15px;
-  cursor: pointer;
+  flex: 0 0 auto;
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  margin: 0;
+}
+@media(max-width:480px) {
+  .city-search {
+    flex-direction: row;
+    gap: 8px;
+  }
+  .city-search input, .city-search button {
+    width: auto;
+    max-width: none;
+    min-width: 0;
+  }
 }
 
 /* Desplegable sugerencias ciudad */
@@ -153,12 +143,13 @@ body.modo-oscuro .firma { color: #aaa; }
   width: 60px;
   text-align: right;
 }
+/* --- CAMBIO: Emoji más pequeño --- */
 #weather-emoji {
   display: inline-block;
-  width: 45px;
-  height: 45px;
-  line-height: 45px;
-  font-size: 45px;
+  width: 35px;
+  height: 35px;
+  line-height: 35px;
+  font-size: 35px;
   text-align: center;
 }
 #city-name {
@@ -196,12 +187,15 @@ body.modo-oscuro .firma { color: #aaa; }
     <input type="text" id="city-input" placeholder="Buscar ciudad" autocomplete="off"
      aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="suggestions" aria-label="Campo de búsqueda de ciudad" />
     <ul id="suggestions" class="suggestions-list" role="listbox" aria-label="Sugerencias de ciudad"></ul>
-    <button id="save-city" aria-label="Buscar ciudad">Buscar</button>
+    <!-- CAMBIO: Solo lupa SVG sin texto -->
+    <button id="save-city" aria-label="Buscar ciudad">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="2" fill="none"/><line x1="15" y1="15" x2="12.5" y2="12.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
   </div>
 </div>
 
 <div class="calendar-container" aria-label="Calendario de festivos" role="region">
-  <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230b8043" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+  <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhb...
 </div>  
 
 <!-- Resto de secciones -->
@@ -443,7 +437,7 @@ function cambiarIdioma(lang) {
   actualizarRadiosIdioma(lang);
   const t = traducciones[lang];
   if (!t) return;
-  document.getElementById("save-city").textContent = t.buscarBtn;
+  // Botón buscar ya no cambia texto, es solo un icono SVG
   document.getElementById('titulo').textContent = t.titulo;
   document.getElementById('h3Semana').textContent = t.h3Semana;
   document.getElementById('btnCalcularSemana').textContent = t.btnCalcularSemana;
@@ -624,11 +618,15 @@ async function obtenerClima(ciudad) {
       details.textContent = "";
       document.getElementById("weather-temp").textContent = "";
       document.getElementById("weather-emoji").textContent = "";
+      // Limpiar input si no se encuentra la ciudad
+      inputCity.value = "";
       return;
     }
     const { lat, lon } = resultados[0];
     obtenerClimaPorCoordenadas(lat, lon);
     localStorage.setItem("ciudadGuardada", ciudad);
+    // Limpiar input si la ciudad existe
+    inputCity.value = "";
   } catch(err) {
     console.error("Error al obtener el clima:", err);
   }
@@ -645,13 +643,13 @@ async function obtenerClimaPorCoordenadas(lat, lon) {
       details.textContent = "";
       document.getElementById("weather-temp").textContent = "";
       document.getElementById("weather-emoji").textContent = "";
+      inputCity.value = "";
       return;
     }
     document.getElementById("weather-temp").textContent = `${Math.round(data.main.temp)}°`;
     cityName.textContent = `${data.name}, ${data.sys.country}`;
-    details.textContent = `${data.weather[0].description} • ${traducir("Viento", idioma)}: ${data.wind.speed} m/s • ${traducir("Min", idioma)}: ${Math.round(data.main.temp_min)}° / ${traducir("Max", idioma)}: ${Math.round(data.main.temp_max)}°`;
+    details.textContent = `${data.weather[0].description} • ${traducir("Viento", idioma)}: ${data.wind.speed} m/s • ${traducir("Min", idioma)}: ${Math.round(data.main.temp_min)}° / ${traducir("Ma...
     document.getElementById("weather-emoji").textContent = getEmoji(data.weather[0].main);
-
   } catch(err) {
     console.error("Error al obtener el clima por coordenadas:", err);
   }
@@ -756,7 +754,8 @@ function actualizarSeleccion() {
 
 function seleccionarCiudadSugerencia(idx) {
   if (!currentSuggestions[idx]) return;
-  inputCity.value = currentSuggestions[idx].name;
+  // Limpiar input tras seleccionar sugerencia
+  inputCity.value = "";
   obtenerClima(currentSuggestions[idx].name);
   document.getElementById("suggestions").innerHTML = "";
   selectedIndex = -1;
