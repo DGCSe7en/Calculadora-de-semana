@@ -117,6 +117,13 @@ body.modo-oscuro .firma { color: #aaa; }
   border-radius: 4px;
   z-index: 10;
 }
+#weather-emoji {
+  display: inline-block;
+  text-align: center;
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+}
 </style>
 </head>
 <body>
@@ -135,13 +142,13 @@ body.modo-oscuro .firma { color: #aaa; }
 <p id="semanaActual"></p>
 
 <div id="weather-widget" class="weather-widget-seccion">
-  <div class="weather-main">
-    <img id="weather-icon" alt="icono clima" />
-    <div class="weather-info">
-      <span id="city-name" class="texto-azul"></span>
-      <small id="details"></small>
-    </div>
+<div class="weather-main">
+  <span id="weather-emoji" style="font-size:60px; line-height:1;"></span>
+  <div class="weather-info">
+    <span id="city-name" class="texto-azul"></span>
+    <small id="details"></small>
   </div>
+</div>
 
   <!-- Bloque de búsqueda integrado -->
   <div class="city-search">
@@ -153,7 +160,7 @@ body.modo-oscuro .firma { color: #aaa; }
 </div>
 
 <div class="calendar-container">
-<iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230b8043" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+  <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmNvbQ&color=%23D81B60" style="border:solid 1px #777" frameborder="0" scrolling="no"></iframe>
 </div>  
 
 <!-- Resto de secciones -->
@@ -517,11 +524,30 @@ function resetSemana(){
 const apiKey = "6190233d77058dc3f79f839252cc0058";
 const saveBtn = document.getElementById("save-city");
 const inputCity = document.getElementById("city-input");
-const weatherIcon = document.getElementById("weather-icon");
 const cityName = document.getElementById("city-name");
 const details = document.getElementById("details");
 
 // --- FUNCIONES ---
+function getEmoji(weatherMain) {
+  const mapping = {
+    Thunderstorm: "⛈️",
+    Drizzle: "🌦️",
+    Rain: "🌧️",
+    Snow: "❄️",
+    Clear: "☀️",
+    Clouds: "☁️",
+    Mist: "🌫️",
+    Smoke: "💨",
+    Haze: "🌤️",
+    Dust: "🌪️",
+    Fog: "🌫️",
+    Sand: "🏜️",
+    Ash: "🌋",
+    Squall: "💨",
+    Tornado: "🌪️"
+  };
+  return mapping[weatherMain] || "🌍";
+}
 async function obtenerClima(ciudad) {
   try {
     const idioma = localStorage.getItem("idiomaSeleccionado") || "es";
@@ -529,7 +555,6 @@ async function obtenerClima(ciudad) {
     if (!resultados[0]) {
       cityName.textContent = traducir("Ciudad no encontrada", idioma);
       details.textContent = "";
-      weatherIcon.src = "";
       return;
     }
     const { lat, lon } = resultados[0];
@@ -549,18 +574,19 @@ async function obtenerClimaPorCoordenadas(lat, lon) {
     if (data.cod !== 200) {
       cityName.textContent = traducir("Ciudad no encontrada", idioma);
       details.textContent = "";
-      weatherIcon.src = "";
+      document.getElementById("weather-emoji").textContent = "❓";
       return;
     }
+
     cityName.textContent = `${data.name}, ${data.sys.country}`;
     details.textContent = `${data.weather[0].description} • ${traducir("Viento", idioma)}: ${data.wind.speed} m/s • ${traducir("Min", idioma)}: ${Math.round(data.main.temp_min)}° / ${traducir("Max", idioma)}: ${Math.round(data.main.temp_max)}°`;
-    weatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
-    weatherIcon.alt = data.weather[0].description;
+    document.getElementById("weather-emoji").textContent = getEmoji(data.weather[0].main);
+
   } catch(err) {
     console.error("Error al obtener el clima por coordenadas:", err);
   }
 }
-
+    
 async function buscarCiudad(query) {
   if (!query) return [];
   try {
