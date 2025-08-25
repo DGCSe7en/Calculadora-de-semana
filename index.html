@@ -49,6 +49,9 @@ body.modo-oscuro .firma { color: #aaa; }
 #city-selector {margin-top: 10px; display: none;}
 #city-selector.hidden {display: none;}
 #city-selector.show {display: block;}
+.suggestions-list {list-style: none; margin: 0; padding: 0; max-height: 150px; overflow-y: auto; background-color: rgba(255,255,255,0.9); border: 1px solid #ccc; border-radius: 4px; position: absolute; width: calc(100% - 20px); z-index: 10;}
+.suggestions-list li {padding: 5px 10px; cursor: pointer;}
+.suggestions-list li:hover {background-color: #3498db; color: white;}
 </style>
 </head>
 <body>
@@ -66,6 +69,10 @@ body.modo-oscuro .firma { color: #aaa; }
 <div class="zona" id="zonaHoraria"></div>
 <p id="semanaActual"></p>
 
+<div class="calendar-container">
+<iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230b8043" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+</div>  
+
 <div id="weather-widget">
   <div class="weather-main">
     <img id="weather-icon" alt="icono clima" />
@@ -76,15 +83,12 @@ body.modo-oscuro .firma { color: #aaa; }
     </div>
     <button id="toggle-city" class="icon-btn">⚙️</button>
   </div>
-  <div id="city-selector" class="hidden">
-    <input type="text" id="city-input" placeholder="Escribe ciudad..." />
-    <button id="save-city">OK</button>
-  </div>
+<div id="city-selector" class="hidden">
+  <input type="text" id="city-input" placeholder="Escribir ciudad..." autocomplete="off" />
+  <ul id="suggestions" class="suggestions-list"></ul>
+  <button id="save-city">OK</button>
 </div>
-
-<div class="calendar-container">
-<iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230b8043" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
-</div>  
+</div>
 
 <div class="seccion">
   <h3 class="texto-azul" id="h3Semana"></h3>
@@ -466,11 +470,16 @@ function resetSemana(){
   document.getElementById("resultadoSemana").textContent="";
   const err = document.getElementById("errorRangoSemana"); if (err) err.textContent = "";
 }
-// CONFIG CLIMA
-const apiKey = "6190233d77058dc3f79f839252cc0058";
+<script>
+// --- Clima y Autocompletar ---
+function resetSemana(){
+  document.getElementById("semanaInput").value="";
+  document.getElementById("resultadoSemana").textContent="";
+  const err = document.getElementById("errorRangoSemana"); if (err) err.textContent = "";
+}
 
-// Idiomas soportados
-const idiomasDisponibles = ["es", "ca", "gl", "eu"];
+// --- CONFIG CLIMA ---
+const apiKey = "6190233d77058dc3f79f839252cc0058";
 
 // ELEMENTOS DEL DOM
 const toggleBtn = document.getElementById("toggle-city");
@@ -483,103 +492,144 @@ const temperature = document.getElementById("temperature");
 const cityName = document.getElementById("city-name");
 const details = document.getElementById("details");
 
-// FUNCIONES
+// --- FUNCIONES ---
 async function obtenerClima(ciudad) {
   try {
-    // Obtener idioma guardado o usar español por defecto
     const idioma = localStorage.getItem("idiomaSeleccionado") || "es";
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${ciudad}&appid=${apiKey}&units=metric&lang=${idioma}`;
-    const resp = await fetch(url);
-    const data = await resp.json();
-
-    if (data.cod !== 200) {
+    const resultados = await buscarCiudad(ciudad);
+    if (!resultados[0]) {
       cityName.textContent = traducir("Ciudad no encontrada", idioma);
       details.textContent = "";
       temperature.textContent = "";
       weatherIcon.src = "";
       return;
     }
-
-    // Datos principales
-    const temp = Math.round(data.main.temp);
-    const desc = data.weather[0].description;
-    const viento = data.wind.speed;
-    const tempMin = Math.round(data.main.temp_min);
-    const tempMax = Math.round(data.main.temp_max);
-
-    // Pintar en el DOM
-    temperature.textContent = `${temp}°C`;
-    cityName.textContent = `${data.name}, ${data.sys.country}`;
-    details.textContent = `${desc} • ${traducir("Viento", idioma)}: ${viento} m/s • ${traducir("Min", idioma)}: ${tempMin}° / ${traducir("Max", idioma)}: ${tempMax}°`;
-
-    // Icono oficial de OpenWeather
-    const iconCode = data.weather[0].icon;
-    weatherIcon.src = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
-    weatherIcon.alt = desc;
-
-  } catch (err) {
+    const { lat, lon } = resultados[0];
+    obtenerClimaPorCoordenadas(lat, lon);
+    localStorage.setItem("ciudadGuardada", ciudad);
+  } catch(err) {
     console.error("Error al obtener el clima:", err);
-    cityName.textContent = "Error";
-    details.textContent = "";
-    temperature.textContent = "";
-    weatherIcon.src = "";
   }
 }
 
-// Diccionario básico
+async function obtenerClimaPorCoordenadas(lat, lon) {
+  try {
+    const idioma = localStorage.getItem("idiomaSeleccionado") || "es";
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=${idioma}`;
+    const resp = await fetch(url);
+    const data = await resp.json();
+    if (data.cod !== 200) {
+      cityName.textContent = traducir("Ciudad no encontrada", idioma);
+      temperature.textContent = "";
+      details.textContent = "";
+      weatherIcon.src = "";
+      return;
+    }
+    temperature.textContent = `${Math.round(data.main.temp)}°C`;
+    cityName.textContent = `${data.name}, ${data.sys.country}`;
+    details.textContent = `${data.weather[0].description} • ${traducir("Viento", idioma)}: ${data.wind.speed} m/s • ${traducir("Min", idioma)}: ${Math.round(data.main.temp_min)}° / ${traducir("Max", idioma)}: ${Math.round(data.main.temp_max)}°`;
+    weatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+    weatherIcon.alt = data.weather[0].description;
+  } catch(err) {
+    console.error("Error al obtener el clima por coordenadas:", err);
+  }
+}
+
+async function buscarCiudad(query) {
+  if (!query) return [];
+  try {
+    const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=5&appid=${apiKey}`;
+    const resp = await fetch(url);
+    const data = await resp.json();
+    return data;
+  } catch(err) {
+    console.error("Error al buscar ciudad:", err);
+    return [];
+  }
+}
+
+// Diccionario de traducciones específicas
 function traducir(texto, idioma) {
   const diccionario = {
-    "Ciudad no encontrada": {
-      es: "Ciudad no encontrada",
-      ca: "Ciutat no trobada",
-      gl: "Cidade non atopada",
-      eu: "Hiria ez da aurkitu"
-    },
-    "Viento": {
-      es: "Viento",
-      ca: "Vent",
-      gl: "Vento",
-      eu: "Haizea"
-    },
-    "Min": {
-      es: "Min",
-      ca: "Mín",
-      gl: "Mín",
-      eu: "Gutx"
-    },
-    "Max": {
-      es: "Max",
-      ca: "Màx",
-      gl: "Máx",
-      eu: "Geh"
-    }
+    "Ciudad no encontrada": { es:"Ciudad no encontrada", ca:"Ciutat no trobada", gl:"Cidade non atopada", eu:"Hiria ez da aurkitu" },
+    "Viento": { es:"Viento", ca:"Vent", gl:"Vento", eu:"Haizea" },
+    "Min": { es:"Min", ca:"Mín", gl:"Mín", eu:"Gutx" },
+    "Max": { es:"Max", ca:"Màx", gl:"Máx", eu:"Geh" }
   };
-
   return diccionario[texto]?.[idioma] || texto;
 }
 
-// EVENTOS
-
-// Mostrar/ocultar selector de ciudad
+// --- EVENTOS ---
+// Mostrar/ocultar selector
 toggleBtn.addEventListener("click", () => {
   selector.classList.toggle("show");
 });
 
-// Guardar y consultar nueva ciudad
+// Guardar y consultar ciudad
 saveBtn.addEventListener("click", () => {
   const ciudad = inputCity.value.trim();
-  if (ciudad) {
-    localStorage.setItem("ciudadGuardada", ciudad);
-    obtenerClima(ciudad);
-    selector.classList.remove("show");
+  if (ciudad) obtenerClima(ciudad);
+  selector.classList.remove("show");
+});
+
+// Autocompletar
+let timeoutId;
+inputCity.addEventListener("input", () => {
+  clearTimeout(timeoutId);
+  timeoutId = setTimeout(async () => {
+    const query = inputCity.value.trim();
+    const lista = document.getElementById("suggestions");
+    lista.innerHTML = "";
+    if (!query) return;
+    const resultados = await buscarCiudad(query);
+    resultados.forEach(ciudad => {
+      const li = document.createElement("li");
+      li.textContent = `${ciudad.name}, ${ciudad.country}`;
+      li.addEventListener("click", () => {
+        inputCity.value = ciudad.name;
+        obtenerClima(ciudad.name);
+        lista.innerHTML = "";
+      });
+      lista.appendChild(li);
+    });
+  }, 300);
+});
+
+// Cerrar lista al hacer click fuera
+document.addEventListener("click", (e) => {
+  if (!selector.contains(e.target)) {
+    document.getElementById("suggestions").innerHTML = "";
   }
 });
 
-// Cargar al inicio
+// Cambiar placeholder según idioma
+function actualizarPlaceholderCiudad() {
+  const idioma = localStorage.getItem("idiomaSeleccionado") || "es";
+  const textos = { es:"Escribir ciudad...", ca:"Escriure ciutat...", gl:"Escribir cidade...", eu:"Hiria idatzi..." };
+  inputCity.placeholder = textos[idioma] || textos.es;
+}
+
+// Actualizar placeholder al cargar o cambiar idioma
 window.addEventListener("load", () => {
-  const guardada = localStorage.getItem("ciudadGuardada") || "Madrid";
-  obtenerClima(guardada);
-})
+  actualizarPlaceholderCiudad();
+  const ciudadGuardada = localStorage.getItem("ciudadGuardada") || "Madrid";
+  obtenerClima(ciudadGuardada);
+});
+
+// Cambiar placeholder al cambiar idioma
+function actualizarIdiomaCiudad(idioma) {
+  localStorage.setItem("idiomaSeleccionado", idioma);
+  actualizarPlaceholderCiudad();
+  const ciudadGuardada = localStorage.getItem("ciudadGuardada") || "Madrid";
+  obtenerClima(ciudadGuardada);
+}
+
+// Sobrescribir la función cambiarIdioma para incluir ciudad
+const originalCambiarIdioma = cambiarIdioma;
+cambiarIdioma = function(lang) {
+  originalCambiarIdioma(lang);
+  actualizarIdiomaCiudad(lang);
+};
 </script>
 </body>
 </html>
