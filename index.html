@@ -117,12 +117,26 @@ body.modo-oscuro .firma { color: #aaa; }
   border-radius: 4px;
   z-index: 10;
 }
+#weather-temp {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: inherit;
+  margin-right: 10px;
+  display: inline-block;
+  width: 60px; /* ancho fijo para alinear con emoji */
+  text-align: right;
+}
+
 #weather-emoji {
   display: inline-block;
+  width: 45px;
+  height: 45px;
+  line-height: 45px;
+  font-size: 45px;
   text-align: center;
-  width: 60px;
-  height: 60px;
-  line-height: 60px;
+}
+#city-name {
+  font-weight: bold;
 }
 </style>
 </head>
@@ -143,7 +157,8 @@ body.modo-oscuro .firma { color: #aaa; }
 
 <div id="weather-widget" class="weather-widget-seccion">
 <div class="weather-main">
-  <span id="weather-emoji" style="font-size:60px; line-height:1;"></span>
+  <span id="weather-temp"></span>
+  <span id="weather-emoji"></span>
   <div class="weather-info">
     <span id="city-name" class="texto-azul"></span>
     <small id="details"></small>
@@ -574,7 +589,7 @@ async function obtenerClimaPorCoordenadas(lat, lon) {
     if (data.cod !== 200) {
       cityName.textContent = traducir("Ciudad no encontrada", idioma);
       details.textContent = "";
-      document.getElementById("weather-emoji").textContent = "❓";
+      document.getElementById("weather-temp").textContent = `${Math.round(data.main.temp)}°`;
       return;
     }
 
