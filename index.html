@@ -470,13 +470,6 @@ function resetSemana(){
   document.getElementById("resultadoSemana").textContent="";
   const err = document.getElementById("errorRangoSemana"); if (err) err.textContent = "";
 }
-<script>
-// --- Clima y Autocompletar ---
-function resetSemana(){
-  document.getElementById("semanaInput").value="";
-  document.getElementById("resultadoSemana").textContent="";
-  const err = document.getElementById("errorRangoSemana"); if (err) err.textContent = "";
-}
 
 // --- CONFIG CLIMA ---
 const apiKey = "6190233d77058dc3f79f839252cc0058";
@@ -486,7 +479,6 @@ const toggleBtn = document.getElementById("toggle-city");
 const selector = document.getElementById("city-selector");
 const saveBtn = document.getElementById("save-city");
 const inputCity = document.getElementById("city-input");
-
 const weatherIcon = document.getElementById("weather-icon");
 const temperature = document.getElementById("temperature");
 const cityName = document.getElementById("city-name");
