@@ -27,6 +27,14 @@ button:hover { background-color: #2980b9; }
 #modo-toggle { position: fixed; right: clamp(10px, 2vw, 24px); bottom: clamp(10px, 2vw, 24px); font-size: clamp(1.25rem, 0.9rem + 1vw, 1.75rem); background: none; border: none; cursor: pointer; }
 #modo-toggle:focus { outline: 2px solid #3498db; }
 
+/* --- Ajuste modo-toggle color según modo --- */
+body.modo-claro #modo-toggle {
+  color: #111;
+}
+body.modo-oscuro #modo-toggle {
+  color: #fff;
+}
+
 .calendar-container {
   max-width: 600px;
   margin: 20px auto;
@@ -121,12 +129,6 @@ body.modo-oscuro .firma { color: #aaa; }
   min-width: 150px;
   margin-right: 0;
 }
-.city-search button {
-  flex-shrink: 0;
-  width: auto;
-  padding: 10px 15px;
-  cursor: pointer;
-}
 
 .suggestions-list {
   position: absolute;
@@ -209,13 +211,12 @@ body.modo-oscuro .firma { color: #aaa; }
   <div class="city-search" aria-label="Buscador de ciudad" role="search">
     <input type="text" id="city-input" placeholder="Introduce una ciudad..." autocomplete="off"
      aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="suggestions" aria-label="Campo de búsqueda de ciudad" />
-    <button id="save-city" aria-label="Buscar ciudad">Buscar</button>
     <ul id="suggestions" class="suggestions-list" role="listbox" aria-label="Sugerencias de ciudad"></ul>
   </div>
 </div>
 
 <div class="calendar-container" aria-label="Calendario de festivos" role="region">
-  <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230b8043" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+  <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhb[...]"></iframe>
 </div>
 
 <div class="seccion" aria-label="Cálculo de número de semana" role="region">
@@ -441,7 +442,7 @@ function cambiarIdioma(lang) {
   actualizarRadiosIdioma(lang);
   const t = traducciones[lang];
   if (!t) return;
-  document.getElementById("save-city").textContent = t.buscarBtn;
+  // document.getElementById("save-city").textContent = t.buscarBtn; // ELIMINADO PORQUE YA NO HAY BOTÓN
   document.getElementById('titulo').textContent = t.titulo;
   document.getElementById('h3Semana').textContent = t.h3Semana;
   document.getElementById('btnCalcularSemana').textContent = t.btnCalcularSemana;
@@ -588,7 +589,7 @@ function calcularRangoSemana(){
 
 // --- CONFIG CLIMA ---
 const apiKey = "6190233d77058dc3f79f839252cc0058";
-const saveBtn = document.getElementById("save-city");
+// const saveBtn = document.getElementById("save-city"); // ELIMINADO
 const inputCity = document.getElementById("city-input");
 const cityName = document.getElementById("city-name");
 const details = document.getElementById("details");
@@ -791,16 +792,7 @@ document.querySelectorAll('#idiomas img').forEach(img => {
   });
 });
 
-// Al pulsar Buscar, cerrar el desplegable y limpiar input
-saveBtn.addEventListener("click", () => {
-  const ciudad = inputCity.value.trim();
-  if (ciudad) obtenerClima(ciudad);
-  inputCity.value = ""; // limpiar input tras buscar
-  document.getElementById("suggestions").innerHTML = "";
-  selectedIndex = -1;
-  currentSuggestions = [];
-  inputCity.setAttribute("aria-expanded", "false");
-});
+// --- ELIMINADO: evento de buscar con botón, ya no existe el botón "Buscar" ---
 
 function actualizarPlaceholderCiudad() {
   const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
