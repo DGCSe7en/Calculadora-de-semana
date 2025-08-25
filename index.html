@@ -25,7 +25,7 @@ input, button { padding: 10px; margin: 5px; font-size: 1em; border-radius: 5px; 
 button { background-color: #3498db; color: white; border: none; cursor: pointer; transition: background-color 0.2s; }
 button:hover { background-color: #2980b9; }
 
-#modo-toggle { position: fixed; right: clamp(10px, 2vw, 24px); bottom: clamp(10px, 2vw, 24px); font-size: clamp(1.25rem, 0.9rem + 1vw, 1.75rem); background: none; border: none; cursor: pointer; color: inherit; z-index: 1000; line-height: 1; -webkit-tap-highlight-color: transparent; }
+#modo-toggle { position: fixed; right: clamp(10px, 2vw, 24px); bottom: clamp(10px, 2vw, 24px); font-size: clamp(1.25rem, 0.9rem + 1vw, 1.75rem); background: none; border: none; cursor: pointer; color: inherit; z-index: 100; }
 #modo-toggle:focus { outline: 2px solid #3498db; }
 
 .calendar-container { max-width: 90%; margin: 20px auto; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
@@ -153,10 +153,10 @@ body.modo-oscuro .firma { color: #aaa; }
 </div>
 
 <div class="calendar-container">
-  <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230b8043" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+  <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmNvbQ&color=%23D81B60" style="border:solid 1px #777" frameborder="0" scrolling="no"></iframe>
 </div>  
 
-<!-- Resto de secciones sin cambios -->
+<!-- Resto de secciones -->
 <div class="seccion">
   <h3 class="texto-azul" id="h3Semana"></h3>
   <input type="date" id="fecha">
@@ -366,25 +366,16 @@ window.onload=function(){
 
 // --- Cambio de idioma ---
 function cambiarIdioma(lang) {
-  // Cambiar atributo lang en el HTML
   document.documentElement.lang = lang;
-
-  // Quitar "active" de todas las banderas
   document.querySelectorAll('#idiomas img').forEach(img => {
     img.classList.remove('active');
   });
-  // Poner "active" en la bandera seleccionada
   const img = document.querySelector(`#idiomas img[data-lang="${lang}"]`);
   if (img) img.classList.add('active');
-
-// Traducir label y botón de ciudad
-document.getElementById("labelLugar").textContent = t.lugarLabel;
-document.getElementById("save-city").textContent = t.buscarBtn;
-
-  // Aplicar traducciones
   const t = traducciones[lang];
-  if (!t) return; // seguridad extra
-
+  if (!t) return;
+  document.getElementById("labelLugar").textContent = t.lugarLabel;
+  document.getElementById("save-city").textContent = t.buscarBtn;
   document.getElementById('titulo').textContent = t.titulo;
   document.getElementById('h3Semana').textContent = t.h3Semana;
   document.getElementById('btnCalcularSemana').textContent = t.btnCalcularSemana;
@@ -397,28 +388,19 @@ document.getElementById("save-city").textContent = t.buscarBtn;
   document.getElementById('btnMostrarRango').textContent = t.btnMostrarRango;
   document.getElementById('btnResetRango').textContent = t.btnResetRango;
   document.getElementById('footerFirma').textContent = t.footer;
-
-  // Placeholders
   document.getElementById('fechaInicio').placeholder = t.placeholderInicio;
   document.getElementById('fechaFin').placeholder = t.placeholderFin;
   document.getElementById('semanaInput').placeholder = t.placeholderSemana;
-
-  // Traducir el "a" entre fechas si lo quieres traducible
-  document.getElementById('a-label').textContent = (lang === 'ca') ? 'a' : (lang === 'gl') ? 'a' : (lang === 'eu') ? 'eta' : 'a';
-
-  // Mostrar semana actual en el idioma seleccionado
+  document.getElementById('a-label').textContent = (lang === 'ca' || lang === 'gl') ? 'a' : (lang === 'eu') ? 'eta' : 'a';
   mostrarSemanaActual(lang);
-
-  // Limpiar resultados y errores visibles
   ['resultado', 'resultadoDias', 'resultadoSemana'].forEach(id => {
     if(document.getElementById(id)) document.getElementById(id).textContent = "";
   });
   ['errorSemana', 'errorDias', 'errorRangoSemana'].forEach(id => {
     if(document.getElementById(id)) document.getElementById(id).textContent = "";
   });
-
-  // Actualizar reloj y zona horaria inmediatamente
   actualizarReloj();
+  actualizarIdiomaCiudad(lang);
 }
 
 // --- Funciones de cálculo ---
@@ -434,11 +416,9 @@ function calcularSemana(){
   const fechaInput=document.getElementById("fecha").value;
   const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
   const t = traducciones[lang];
-
   if(!fechaInput){ mostrarError("fecha","errorSemana",t.errorFecha); return; }
   const fecha=new Date(fechaInput);
   if(isNaN(fecha)){ mostrarError("fecha","errorSemana",t.errorFecha); return; }
-
   const semana=getSemanaISO(fecha);
   document.getElementById("resultado").innerText = t.semanaDe
     .replace("{fecha}", formatoFecha(fecha))
@@ -465,7 +445,6 @@ function calcularDias(){
   const finVal=document.getElementById("fechaFin").value;
   const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
   const t = traducciones[lang];
-
   if(!inicioVal || !finVal){
     mostrarError("fechaInicio","errorDias", t.errorFechas);
     return;
@@ -480,7 +459,6 @@ function calcularDias(){
     mostrarError("fechaFin","errorDias", t.errorFinAntesInicio);
     return;
   }
-
   let años=fechaFin.getFullYear()-fechaInicio.getFullYear();
   let meses=fechaFin.getMonth()-fechaInicio.getMonth();
   let dias=fechaFin.getDate()-fechaInicio.getDate();
@@ -512,12 +490,10 @@ function calcularRangoSemana(){
   const semana = parseInt(semanaInput, 10);
   const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
   const t = traducciones[lang];
-
   if(isNaN(semana) || semana < 1 || semana > 53){
     mostrarError("semanaInput","errorRangoSemana", t.errorSemana);
     return;
   }
-
   const año = new Date().getFullYear();
   const primerJueves = new Date(año,0,4);
   const diaSemana = (primerJueves.getDay() + 6) % 7;
@@ -525,7 +501,6 @@ function calcularRangoSemana(){
   inicioSemana.setDate(primerJueves.getDate() - diaSemana + (semana - 1) * 7);
   const finSemana = new Date(inicioSemana);
   finSemana.setDate(inicioSemana.getDate() + 6);
-
   document.getElementById("resultadoSemana").textContent=t.rangoSemana
     .replace("{semana}", semana)
     .replace("{inicio}", formatoFecha(inicioSemana))
@@ -540,14 +515,9 @@ function resetSemana(){
 
 // --- CONFIG CLIMA ---
 const apiKey = "6190233d77058dc3f79f839252cc0058";
-
-// ELEMENTOS DEL DOM
-const toggleBtn = document.getElementById("toggle-city");
-const selector = document.getElementById("city-selector");
 const saveBtn = document.getElementById("save-city");
 const inputCity = document.getElementById("city-input");
 const weatherIcon = document.getElementById("weather-icon");
-const temperature = document.getElementById("temperature");
 const cityName = document.getElementById("city-name");
 const details = document.getElementById("details");
 
@@ -559,7 +529,6 @@ async function obtenerClima(ciudad) {
     if (!resultados[0]) {
       cityName.textContent = traducir("Ciudad no encontrada", idioma);
       details.textContent = "";
-      temperature.textContent = "";
       weatherIcon.src = "";
       return;
     }
@@ -579,12 +548,10 @@ async function obtenerClimaPorCoordenadas(lat, lon) {
     const data = await resp.json();
     if (data.cod !== 200) {
       cityName.textContent = traducir("Ciudad no encontrada", idioma);
-      temperature.textContent = "";
       details.textContent = "";
       weatherIcon.src = "";
       return;
     }
-    temperature.textContent = `${Math.round(data.main.temp)}°C`;
     cityName.textContent = `${data.name}, ${data.sys.country}`;
     details.textContent = `${data.weather[0].description} • ${traducir("Viento", idioma)}: ${data.wind.speed} m/s • ${traducir("Min", idioma)}: ${Math.round(data.main.temp_min)}° / ${traducir("Max", idioma)}: ${Math.round(data.main.temp_max)}°`;
     weatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
@@ -607,7 +574,6 @@ async function buscarCiudad(query) {
   }
 }
 
-// Diccionario de traducciones específicas
 function traducir(texto, idioma) {
   const diccionario = {
     "Ciudad no encontrada": { es:"Ciudad no encontrada", ca:"Ciutat no trobada", gl:"Cidade non atopada", eu:"Hiria ez da aurkitu" },
@@ -617,19 +583,6 @@ function traducir(texto, idioma) {
   };
   return diccionario[texto]?.[idioma] || texto;
 }
-
-// --- EVENTOS ---
-// Mostrar/ocultar selector
-toggleBtn.addEventListener("click", () => {
-  selector.classList.toggle("show");
-});
-
-// Guardar y consultar ciudad
-saveBtn.addEventListener("click", () => {
-  const ciudad = inputCity.value.trim();
-  if (ciudad) obtenerClima(ciudad);
-  selector.classList.remove("show");
-});
 
 // Autocompletar
 let timeoutId;
@@ -654,9 +607,14 @@ inputCity.addEventListener("input", () => {
   }, 300);
 });
 
-// Cerrar lista al hacer click fuera
+saveBtn.addEventListener("click", () => {
+  const ciudad = inputCity.value.trim();
+  if (ciudad) obtenerClima(ciudad);
+  document.getElementById("suggestions").innerHTML = "";
+});
+
 document.addEventListener("click", (e) => {
-  if (!selector.contains(e.target)) {
+  if (!document.querySelector('.city-search').contains(e.target)) {
     document.getElementById("suggestions").innerHTML = "";
   }
 });
@@ -682,89 +640,6 @@ function actualizarIdiomaCiudad(idioma) {
   const ciudadGuardada = localStorage.getItem("ciudadGuardada") || "Madrid";
   obtenerClima(ciudadGuardada);
 }
-
-// Sobrescribir la función cambiarIdioma para incluir ciudad
-const originalCambiarIdioma = cambiarIdioma;
-cambiarIdioma = function(lang) {
-  originalCambiarIdioma(lang);
-  actualizarIdiomaCiudad(lang);
-};
-// --- NUEVO BLOQUE DE AUTOCOMPLETADO LOCAL PROVINCIAS CON NORMALIZACIÓN ---
-const provinciasES = [
-  "Álava","Albacete","Alicante","Almería","Asturias","Ávila","Badajoz",
-  "Barcelona","Burgos","Cáceres","Cádiz","Cantabria","Castellón","Ceuta",
-  "Ciudad Real","Córdoba","Cuenca","Gerona","Granada","Guadalajara",
-  "Guipúzcoa","Huelva","Huesca","Islas Baleares","Jaén","La Coruña",
-  "La Rioja","Las Palmas","León","Lérida","Lugo","Madrid","Málaga","Melilla",
-  "Murcia","Navarra","Orense","Palencia","Pontevedra","Salamanca","Sta Cruz de Tenerife",
-  "Segovia","Sevilla","Soria","Tarragona","Teruel","Toledo","Valencia",
-  "Valladolid","Vizcaya","Zamora","Zaragoza"
-];
-
-// Elementos DOM
-const inputLugar = document.getElementById("input-lugar");
-const btnBuscarLugar = document.getElementById("btn-buscar-lugar");
-const buscadorList = document.createElement("ul");
-buscadorList.className = "suggestions-list";
-inputLugar.parentNode.appendChild(buscadorList);
-
-// Función para normalizar texto (elimina acentos y pasa a minúsculas)
-function normalizar(texto) {
-  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
-}
-
-// Autocompletar local para provincias
-inputCity.addEventListener("input", () => {
-  const query = inputCity.value.trim().toLowerCase();
-  const lista = document.getElementById("suggestions");
-  lista.innerHTML = "";
-  if (!query) return;
-
-  const matches = provinciasES.filter(p => p.toLowerCase().includes(query));
-  matches.forEach(provincia => {
-    const li = document.createElement("li");
-    li.textContent = provincia;
-    li.addEventListener("click", () => {
-      inputCity.value = provincia;
-      lista.innerHTML = "";
-      // Aquí puedes llamar a tu función de mostrar clima si quieres más adelante
-    });
-    lista.appendChild(li);
-  });
-});
-
-// Cerrar lista al hacer click fuera
-document.addEventListener("click", (e) => {
-  if (!selector.contains(e.target)) {
-    document.getElementById("suggestions").innerHTML = "";
-  }
-});
-
-// Traducción de "Lugar:" y botón "Buscar"
-function actualizarIdiomaLugar(lang) {
-  const textos = {
-    es: { label: "Lugar:", boton: "Buscar" },
-    ca: { label: "Lloc:", boton: "Cercar" },
-    gl: { label: "Lugar:", boton: "Buscar" },
-    eu: { label: "Lekua:", boton: "Bilatu" }
-  };
-  const t = textos[lang] || textos.es;
-  document.getElementById("label-lugar").textContent = t.label;
-  btnBuscarLugar.textContent = t.boton;
-}
-
-// Integrar con cambiarIdioma
-const originalCambiarIdioma2 = cambiarIdioma;
-cambiarIdioma = function(lang){
-  originalCambiarIdioma2(lang);
-  actualizarIdiomaLugar(lang);
-};
-
-// Evento de botón Buscar (solo ejemplo)
-btnBuscarLugar.addEventListener("click", () => {
-  const valor = inputLugar.value.trim();
-  if (valor) alert(`Buscando: ${valor}`);
-});
 </script>
 </body>
 </html>
