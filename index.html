@@ -1,3 +1,4 @@
+```html name=index.html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -25,7 +26,7 @@ input, button { padding: 10px; margin: 5px; font-size: 1em; border-radius: 5px; 
 button { background-color: #3498db; color: white; border: none; cursor: pointer; transition: background-color 0.2s; }
 button:hover { background-color: #2980b9; }
 
-#modo-toggle { position: fixed; right: clamp(10px, 2vw, 24px); bottom: clamp(10px, 2vw, 24px); font-size: clamp(1.25rem, 0.9rem + 1vw, 1.75rem); background: none; border: none; cursor: pointer; color: inherit; z-index: 100; }
+#modo-toggle { position: fixed; right: clamp(10px, 2vw, 24px); bottom: clamp(10px, 2vw, 24px); font-size: clamp(1.25rem, 0.9rem + 1vw, 1.75rem); background: none; border: none; cursor: pointer; color: inherit; }
 #modo-toggle:focus { outline: 2px solid #3498db; }
 
 .calendar-container { max-width: 90%; margin: 20px auto; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
@@ -105,18 +106,40 @@ body.modo-oscuro .firma { color: #aaa; }
   cursor: pointer;
 }
 
+/* Desplegable sugerencias ciudad */
 .suggestions-list {
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
+  min-width: 100%;
   max-height: 150px;
   overflow-y: auto;
-  background-color: rgba(255,255,255,0.9);
+  background: #fff !important;
+  color: #111 !important;
   border: 1px solid #ccc;
   border-radius: 4px;
   z-index: 10;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-top: 2px;
+  padding: 0;
+  list-style: none;
 }
+.suggestions-list li {
+  padding: 8px 12px;
+  cursor: pointer;
+  color: #111 !important;
+  background: #fff !important;
+  transition: background-color 0.2s, color 0.2s;
+}
+.suggestions-list li.active,
+.suggestions-list li:hover {
+  background-color: #3498db !important;
+  color: #fff !important;
+}
+
+/* --- Fin sugerencias ciudad --- */
+
 #weather-temp {
   font-size: 1.8em;
   font-weight: bold;
@@ -126,7 +149,6 @@ body.modo-oscuro .firma { color: #aaa; }
   width: 60px;
   text-align: right;
 }
-
 #weather-emoji {
   display: inline-block;
   width: 45px;
@@ -140,98 +162,103 @@ body.modo-oscuro .firma { color: #aaa; }
 }
 </style>
 </head>
-<body>
+<body aria-label="Calculadora de tiempo" role="main">
 
-<h1 class="texto-azul" id="titulo"></h1>
+<h1 class="texto-azul" id="titulo" tabindex="0" aria-label="Título principal"></h1>
 
-<div id="idiomas">
-  <img src="ESP.png" alt="Español" data-lang="es" onclick="cambiarIdioma('es')" title="Español">
-  <img src="CAT.png" alt="Català" data-lang="ca" onclick="cambiarIdioma('ca')" title="Català">
-  <img src="GAL.png" alt="Galego" data-lang="gl" onclick="cambiarIdioma('gl')" title="Galego">
-  <img src="EUS.png" alt="Euskera" data-lang="eu" onclick="cambiarIdioma('eu')" title="Euskera">
+<div id="idiomas" aria-label="Selector de idioma" role="radiogroup">
+  <img src="ESP.png" alt="Español" data-lang="es" onclick="cambiarIdioma('es')" title="Español" role="radio" aria-checked="false" tabindex="0">
+  <img src="CAT.png" alt="Català" data-lang="ca" onclick="cambiarIdioma('ca')" title="Català" role="radio" aria-checked="false" tabindex="0">
+  <img src="GAL.png" alt="Galego" data-lang="gl" onclick="cambiarIdioma('gl')" title="Galego" role="radio" aria-checked="false" tabindex="0">
+  <img src="EUS.png" alt="Euskera" data-lang="eu" onclick="cambiarIdioma('eu')" title="Euskera" role="radio" aria-checked="false" tabindex="0">
 </div>
 
-<div class="reloj texto-azul" id="reloj"></div>
-<div class="zona" id="zonaHoraria"></div>
-<p id="semanaActual"></p>
+<div class="reloj texto-azul" id="reloj" aria-live="polite" aria-atomic="true"></div>
+<div class="zona" id="zonaHoraria" aria-live="polite"></div>
+<p id="semanaActual" aria-live="polite"></p>
 
-<div id="weather-widget" class="weather-widget-seccion">
-<div class="weather-main">
-  <span id="weather-temp"></span>
-  <span id="weather-emoji"></span>
-  <div class="weather-info">
-    <span id="city-name" class="texto-azul"></span>
-    <small id="details"></small>
+<div id="weather-widget" class="weather-widget-seccion" aria-label="Widget del tiempo" role="region">
+  <div class="weather-main" aria-label="Información meteorológica principal" role="group">
+    <span id="weather-temp" class="texto-azul" aria-label="Temperatura actual"></span>
+    <span id="weather-emoji" aria-label="Icono meteorológico"></span>
+    <div class="weather-info" aria-label="Información de ciudad y detalles">
+      <span id="city-name" class="texto-azul" aria-label="Ciudad"></span>
+      <small id="details" aria-label="Detalles del tiempo"></small>
+    </div>
   </div>
-</div>
 
   <!-- Bloque de búsqueda integrado -->
-  <div class="city-search">
+  <div class="city-search" aria-label="Buscador de ciudad" role="search">
     <label id="labelLugar" for="city-input">Lugar:</label>
-    <input type="text" id="city-input" placeholder="Escribir ciudad..." autocomplete="off" />
-    <ul id="suggestions" class="suggestions-list"></ul>
-    <button id="save-city">Buscar</button>
+    <input type="text" id="city-input" placeholder="Escribir ciudad..." autocomplete="off"
+     aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="suggestions" aria-label="Campo de búsqueda de ciudad" />
+    <ul id="suggestions" class="suggestions-list" role="listbox" aria-label="Sugerencias de ciudad"></ul>
+    <button id="save-city" aria-label="Buscar ciudad">Buscar</button>
   </div>
 </div>
 
-<div class="calendar-container">
-  <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230b8043" style="border:solid 1px #777" frameborder="0" scrolling="no"></iframe>
+<div class="calendar-container" aria-label="Calendario de festivos" role="region">
+  <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyaW8uZXM&color=%230B8043"
+    style="border:solid 1px #777" width="100%" height="300" frameborder="0" scrolling="no" title="Calendario Festivos" aria-label="Calendario de festivos"></iframe>
 </div>  
 
 <!-- Resto de secciones -->
-<div class="seccion">
-  <h3 class="texto-azul" id="h3Semana"></h3>
-  <input type="date" id="fecha">
-  <button id="btnCalcularSemana" onclick="calcularSemana()"></button>
-  <button id="btnResetSemana" onclick="resetearFormulario()"></button>
-  <div class="resultado" id="resultado"></div>
-  <p class="error" id="errorSemana"><span class="icono">⚠️</span></p>
+<div class="seccion" aria-label="Cálculo de número de semana" role="region">
+  <h3 class="texto-azul" id="h3Semana" tabindex="0"></h3>
+  <input type="date" id="fecha" aria-label="Fecha para calcular semana">
+  <button id="btnCalcularSemana" onclick="calcularSemana()" aria-label="Calcular semana"></button>
+  <button id="btnResetSemana" onclick="resetearFormulario()" aria-label="Restablecer cálculo de semana"></button>
+  <div class="resultado" id="resultado" aria-live="polite"></div>
+  <p class="error" id="errorSemana" aria-live="assertive"><span class="icono">⚠️</span></p>
 </div>
 
-<div class="seccion">
-  <h3 class="texto-azul" id="h3Dias"></h3>
-  <input type="date" id="fechaInicio">
+<div class="seccion" aria-label="Cálculo de días entre dos fechas" role="region">
+  <h3 class="texto-azul" id="h3Dias" tabindex="0"></h3>
+  <input type="date" id="fechaInicio" aria-label="Fecha de inicio">
   <span id="a-label">a</span>
-  <input type="date" id="fechaFin">
-  <button id="btnCalcularDias" onclick="calcularDias()"></button>
-  <button id="btnResetDias" onclick="resetDias()"></button>
-  <p class="resultado" id="resultadoDias"></p>
-  <p class="error" id="errorDias"><span class="icono">⚠️</span></p>
+  <input type="date" id="fechaFin" aria-label="Fecha de fin">
+  <button id="btnCalcularDias" onclick="calcularDias()" aria-label="Calcular días"></button>
+  <button id="btnResetDias" onclick="resetDias()" aria-label="Restablecer cálculo de días"></button>
+  <p class="resultado" id="resultadoDias" aria-live="polite"></p>
+  <p class="error" id="errorDias" aria-live="assertive"><span class="icono">⚠️</span></p>
 </div>
 
-<div class="seccion">
-  <h3 class="texto-azul" id="h3Rango"></h3>
+<div class="seccion" aria-label="Cálculo de fechas de una semana" role="region">
+  <h3 class="texto-azul" id="h3Rango" tabindex="0"></h3>
   <label id="labelSemana" for="semanaInput"></label>
-  <input type="number" id="semanaInput" min="1" max="53">
-  <button id="btnMostrarRango" onclick="calcularRangoSemana()"></button>
-  <button id="btnResetRango" onclick="resetSemana()"></button>
-  <p class="resultado" id="resultadoSemana"></p>
-  <p class="error" id="errorRangoSemana"><span class="icono">⚠️</span></p>
+  <input type="number" id="semanaInput" min="1" max="53" aria-label="Número de semana">
+  <button id="btnMostrarRango" onclick="calcularRangoSemana()" aria-label="Mostrar rango de semana"></button>
+  <button id="btnResetRango" onclick="resetSemana()" aria-label="Restablecer cálculo de rango"></button>
+  <p class="resultado" id="resultadoSemana" aria-live="polite"></p>
+  <p class="error" id="errorRangoSemana" aria-live="assertive"><span class="icono">⚠️</span></p>
 </div>
 
-<button id="modo-toggle" onclick="toggleModo()" aria-label="Cambiar modo claro/oscuro">☀︎/☾</button> 
+<button id="modo-toggle" onclick="toggleModo()" aria-label="Cambiar modo claro/oscuro" title="Cambiar modo claro/oscuro">☀︎/☾</button> 
   
-<footer class="firma" id="footerFirma"></footer>
+<footer class="firma" id="footerFirma" tabindex="0" aria-label="Pie de página"></footer>
 
 <script>
-// --- Traducciones ---
+// --- Traducciones coherentes ---
 const traducciones = {
-  es: { lugarLabel: "Lugar:", buscarBtn: "Buscar", titulo: "Calculadora de tiempo",
+  es: {
+    lugarLabel: "Lugar:",
+    buscarBtn: "Buscar",
+    titulo: "Calculadora de tiempo",
     h3Semana: "Número de semana",
     btnCalcularSemana: "Calcular semana",
-    btnResetSemana: "Resetear",
+    btnResetSemana: "Restablecer",
     semanaDe: "{fecha} > Semana {semana}",
     diasEntre: "{total} días ({años} años, {meses} meses, {dias} días)",
     rangoSemana: "Semana {semana}: del {inicio} al {fin}",
     h3Dias: "Tiempo entre dos fechas",
     btnCalcularDias: "Calcular días",
-    btnResetDias: "Resetear",
+    btnResetDias: "Restablecer",
     h3Rango: "Fechas de una semana",
     labelSemana: "Semana del año (1-53):",
     btnMostrarRango: "Mostrar rango",
-    btnResetRango: "Resetear",
-    placeholderInicio: "Fecha inicio",
-    placeholderFin: "Fecha fin",
+    btnResetRango: "Restablecer",
+    placeholderInicio: "Fecha de inicio",
+    placeholderFin: "Fecha de fin",
     placeholderSemana: "Número de semana",
     errorFecha: "Introduce una fecha válida.",
     errorFechas: "Introduce fechas válidas en ambos campos.",
@@ -240,9 +267,12 @@ const traducciones = {
     horaActual: "Hora actual:",
     zonaHorariaTpl: "Hora local de España ({gmt})",
     semanaActual: "Hoy es {fecha} y estamos en la semana número {semana} del año.",
-    footer: "El sitio podría cometer errores, considera contrastar la información. Calculadora de tiempo V5.0 por DGCSe7en - Github"
+    footer: "El sitio podría contener errores, por favor contrasta la información. Calculadora de tiempo V5.0 por DGCSe7en - Github"
   },
-  ca: { lugarLabel: "Lloc:", buscarBtn: "Cercar", titulo: "Calculadora de temps",
+  ca: {
+    lugarLabel: "Lloc:",
+    buscarBtn: "Cercar",
+    titulo: "Calculadora de temps",
     h3Semana: "Número de setmana",
     btnCalcularSemana: "Calcular setmana",
     btnResetSemana: "Restablir",
@@ -254,10 +284,10 @@ const traducciones = {
     btnResetDias: "Restablir",
     h3Rango: "Dates d’una setmana",
     labelSemana: "Setmana de l’any (1-53):",
-    btnMostrarRango: "Mostrar interval",
+    btnMostrarRango: "Mostrar rang",
     btnResetRango: "Restablir",
-    placeholderInicio: "Data inici",
-    placeholderFin: "Data fi",
+    placeholderInicio: "Data d'inici",
+    placeholderFin: "Data de fi",
     placeholderSemana: "Número de setmana",
     errorFecha: "Introdueix una data vàlida.",
     errorFechas: "Introdueix dates vàlides en tots dos camps.",
@@ -266,9 +296,12 @@ const traducciones = {
     horaActual: "Hora actual:",
     zonaHorariaTpl: "Hora local d'Espanya ({gmt})",
     semanaActual: "Avui és {fecha} i estem a la setmana número {semana} de l’any.",
-    footer: "El lloc podria contenir errors, considera contrastar la informació. Calculadora de temps V5.0 per DGCSe7en - Github"
+    footer: "El lloc podria contenir errors, si us plau contrasta la informació. Calculadora de temps V5.0 per DGCSe7en - Github"
   },
-  gl: { lugarLabel: "Lugar:", buscarBtn: "Buscar", titulo: "Calculadora de tempo",
+  gl: {
+    lugarLabel: "Lugar:",
+    buscarBtn: "Buscar",
+    titulo: "Calculadora de tempo",
     h3Semana: "Número de semana",
     btnCalcularSemana: "Calcular semana",
     btnResetSemana: "Restablecer",
@@ -280,10 +313,10 @@ const traducciones = {
     btnResetDias: "Restablecer",
     h3Rango: "Datas dunha semana",
     labelSemana: "Semana do ano (1-53):",
-    btnMostrarRango: "Mostrar intervalo",
+    btnMostrarRango: "Mostrar rango",
     btnResetRango: "Restablecer",
-    placeholderInicio: "Data inicio",
-    placeholderFin: "Data fin",
+    placeholderInicio: "Data de inicio",
+    placeholderFin: "Data de fin",
     placeholderSemana: "Número de semana",
     errorFecha: "Introduce unha data válida.",
     errorFechas: "Introduce datas válidas en ambos campos.",
@@ -292,9 +325,12 @@ const traducciones = {
     horaActual: "Hora actual:",
     zonaHorariaTpl: "Hora local de España ({gmt})",
     semanaActual: "Hoxe é {fecha} e estamos na semana número {semana} do ano.",
-    footer: "O sitio podería conter erros, considera contrastar a información. Calculadora de tempo V5.0 por DGCSe7en - Github"
+    footer: "O sitio pode conter erros, por favor contrasta a información. Calculadora de tempo V5.0 por DGCSe7en - Github"
   },
-  eu: { lugarLabel: "Lekua:", buscarBtn: "Bilatu", titulo: "Denboraren kalkulagailua",
+  eu: {
+    lugarLabel: "Lekua:",
+    buscarBtn: "Bilatu",
+    titulo: "Denboraren kalkulagailua",
     h3Semana: "Aste zenbakia",
     btnCalcularSemana: "Astea kalkulatu",
     btnResetSemana: "Berrezarri",
@@ -316,9 +352,9 @@ const traducciones = {
     errorFinAntesInicio: "Amaiera data ezin da hasierakoa baino lehenagokoa izan.",
     errorSemana: "Sartu 1 eta 53 arteko aste-zenbaki baliozkoa.",
     horaActual: "Ordu orain:",
-    zonaHorariaTpl: "Espainiako tokiko ordua ({gmt})",
+    zonaHorariaTpl: "Espainiako ordu lokala ({gmt})",
     semanaActual: "Gaur {fecha} da eta urteko {semana}. astean gaude.",
-    footer: "Guneak akatsak izan ditzake, kontrastatu informazioa. Denboraren kalkulagailua V5.0 DGCSe7en - Github"
+    footer: "Guneak akatsak izan ditzake, mesedez kontrastatu informazioa. Denboraren kalkulagailua V5.0 DGCSe7en - Github"
   }
 };
 
@@ -384,6 +420,8 @@ window.onload=function(){
     document.body.classList.add('modo-claro');
   }
   cambiarIdioma('es');
+  // ARIA: inicializa radios idioma
+  actualizarRadiosIdioma('es');
 };
 
 // --- Cambio de idioma ---
@@ -391,9 +429,15 @@ function cambiarIdioma(lang) {
   document.documentElement.lang = lang;
   document.querySelectorAll('#idiomas img').forEach(img => {
     img.classList.remove('active');
+    img.setAttribute("aria-checked", "false");
   });
   const img = document.querySelector(`#idiomas img[data-lang="${lang}"]`);
-  if (img) img.classList.add('active');
+  if (img) {
+    img.classList.add('active');
+    img.setAttribute("aria-checked", "true");
+    img.focus();
+  }
+  actualizarRadiosIdioma(lang);
   const t = traducciones[lang];
   if (!t) return;
   document.getElementById("labelLugar").textContent = t.lugarLabel;
@@ -423,6 +467,12 @@ function cambiarIdioma(lang) {
   });
   actualizarReloj();
   actualizarIdiomaCiudad(lang);
+}
+
+function actualizarRadiosIdioma(lang) {
+  document.querySelectorAll('#idiomas img').forEach(img => {
+    img.setAttribute("aria-checked", img.dataset.lang === lang ? "true" : "false");
+  });
 }
 
 // --- Funciones de cálculo ---
@@ -570,6 +620,8 @@ async function obtenerClima(ciudad) {
     if (!resultados[0]) {
       cityName.textContent = traducir("Ciudad no encontrada", idioma);
       details.textContent = "";
+      document.getElementById("weather-temp").textContent = "";
+      document.getElementById("weather-emoji").textContent = "";
       return;
     }
     const { lat, lon } = resultados[0];
@@ -589,10 +641,11 @@ async function obtenerClimaPorCoordenadas(lat, lon) {
     if (data.cod !== 200) {
       cityName.textContent = traducir("Ciudad no encontrada", idioma);
       details.textContent = "";
-      document.getElementById("weather-temp").textContent = `${Math.round(data.main.temp)}°`;
+      document.getElementById("weather-temp").textContent = "";
+      document.getElementById("weather-emoji").textContent = "";
       return;
     }
-
+    document.getElementById("weather-temp").textContent = `${Math.round(data.main.temp)}°`;
     cityName.textContent = `${data.name}, ${data.sys.country}`;
     details.textContent = `${data.weather[0].description} • ${traducir("Viento", idioma)}: ${data.wind.speed} m/s • ${traducir("Min", idioma)}: ${Math.round(data.main.temp_min)}° / ${traducir("Max", idioma)}: ${Math.round(data.main.temp_max)}°`;
     document.getElementById("weather-emoji").textContent = getEmoji(data.weather[0].main);
@@ -625,39 +678,128 @@ function traducir(texto, idioma) {
   return diccionario[texto]?.[idioma] || texto;
 }
 
-// Autocompletar
+// --- Autocompletar ciudad accesible ---
 let timeoutId;
+let selectedIndex = -1;
+let currentSuggestions = [];
+
 inputCity.addEventListener("input", () => {
   clearTimeout(timeoutId);
   timeoutId = setTimeout(async () => {
     const query = inputCity.value.trim();
     const lista = document.getElementById("suggestions");
     lista.innerHTML = "";
+    selectedIndex = -1;
+    currentSuggestions = [];
+    inputCity.setAttribute("aria-expanded", "false");
     if (!query) return;
     const resultados = await buscarCiudad(query);
-    resultados.forEach(ciudad => {
-      const li = document.createElement("li");
-      li.textContent = `${ciudad.name}, ${ciudad.country}`;
-      li.addEventListener("click", () => {
-        inputCity.value = ciudad.name;
-        obtenerClima(ciudad.name);
-        lista.innerHTML = "";
+    currentSuggestions = resultados;
+    if (resultados.length > 0) {
+      resultados.forEach((ciudad, idx) => {
+        const li = document.createElement("li");
+        li.textContent = `${ciudad.name}, ${ciudad.country}`;
+        li.setAttribute("role", "option");
+        li.setAttribute("id", "suggestion-" + idx);
+        li.setAttribute("tabindex", "-1");
+        li.addEventListener("mousedown", e => {
+          e.preventDefault();
+          seleccionarCiudadSugerencia(idx);
+        });
+        lista.appendChild(li);
       });
-      lista.appendChild(li);
-    });
+      inputCity.setAttribute("aria-expanded", "true");
+    }
   }, 300);
 });
 
+// Selección con teclado
+inputCity.addEventListener("keydown", (e) => {
+  const lista = document.getElementById("suggestions");
+  if (!currentSuggestions.length) return;
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    selectedIndex = (selectedIndex + 1) % currentSuggestions.length;
+    actualizarSeleccion();
+  } else if (e.key === "ArrowUp") {
+    e.preventDefault();
+    selectedIndex = (selectedIndex - 1 + currentSuggestions.length) % currentSuggestions.length;
+    actualizarSeleccion();
+  } else if (e.key === "Enter") {
+    if (selectedIndex >= 0 && currentSuggestions[selectedIndex]) {
+      e.preventDefault();
+      seleccionarCiudadSugerencia(selectedIndex);
+    }
+  } else if (e.key === "Escape") {
+    lista.innerHTML = "";
+    selectedIndex = -1;
+    currentSuggestions = [];
+    inputCity.setAttribute("aria-expanded", "false");
+  }
+});
+
+function actualizarSeleccion() {
+  const lista = document.getElementById("suggestions");
+  Array.from(lista.children).forEach((li, idx) => {
+    if (idx === selectedIndex) {
+      li.classList.add("active");
+      li.setAttribute("aria-selected", "true");
+      li.scrollIntoView({ block: "nearest" });
+    } else {
+      li.classList.remove("active");
+      li.setAttribute("aria-selected", "false");
+    }
+  });
+}
+
+function seleccionarCiudadSugerencia(idx) {
+  if (!currentSuggestions[idx]) return;
+  inputCity.value = currentSuggestions[idx].name;
+  obtenerClima(currentSuggestions[idx].name);
+  document.getElementById("suggestions").innerHTML = "";
+  selectedIndex = -1;
+  currentSuggestions = [];
+  inputCity.setAttribute("aria-expanded", "false");
+  inputCity.focus();
+}
+
+// Cerrar sugerencias si haces click fuera
+document.addEventListener("mousedown", (e) => {
+  const searchDiv = document.querySelector('.city-search');
+  if (!searchDiv.contains(e.target)) {
+    document.getElementById("suggestions").innerHTML = "";
+    selectedIndex = -1;
+    currentSuggestions = [];
+    inputCity.setAttribute("aria-expanded", "false");
+  }
+});
+
+// Selección idioma con teclado
+document.querySelectorAll('#idiomas img').forEach(img => {
+  img.addEventListener("keydown", function(e) {
+    const idiomas = Array.from(document.querySelectorAll('#idiomas img'));
+    let idx = idiomas.indexOf(document.activeElement);
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      idiomas[(idx + 1) % idiomas.length].focus();
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      idiomas[(idx - 1 + idiomas.length) % idiomas.length].focus();
+    } else if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      img.click();
+    }
+  });
+});
+
+// Al pulsar Buscar, cerrar el desplegable
 saveBtn.addEventListener("click", () => {
   const ciudad = inputCity.value.trim();
   if (ciudad) obtenerClima(ciudad);
   document.getElementById("suggestions").innerHTML = "";
-});
-
-document.addEventListener("click", (e) => {
-  if (!document.querySelector('.city-search').contains(e.target)) {
-    document.getElementById("suggestions").innerHTML = "";
-  }
+  selectedIndex = -1;
+  currentSuggestions = [];
+  inputCity.setAttribute("aria-expanded", "false");
 });
 
 // Cambiar placeholder según idioma
@@ -684,3 +826,4 @@ function actualizarIdiomaCiudad(idioma) {
 </script>
 </body>
 </html>
+```
