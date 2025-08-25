@@ -43,7 +43,7 @@ body.modo-oscuro .firma { color: #aaa; }
 #weather-icon {width: 60px; height: 60px;}
 #temperature {font-size: 1.8rem; font-weight: bold;}
 .weather-info {display: flex; flex-direction: column;}
-#city-name {font-size: 1.2rem; font-weight: 600; color: color: inherit; font-weight: bold;}
+#city-name {font-size: 1.2rem; font-weight: 600; color: inherit; font-weight: bold;}
 #details { font-size: 0.9rem; color: inherit; }
 #city-name { font-size: 1.2rem; font-weight: bold; color: inherit; }
 .icon-btn {background: none; border: none; font-size: 1.2rem; cursor: pointer; margin-left: 10px;}
@@ -70,10 +70,6 @@ body.modo-oscuro .firma { color: #aaa; }
 <div class="zona" id="zonaHoraria"></div>
 <p id="semanaActual"></p>
 
-<div class="calendar-container">
-<iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230b8043" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
-</div>  
-
 <div id="weather-widget">
   <div class="weather-main">
     <img id="weather-icon" alt="icono clima" />
@@ -90,6 +86,10 @@ body.modo-oscuro .firma { color: #aaa; }
   <button id="save-city">OK</button>
 </div>
 </div>
+
+<div class="calendar-container">
+<iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showCalendars=0&showTitle=0&title=Festivos&showTz=0&showDate=0&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230b8043" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+</div>  
 
 <div class="seccion">
   <h3 class="texto-azul" id="h3Semana"></h3>
