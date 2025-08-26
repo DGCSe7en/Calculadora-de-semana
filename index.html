@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de tiempo</title>
+<title>Tiempo360</title>
 <link rel="icon" type="image/png" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
 <style>
 body { font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; margin: 0; transition: background-color 0.3s, color 0.3s, background-image 0.5s ease-in-out; }
 body.modo-claro { background-image: url('./LIGHT.webp'); background-size: cover; background-position: center; background-repeat: no-repeat; color: #1a1a1a; }
@@ -181,11 +182,52 @@ body.modo-oscuro .firma { color: #aaa; }
 #city-name {
   font-weight: bold;
 }
+.titulo-con-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  margin-bottom: 20px;
+}
+
+.titulo-logo {
+  height: 1em;
+  width: auto;
+  transition: filter 0.3s;
+  display: block;
+}
+
+h1.texto-azul {
+  font-family: 'Montserrat', 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 96px;
+  margin: 0;
+  letter-spacing: 1px;
+  color: inherit;
+  transition: color 0.3s;
+  line-height: 1;
+}
+
+@media (max-width: 600px) {
+  h1.texto-azul {
+    font-size: 8vw;
+  }
+  .titulo-logo {
+    height: 1em;
+    min-height: 36px;
+  }
+  .titulo-con-logo {
+    gap: 16px;
+  }
+}
 </style>
 </head>
-<body aria-label="Calculadora de tiempo" role="main">
+<body aria-label="Tiempo 360" role="main">
 
-<h1 class="texto-azul" id="titulo" tabindex="0" aria-label="Título principal"></h1>
+<div class="titulo-con-logo">
+  <img src="Logoweb_Clear.png" id="titulo-logo" class="titulo-logo" alt="Logotipo" />
+  <h1 class="texto-azul" id="titulo" tabindex="0" aria-label="Título principal"></h1>
+</div>
 
 <div id="idiomas" aria-label="Selector de idioma" role="radiogroup">
   <img src="ESP.png" alt="Español" data-lang="es" onclick="cambiarIdioma('es')" title="Español" role="radio" aria-checked="false" tabindex="0">
@@ -278,7 +320,7 @@ const traducciones = {
     horaActual: "Hora actual:",
     zonaHorariaTpl: "Hora local de España ({gmt})",
     semanaActual: "Hoy es {fecha} y estamos en la semana número {semana} del año.",
-    footer: "El sitio podría contener errores, por favor contrasta la información. Calculadora de tiempo V5.0 por DGCSe7en - Github"
+    footer: "El sitio podría contener errores, por favor contrasta la información. Tiempo360 desarrollado con amor, 2025 - Todos los derechos reservados."
   },
   ca: {
     lugarLabel: "Lloc:",
@@ -305,7 +347,7 @@ const traducciones = {
     horaActual: "Hora actual:",
     zonaHorariaTpl: "Hora local d'Espanya ({gmt})",
     semanaActual: "Avui és {fecha} i estem a la setmana número {semana} de l’any.",
-    footer: "El lloc podria contenir errors, si us plau contrasta la informació. Calculadora de temps V5.0 per DGCSe7en - Github"
+    footer: "El lloc podria contenir errors, si us plau contrasta la informació. Tiempo360 desenvolupat amb amor, 2025 - Tots els drets reservats."
   },
   gl: {
     lugarLabel: "Lugar:",
@@ -332,7 +374,7 @@ const traducciones = {
     horaActual: "Hora actual:",
     zonaHorariaTpl: "Hora local de España ({gmt})",
     semanaActual: "Hoxe é {fecha} e estamos na semana número {semana} do ano.",
-    footer: "O sitio pode conter erros, por favor contrasta a información. Calculadora de tempo V5.0 por DGCSe7en - Github"
+    footer: "O sitio pode conter erros, por favor contrasta a información. Tiempo360 desenvolvido con amor, 2025 - Todos os dereitos reservados."
   },
   eu: {
     lugarLabel: "Lekua:",
@@ -359,10 +401,20 @@ const traducciones = {
     horaActual: "Ordu orain:",
     zonaHorariaTpl: "Espainiako ordu lokala ({gmt})",
     semanaActual: "Gaur {fecha} da eta urteko {semana}. astean gaude.",
-    footer: "Guneak akatsak izan ditzake, mesedez kontrastatu informazioa. Denboraren kalkulagailua V5.0 DGCSe7en - Github"
+    footer: "Guneak akatsak izan ditzake, mesedez kontrastatu informazioa. Tiempo360 maitasunez garatua, 2025 - Eskubide guztiak erreserbatuta."
   }
 };
 
+function actualizarLogoModo() {
+  const logo = document.getElementById('titulo-logo');
+  if (!logo) return;
+  if (document.body.classList.contains('modo-oscuro')) {
+    logo.src = 'Logoweb_Dark.png';
+  } else {
+    logo.src = 'Logoweb_Clear.png';
+  }
+}  
+  
 function formatoFecha(fecha){ 
   const dia=String(fecha.getDate()).padStart(2,'0'); 
   const mes=String(fecha.getMonth()+1).padStart(2,'0'); 
@@ -413,6 +465,7 @@ function toggleModo(){
     body.classList.add('modo-oscuro');
     localStorage.setItem('modo','oscuro');
   }
+  actualizarLogoModo();
 }
 
 window.onload=function(){
@@ -424,6 +477,7 @@ window.onload=function(){
   }
   cambiarIdioma('es');
   actualizarRadiosIdioma('es');
+  actualizarLogoModo();
 };
 
 // --- Cambio de idioma ---
