@@ -7,43 +7,46 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="favicon.png">
 <style>
-/* --- Fuente global --- */
+/* --- Fuente global y layout centrado --- */
 body {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
-  padding: 0;
+  padding: 20px 0 40px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
   min-height: 100vh;
   color: #1a1a1a;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   transition: color 0.3s, background-image 0.3s;
+  box-sizing: border-box;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
 /* --- Título con logo --- */
 .titulo-con-logo {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 1rem;
+  gap: 10px;
   text-align: center;
   margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-.titulo-con-logo h1 {
-  font-weight: 700;
-  font-size: clamp(28px, 5vw, 46px);
-  margin: 0;
-  line-height: 1;
-  letter-spacing: 1px;
-  color: inherit;
 }
 .titulo-logo {
-  height: 1em; /* Escala automáticamente con la altura del h1 */
-  width: auto;
+  width: clamp(180px, 30vw, 320px);
+  height: auto;
   display: block;
   transition: filter 0.3s;
 }
@@ -60,17 +63,22 @@ body.modo-oscuro {
 body.modo-claro .texto-azul { color: #0D47A1; }
 body.modo-oscuro .texto-azul { color: #90D5FF; }
 
-/* --- Textos generales --- */
-h1, h3 { margin: 10px 0; }
-.reloj { font-size: 1.8em; font-weight: bold; margin: 10px 0; }
-.zona, #semanaActual { font-size: 1em; font-weight: normal; margin: 10px 0; color: inherit; }
+/* --- H3 proporcionales al calendario --- */
+.seccion h3 {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  text-align: center;
+  max-width: 100%;
+  margin: 10px auto;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
 
-/* --- Secciones --- */
+/* --- Secciones centradas y responsivas --- */
 .seccion {
-  margin: 20px auto;
+  margin: 15px 0;
   padding: 15px;
   border-radius: 8px;
-  max-width: 600px;
+  width: 100%;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   background-color: rgba(255,255,255,0.9);
   transition: background-color 0.3s;
@@ -110,10 +118,13 @@ button:hover { background-color: #2980b9; }
 body.modo-claro #modo-toggle { color: #111; }
 body.modo-oscuro #modo-toggle { color: #fff; }
 
-/* --- Calendario --- */
+/* --- Calendario responsivo --- */
 .calendar-container {
-  max-width: 600px;
-  margin: 20px auto;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 280px;
+  max-height: 500px;
+  margin: 20px 0;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -122,11 +133,24 @@ body.modo-oscuro #modo-toggle { color: #fff; }
 body.modo-oscuro .calendar-container { background-color: rgba(50,50,50,0.9); }
 .calendar-container iframe {
   width: 100%;
-  min-width: 250px;
-  height: 350px;
+  height: 100%;
   border: none;
   display: block;
-  margin: 0 auto;
+}
+
+/* --- Reloj --- */
+.reloj {
+  font-size: 1.8em;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+/* --- Zona horaria --- */
+.zona, #semanaActual {
+  font-size: 1em;
+  font-weight: normal;
+  margin: 10px 0;
+  color: inherit;
 }
 
 /* --- Firma / pie de página --- */
@@ -175,17 +199,18 @@ body.modo-oscuro .firma { color: #aaa; }
   border: 2px solid #3498db;
 }
 
-/* --- Responsive --- */
+/* --- Responsive general --- */
 @media(max-width:480px) {
-  .reloj { font-size: 1.5em; }
+  body { padding-top: 15px; }
+  .reloj { font-size: 1.4em; }
   input, button { width: 95%; }
-  .calendar-container iframe { height: 280px; min-width: 0; }
-  .titulo-con-logo { flex-direction: column; gap: 12px; }
-  .titulo-logo { height: 1.2em; }
+  .calendar-container { min-height: 260px; }
+  .titulo-con-logo { gap: 8px; }
 }
+
 @media(min-width:481px) and (max-width:768px) {
   input, button { max-width: 90%; }
-  .calendar-container iframe { height: 320px; min-width: 0; }
+  .calendar-container { min-height: 320px; }
 }
 </style>
 </head>
