@@ -1,2 +1,2 @@
-# Calculadora-de-tiempo
-Calculadora de semana, buscador de número de semana del año con introducción de fechas, número de días entre dos fechas, rango de fechas de una semana, calendario de festivos y hora local actual
+# Tiempo360
+Hora actual, widget de clima con selección de ciudad, calculadora de semana, intervalo de tiempo entre fechas, correspondencia de fechas por semanama. Traducción y modo claro/oscuro.
