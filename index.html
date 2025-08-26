@@ -426,27 +426,27 @@ function mostrarError(inputId,errorId,mensaje){
 
 // --- Toggle modo claro/oscuro ---
 function toggleModo(){
-  const body=document.body;
+  const body = document.body;
   if(body.classList.contains('modo-oscuro')){
     body.classList.remove('modo-oscuro');
     body.classList.add('modo-claro');
     localStorage.setItem('modo','claro');
-  }else{
+  } else {
     body.classList.remove('modo-claro');
     body.classList.add('modo-oscuro');
     localStorage.setItem('modo','oscuro');
-    actualizarLogo();
   }
+  actualizarLogo(); // <--- Siempre
 }
 
 window.onload=function(){
   const modoGuardado=localStorage.getItem('modo');
   if(modoGuardado==='oscuro'){
-    document.body.classList.add('modo-oscuro');
-  } else {
-    document.body.classList.add('modo-claro');
-    actualizarLogo();
-  }
+  document.body.classList.add('modo-oscuro');
+} else {
+  document.body.classList.add('modo-claro');
+}
+actualizarLogo(); // <--- Siempre
   cambiarIdioma('es');
   actualizarRadiosIdioma('es');
 };
