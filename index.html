@@ -33,7 +33,7 @@ body.modo-oscuro {
 
 /* Logo encabezado */
 header img {
-  max-width: 300px; /* x1.5 más grande */
+  max-width: 200px; /* x1.5 más grande */
   height: auto;
   margin: 20px auto;
   display: block;
@@ -239,21 +239,33 @@ footer.firma {
 <div class="zona" id="zonaHoraria" aria-live="polite"></div>
 <p id="semanaActual" aria-live="polite"></p>
 
+<!-- Widget del tiempo -->
 <div id="weather-widget" class="weather-widget-seccion" aria-label="Widget del tiempo" role="region">
+  
+  <!-- Parte principal -->
   <div class="weather-main" aria-label="Información meteorológica principal" role="group">
-    <span id="weather-temp" class="texto-azul" aria-label="Temperatura actual"></span>
-    <span id="weather-emoji" aria-label="Icono meteorológico"></span>
-    <div class="weather-info" aria-label="Información de ciudad y detalles">
-      <span id="city-name" class="texto-azul" aria-label="Ciudad"></span>
-      <small id="details" aria-label="Detalles del tiempo"></small>
+    
+    <!-- Fila temp + emoji -->
+    <div class="weather-temp-row">
+      <span id="weather-temp" class="texto-azul" aria-label="Temperatura actual"></span>
+      <span id="weather-emoji" aria-label="Icono meteorológico"></span>
     </div>
+    
+    <!-- Ciudad -->
+    <span id="city-name" class="texto-azul" aria-label="Ciudad"></span>
+    
+    <!-- Detalles -->
+    <small id="details" aria-label="Detalles del tiempo"></small>
   </div>
 
+  <!-- Buscador de ciudad -->
   <div class="city-search" aria-label="Buscador de ciudad" role="search">
     <input type="text" id="city-input" placeholder="Introduce una ciudad..." autocomplete="off"
-     aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="suggestions" aria-label="Campo de búsqueda de ciudad" />
+      aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="suggestions"
+      aria-label="Campo de búsqueda de ciudad" />
     <ul id="suggestions" class="suggestions-list" role="listbox" aria-label="Sugerencias de ciudad"></ul>
   </div>
+
 </div>
 
 <div class="calendar-container" aria-label="Calendario de festivos" role="region">
