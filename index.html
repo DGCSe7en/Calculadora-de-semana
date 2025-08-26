@@ -369,6 +369,23 @@ const traducciones = {
   }
 };
 
+function actualizarLogo() {
+  const logo = document.getElementById('titulo-img');
+  if (!logo) return;
+
+  // Detectar idioma activo
+  const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
+  const t = traducciones[lang];
+
+  // Cambiar imagen según modo
+  logo.src = document.body.classList.contains('modo-oscuro') 
+    ? 'Logoweb_Dark.png' 
+    : 'Logoweb_Clear.png';
+
+  // Actualizar alt según idioma
+  logo.alt = t.tituloAlt || "Tiempo360 - El tiempo desde todas sus dimensiones...";
+}
+
 function formatoFecha(fecha){ 
   const dia=String(fecha.getDate()).padStart(2,'0'); 
   const mes=String(fecha.getMonth()+1).padStart(2,'0'); 
