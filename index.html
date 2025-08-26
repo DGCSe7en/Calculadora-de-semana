@@ -3,235 +3,120 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tiempo360</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+<title>Calculadora de tiempo</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <style>
-/* --- Fuente global --- */
-body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  padding: 20px 0 40px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 100vh;
-  color: #1a1a1a;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  transition: color 0.3s, background-image 0.3s;
-  box-sizing: border-box;
-}
+body { font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; margin: 0; transition: background-color 0.3s, color 0.3s, background-image 0.5s ease-in-out; }
+body.modo-claro { background-image: url('./LIGHT.webp'); background-size: cover; background-position: center; background-repeat: no-repeat; color: #1a1a1a; }
+body.modo-oscuro { background-image: url('./DARK.webp'); background-size: cover; background-position: center; background-repeat: no-repeat; color: #e0e0e0; }
+.texto-azul { color: inherit; }
+body.modo-claro .texto-azul { color: #0D47A1 !important; }
+body.modo-oscuro .texto-azul { color: #90D5FF !important; }
 
-/* --- Contenedor principal --- */
-main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  max-width: 600px;
-  padding: 0 10px;
-  box-sizing: border-box;
-}
+h1, h3 { font-size: 1.2em; margin: 10px 0; }
+.reloj { font-size: 1.8em; font-weight: bold; margin: 10px 0; }
+.zona, #semanaActual { font-size: 1em; font-weight: normal; margin: 10px 0; color: inherit; }
 
-/* --- Título con logo --- */
-.titulo-con-logo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 20px;
-}
-.titulo-logo {
-  width: clamp(220px, 35vw, 360px); /* tamaño equilibrado */
-  height: auto;
-  display: block;
-  transition: filter 0.3s;
-}
+.seccion { margin: 20px auto; padding: 15px; border-radius: 8px; max-width: 600px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.9);}
+body.modo-oscuro .seccion { background-color: rgba(50,50,50,0.9); }
 
-/* --- Modo claro / oscuro --- */
-body.modo-claro {
-  background-image: url('./LIGHT.webp');
-  color: #1a1a1a;
-}
-body.modo-oscuro {
-  background-image: url('./DARK.webp');
-  color: #e0e0e0;
-}
-body.modo-claro .texto-azul { color: #0D47A1; }
-body.modo-oscuro .texto-azul { color: #90D5FF; }
-
-/* --- H3 uniformes --- */
-.seccion h3 {
-  font-size: clamp(1.4rem, 2.5vw, 1.8rem);
-  text-align: center;
-  margin: 10px auto;
-  padding: 0 10px;
-}
-
-/* --- Secciones (cajas) --- */
-.seccion {
-  margin: 15px 0;
-  padding: 15px;
-  border-radius: 10px;
-  width: 100%;
-  max-width: 800px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  background-color: rgba(255,255,255,0.9);
-  transition: background-color 0.3s;
-}
-body.modo-oscuro .seccion {
-  background-color: rgba(50,50,50,0.9);
-}
-
-/* --- Inputs y botones --- */
-input, button {
-  padding: 10px;
-  margin: 5px 0;
-  font-size: 1em;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  width: 90%;
-  max-width: 300px;
-  box-sizing: border-box;
-}
-button {
-  background-color: #3498db;
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
+input, button { padding: 10px; margin: 5px; font-size: 1em; border-radius: 5px; border: 1px solid #ccc; width: 90%; max-width: 300px; box-sizing: border-box;}
+button { background-color: #3498db; color: white; border: none; cursor: pointer; transition: background-color 0.2s; }
 button:hover { background-color: #2980b9; }
 
-/* --- Botón modo claro/oscuro --- */
-#modo-toggle {
-  position: fixed;
-  right: clamp(10px, 2vw, 24px);
-  bottom: clamp(10px, 2vw, 24px);
-  font-size: clamp(1.25rem, 0.9rem + 1vw, 1.75rem);
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-body.modo-claro #modo-toggle { color: #111; }
-body.modo-oscuro #modo-toggle { color: #fff; }
+#modo-toggle { position: fixed; right: clamp(10px, 2vw, 24px); bottom: clamp(10px, 2vw, 24px); font-size: clamp(1.25rem, 0.9rem + 1vw, 1.75rem); background: none; border: none; cursor: pointer; }
+#modo-toggle:focus { outline: 2px solid #3498db; }
 
-/* --- Calendario responsivo --- */
+/* --- Ajuste modo-toggle color según modo --- */
+body.modo-claro #modo-toggle {
+  color: #111;
+}
+body.modo-oscuro #modo-toggle {
+  color: #fff;
+}
+
 .calendar-container {
-  width: 100%;
-  max-width: 800px;
-  margin: 20px 0;
-  border-radius: 10px;
+  max-width: 600px;
+  margin: 20px auto;
+  border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   background-color: rgba(255,255,255,0.9);
 }
-body.modo-oscuro .calendar-container {
-  background-color: rgba(50,50,50,0.9);
-}
+body.modo-oscuro .calendar-container { background-color: rgba(50,50,50,0.9);}
 .calendar-container iframe {
   width: 100%;
-  height: 500px;
+  min-width: 250px;
+  height: 350px;
+  max-width: 600px;
   border: none;
   display: block;
+  margin: 0 auto;
 }
 
-/* --- Reloj --- */
-.reloj {
-  font-size: 1.8em;
-  font-weight: bold;
-  margin: 10px 0;
-}
-
-/* --- Zona horaria --- */
-.zona, #semanaActual {
-  font-size: 1em;
-  margin: 5px 0;
-}
-
-/* --- Firma --- */
-.firma {
-  margin-top: 15px;
-  font-size: 0.8em;
-  text-align: center;
-  opacity: 0.7;
-}
+.firma { margin-top: 15px; font-size: 0.8em; text-align: center; opacity: 0.7; }
 body.modo-claro .firma { color: #666; }
 body.modo-oscuro .firma { color: #aaa; }
 
-/* --- Errores --- */
-.error {
-  color: orange;
-  font-weight: bold;
-  font-style: italic;
-  font-size: 0.9em;
-  margin-top: 5px;
-  opacity: 0;
-  transition: opacity 0.4s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+.error { color: orange; font-weight: bold; font-style: italic; font-size: 0.9em; margin-top: 5px; opacity: 0; transition: opacity 0.4s; display: flex; align-items: center; justify-content: center; }
 .error.visible { opacity: 1; }
+.icono { margin-right: 5px; }
+.input-error { border: 2px solid orange; animation: parpadeo 0.6s ease-in-out 2; }
+@keyframes parpadeo { 0%,100%{ border-color: transparent;} 50%{ border-color: orange; } }
 
-/* --- Selector de idioma --- */
-#idiomas {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-#idiomas img {
-  width: 40px;
-  height: 26px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: transform 0.2s;
-}
-#idiomas img:hover, #idiomas img.active {
-  transform: scale(1.1);
-  border: 2px solid #3498db;
+#idiomas { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+#idiomas img { width: 40px; height: 26px; cursor: pointer; border-radius: 4px; transition: transform 0.2s; }
+#idiomas img:hover, #idiomas img.active { transform: scale(1.1); border: 2px solid #3498db; }
+
+/* --- Responsive para móviles --- */
+@media(max-width:480px) { 
+  .reloj { font-size: 1.5em;} 
+  input, button { width: 95%; } 
+  .calendar-container { max-width: 95vw; }
+  .calendar-container iframe { height: 280px; min-width: 0; max-width: 100%; }
+  #weather-widget { flex-direction: column; align-items: center; gap: 10px; }
+  #weather-widget .weather-main { 
+    flex-direction: row !important;
+    align-items: center; 
+    gap: 5px; 
+  }
 }
 
-/* --- Widget del tiempo --- */
+@media(min-width:481px) and (max-width:768px) { 
+  input, button { max-width: 90%; } 
+  .calendar-container { max-width: 99vw; }
+  .calendar-container iframe { height: 320px; min-width: 0; max-width: 100%; }
+  #weather-widget .weather-main {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 15px;
+  }
+}
+
 .weather-widget-seccion {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 15px;
   margin: 20px auto;
-  padding: 15px;
 }
+
 .weather-main {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 15px;
+  flex-direction: row;
 }
-.weather-temp-row {
+
+.weather-info {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  align-items: flex-start;
 }
-#weather-temp {
-  font-size: 1.8em;
-  font-weight: bold;
-}
-#weather-emoji {
-  font-size: 1.8em;
-}
-#city-name {
-  font-weight: bold;
-}
-#details {
-  font-size: 0.9em;
-  text-align: center;
-}
+
 .city-search {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   gap: 10px;
@@ -239,11 +124,18 @@ body.modo-oscuro .firma { color: #aaa; }
   width: 100%;
   max-width: 400px;
 }
+.city-search input {
+  flex: 1;
+  min-width: 150px;
+  margin-right: 0;
+}
+
 .suggestions-list {
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
+  min-width: 100%;
   max-height: 150px;
   overflow-y: auto;
   background: #fff !important;
@@ -251,26 +143,49 @@ body.modo-oscuro .firma { color: #aaa; }
   border: 1px solid #ccc;
   border-radius: 4px;
   z-index: 10;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   margin-top: 2px;
   padding: 0;
   list-style: none;
 }
-
-/* --- Responsive --- */
-@media(max-width:480px) {
-  .reloj { font-size: 1.5em; }
-  .calendar-container iframe { height: 280px; }
+.suggestions-list li {
+  padding: 8px 12px;
+  cursor: pointer;
+  color: #111 !important;
+  background: #fff !important;
+  transition: background-color 0.2s, color 0.2s;
 }
-@media(min-width:481px) and (max-width:768px) {
-  .calendar-container iframe { height: 320px; }
+.suggestions-list li.active,
+.suggestions-list li:hover {
+  background-color: #3498db !important;
+  color: #fff !important;
+}
+
+#weather-temp {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: inherit;
+  margin-right: 10px;
+  display: inline-block;
+  width: 60px;
+  text-align: right;
+}
+#weather-emoji {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  font-size: 30px;
+  text-align: center;
+}
+#city-name {
+  font-weight: bold;
 }
 </style>
 </head>
-<body aria-label="Tiempo 360" role="main">
+<body aria-label="Calculadora de tiempo" role="main">
 
-<div class="titulo-con-logo" role="banner">
-  <img src="Logoweb_Clear.png" id="titulo-logo" class="titulo-logo" alt="Tiempo360 Logo" />
-</div>
+<h1 class="texto-azul" id="titulo" tabindex="0" aria-label="Título principal"></h1>
 
 <div id="idiomas" aria-label="Selector de idioma" role="radiogroup">
   <img src="ESP.png" alt="Español" data-lang="es" onclick="cambiarIdioma('es')" title="Español" role="radio" aria-checked="false" tabindex="0">
@@ -283,33 +198,21 @@ body.modo-oscuro .firma { color: #aaa; }
 <div class="zona" id="zonaHoraria" aria-live="polite"></div>
 <p id="semanaActual" aria-live="polite"></p>
 
-<!-- Widget del tiempo -->
 <div id="weather-widget" class="weather-widget-seccion" aria-label="Widget del tiempo" role="region">
-  
-  <!-- Parte principal -->
   <div class="weather-main" aria-label="Información meteorológica principal" role="group">
-    
-    <!-- Fila temp + emoji -->
-    <div class="weather-temp-row">
-      <span id="weather-temp" class="texto-azul" aria-label="Temperatura actual"></span>
-      <span id="weather-emoji" aria-label="Icono meteorológico"></span>
+    <span id="weather-temp" class="texto-azul" aria-label="Temperatura actual"></span>
+    <span id="weather-emoji" aria-label="Icono meteorológico"></span>
+    <div class="weather-info" aria-label="Información de ciudad y detalles">
+      <span id="city-name" class="texto-azul" aria-label="Ciudad"></span>
+      <small id="details" aria-label="Detalles del tiempo"></small>
     </div>
-    
-    <!-- Ciudad -->
-    <span id="city-name" class="texto-azul" aria-label="Ciudad"></span>
-    
-    <!-- Detalles -->
-    <small id="details" aria-label="Detalles del tiempo"></small>
   </div>
 
-  <!-- Buscador de ciudad -->
   <div class="city-search" aria-label="Buscador de ciudad" role="search">
     <input type="text" id="city-input" placeholder="Introduce una ciudad..." autocomplete="off"
-      aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="suggestions"
-      aria-label="Campo de búsqueda de ciudad" />
+     aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="suggestions" aria-label="Campo de búsqueda de ciudad" />
     <ul id="suggestions" class="suggestions-list" role="listbox" aria-label="Sugerencias de ciudad"></ul>
   </div>
-
 </div>
 
 <div class="calendar-container" aria-label="Calendario de festivos" role="region">
@@ -353,6 +256,7 @@ const traducciones = {
   es: {
     lugarLabel: "Lugar:",
     buscarBtn: "Buscar",
+    titulo: "Calculadora de tiempo",
     h3Semana: "Número de semana",
     btnCalcularSemana: "Calcular",
     semanaDe: "{fecha} > Semana {semana}",
@@ -374,11 +278,12 @@ const traducciones = {
     horaActual: "Hora actual:",
     zonaHorariaTpl: "Hora local de España ({gmt})",
     semanaActual: "Hoy es {fecha} y estamos en la semana número {semana} del año.",
-    footer: "El sitio podría contener errores, por favor contrasta la información. Tiempo360 desarrollado con amor. 2025 - Todos los derechos reservados."
+    footer: "El sitio podría contener errores, por favor contrasta la información. Calculadora de tiempo V5.0 por DGCSe7en - Github"
   },
   ca: {
     lugarLabel: "Lloc:",
     buscarBtn: "Cercar",
+    titulo: "Calculadora de temps",
     h3Semana: "Número de setmana",
     btnCalcularSemana: "Calcular",
     semanaDe: "{fecha} > Setmana {semana}",
@@ -400,11 +305,12 @@ const traducciones = {
     horaActual: "Hora actual:",
     zonaHorariaTpl: "Hora local d'Espanya ({gmt})",
     semanaActual: "Avui és {fecha} i estem a la setmana número {semana} de l’any.",
-    footer: "El lloc podria contenir errors, si us plau contrasta la informació. Tiempo360 desenvolupat amb amor. 2025 - Tots els drets reservats."
+    footer: "El lloc podria contenir errors, si us plau contrasta la informació. Calculadora de temps V5.0 per DGCSe7en - Github"
   },
   gl: {
     lugarLabel: "Lugar:",
     buscarBtn: "Buscar",
+    titulo: "Calculadora de tempo",
     h3Semana: "Número de semana",
     btnCalcularSemana: "Calcular",
     semanaDe: "{fecha} > Semana {semana}",
@@ -426,11 +332,12 @@ const traducciones = {
     horaActual: "Hora actual:",
     zonaHorariaTpl: "Hora local de España ({gmt})",
     semanaActual: "Hoxe é {fecha} e estamos na semana número {semana} do ano.",
-    footer: "O sitio pode conter erros, por favor contrasta a información. Tiempo360 desenvolvido con amor. 2025 - Todos os dereitos reservados."
+    footer: "O sitio pode conter erros, por favor contrasta a información. Calculadora de tempo V5.0 por DGCSe7en - Github"
   },
   eu: {
     lugarLabel: "Lekua:",
     buscarBtn: "Bilatu",
+    titulo: "Denboraren kalkulagailua",
     h3Semana: "Aste zenbakia",
     btnCalcularSemana: "Kalkulatu",
     semanaDe: "{fecha} > {semana}. astea",
@@ -452,20 +359,10 @@ const traducciones = {
     horaActual: "Ordu orain:",
     zonaHorariaTpl: "Espainiako ordu lokala ({gmt})",
     semanaActual: "Gaur {fecha} da eta urteko {semana}. astean gaude.",
-    footer: "Guneak akatsak izan ditzake, mesedez kontrastatu informazioa. Tiempo360 maitasunez garatua. 2025 - Eskubide guztiak erreserbatuta."
+    footer: "Guneak akatsak izan ditzake, mesedez kontrastatu informazioa. Denboraren kalkulagailua V5.0 DGCSe7en - Github"
   }
 };
 
-function actualizarLogoModo() {
-  const logo = document.getElementById('titulo-logo');
-  if (!logo) return;
-  if (document.body.classList.contains('modo-oscuro')) {
-    logo.src = 'Logoweb_Dark.png';
-  } else {
-    logo.src = 'Logoweb_Clear.png';
-  }
-}  
-  
 function formatoFecha(fecha){ 
   const dia=String(fecha.getDate()).padStart(2,'0'); 
   const mes=String(fecha.getMonth()+1).padStart(2,'0'); 
@@ -516,7 +413,6 @@ function toggleModo(){
     body.classList.add('modo-oscuro');
     localStorage.setItem('modo','oscuro');
   }
-  actualizarLogoModo();
 }
 
 window.onload=function(){
@@ -528,7 +424,6 @@ window.onload=function(){
   }
   cambiarIdioma('es');
   actualizarRadiosIdioma('es');
-  actualizarLogoModo();
 };
 
 // --- Cambio de idioma ---
