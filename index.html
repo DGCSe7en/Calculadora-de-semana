@@ -435,6 +435,7 @@ function toggleModo(){
     body.classList.remove('modo-claro');
     body.classList.add('modo-oscuro');
     localStorage.setItem('modo','oscuro');
+    actualizarLogo();
   }
 }
 
@@ -444,6 +445,7 @@ window.onload=function(){
     document.body.classList.add('modo-oscuro');
   } else {
     document.body.classList.add('modo-claro');
+    actualizarLogo();
   }
   cambiarIdioma('es');
   actualizarRadiosIdioma('es');
@@ -455,6 +457,7 @@ function cambiarIdioma(lang) {
   document.querySelectorAll('#idiomas img').forEach(img => {
     img.classList.remove('active');
     img.setAttribute("aria-checked", "false");
+    actualizarLogo();
   });
   const img = document.querySelector(`#idiomas img[data-lang="${lang}"]`);
   if (img) {
