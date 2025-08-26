@@ -7,65 +7,192 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="favicon.png">
 <style>
-/* Fuente más neutra */
+/* --- Fuente global --- */
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
-  padding: 0;
-  background: var(--fondo);
-  color: var(--texto);
-  text-align: center;
+  padding: 20px 0 40px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  color: #1a1a1a;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: color 0.3s, background-image 0.3s;
+  box-sizing: border-box;
 }
 
-/* Variables modo claro/oscuro */
-:root {
-  --fondo: #f9f9f9;
-  --texto: #222;
-  --contenedor-bg: #fff;
-  --sombra: rgba(0,0,0,0.1);
+/* --- Contenedor principal --- */
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+/* --- Título con logo --- */
+.titulo-con-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.titulo-logo {
+  width: clamp(220px, 35vw, 360px); /* tamaño equilibrado */
+  height: auto;
+  display: block;
+  transition: filter 0.3s;
+}
+
+/* --- Modo claro / oscuro --- */
+body.modo-claro {
+  background-image: url('./LIGHT.webp');
+  color: #1a1a1a;
 }
 body.modo-oscuro {
-  --fondo: #1a1a1a;
-  --texto: #f1f1f1;
-  --contenedor-bg: #2a2a2a;
-  --sombra: rgba(0,0,0,0.5);
+  background-image: url('./DARK.webp');
+  color: #e0e0e0;
+}
+body.modo-claro .texto-azul { color: #0D47A1; }
+body.modo-oscuro .texto-azul { color: #90D5FF; }
+
+/* --- H3 uniformes --- */
+.seccion h3 {
+  font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+  text-align: center;
+  margin: 10px auto;
+  padding: 0 10px;
 }
 
-/* Logo encabezado */
-header img {
-  max-width: 200px; /* x1.5 más grande */
-  height: auto;
-  margin: 20px auto;
+/* --- Secciones (cajas) --- */
+.seccion {
+  margin: 15px 0;
+  padding: 15px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  background-color: rgba(255,255,255,0.9);
+  transition: background-color 0.3s;
+}
+body.modo-oscuro .seccion {
+  background-color: rgba(50,50,50,0.9);
+}
+
+/* --- Inputs y botones --- */
+input, button {
+  padding: 10px;
+  margin: 5px 0;
+  font-size: 1em;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 90%;
+  max-width: 300px;
+  box-sizing: border-box;
+}
+button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+button:hover { background-color: #2980b9; }
+
+/* --- Botón modo claro/oscuro --- */
+#modo-toggle {
+  position: fixed;
+  right: clamp(10px, 2vw, 24px);
+  bottom: clamp(10px, 2vw, 24px);
+  font-size: clamp(1.25rem, 0.9rem + 1vw, 1.75rem);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+body.modo-claro #modo-toggle { color: #111; }
+body.modo-oscuro #modo-toggle { color: #fff; }
+
+/* --- Calendario responsivo --- */
+.calendar-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background-color: rgba(255,255,255,0.9);
+}
+body.modo-oscuro .calendar-container {
+  background-color: rgba(50,50,50,0.9);
+}
+.calendar-container iframe {
+  width: 100%;
+  height: 500px;
+  border: none;
   display: block;
 }
 
-/* Contenedores principales */
-.seccion, .calendar-container, .weather-widget-seccion {
-  background: var(--contenedor-bg);
-  border-radius: 12px;
-  padding: 20px;
-  margin: 20px auto;
-  max-width: 900px;
-  box-shadow: 0 2px 8px var(--sombra);
-  text-align: center;
-}
-
-/* Títulos uniformes */
-h3 {
-  font-size: 1.4em;
+/* --- Reloj --- */
+.reloj {
+  font-size: 1.8em;
   font-weight: bold;
-  margin-bottom: 15px;
-  color: inherit;
+  margin: 10px 0;
 }
 
-/* Calendario */
-.calendar-container iframe {
-  width: 100%;
-  max-width: 800px;
-  height: 600px;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px var(--sombra);
+/* --- Zona horaria --- */
+.zona, #semanaActual {
+  font-size: 1em;
+  margin: 5px 0;
+}
+
+/* --- Firma --- */
+.firma {
+  margin-top: 15px;
+  font-size: 0.8em;
+  text-align: center;
+  opacity: 0.7;
+}
+body.modo-claro .firma { color: #666; }
+body.modo-oscuro .firma { color: #aaa; }
+
+/* --- Errores --- */
+.error {
+  color: orange;
+  font-weight: bold;
+  font-style: italic;
+  font-size: 0.9em;
+  margin-top: 5px;
+  opacity: 0;
+  transition: opacity 0.4s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.error.visible { opacity: 1; }
+
+/* --- Selector de idioma --- */
+#idiomas {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+#idiomas img {
+  width: 40px;
+  height: 26px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: transform 0.2s;
+}
+#idiomas img:hover, #idiomas img.active {
+  transform: scale(1.1);
+  border: 2px solid #3498db;
 }
 
 /* --- Widget del tiempo --- */
@@ -73,56 +200,38 @@ h3 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
+  margin: 20px auto;
+  padding: 15px;
 }
-
 .weather-main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
-
-/* fila temperatura + emoji */
 .weather-temp-row {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 8px;
 }
-
 #weather-temp {
-  font-size: 1.8em; /* mismo tamaño que el reloj */
+  font-size: 1.8em;
   font-weight: bold;
-  color: inherit;
 }
-
 #weather-emoji {
   font-size: 1.8em;
-  line-height: 1;
 }
-
 #city-name {
   font-weight: bold;
-  text-align: center;
-  display: block;
-  margin-top: 2px;
-  font-size: 1.1em;
-  color: inherit;
 }
-
 #details {
   font-size: 0.9em;
   text-align: center;
-  display: block;
-  margin-top: 2px;
-  color: inherit;
 }
-
-/* Buscador de ciudad */
 .city-search {
   display: flex;
-  flex-direction: row;
   justify-content: center;
   align-items: center;
   gap: 10px;
@@ -130,22 +239,11 @@ h3 {
   width: 100%;
   max-width: 400px;
 }
-.city-search input {
-  flex: 1;
-  min-width: 150px;
-  margin-right: 0;
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-/* Lista de sugerencias */
 .suggestions-list {
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
-  min-width: 100%;
   max-height: 150px;
   overflow-y: auto;
   background: #fff !important;
@@ -153,72 +251,18 @@ h3 {
   border: 1px solid #ccc;
   border-radius: 4px;
   z-index: 10;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   margin-top: 2px;
   padding: 0;
   list-style: none;
 }
-.suggestions-list li {
-  padding: 8px 12px;
-  cursor: pointer;
-  color: #111 !important;
-  background: #fff !important;
-  transition: background-color 0.2s, color 0.2s;
-}
-.suggestions-list li.active,
-.suggestions-list li:hover {
-  background-color: #3498db !important;
-  color: #fff !important;
-}
-
-/* Reloj y zona horaria */
-.reloj {
-  font-size: 1.8em;
-  font-weight: bold;
-  margin: 10px 0;
-}
-.zona, #semanaActual {
-  font-size: 1em;
-  margin: 2px 0;
-}
-
-/* Botón modo oscuro */
-#modo-toggle {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 10px 14px;
-  border-radius: 50%;
-  border: none;
-  background: var(--contenedor-bg);
-  color: var(--texto);
-  font-size: 1.2em;
-  cursor: pointer;
-  box-shadow: 0 2px 6px var(--sombra);
-}
-
-/* Footer */
-footer.firma {
-  margin: 30px auto;
-  font-size: 0.9em;
-  opacity: 0.8;
-}
 
 /* --- Responsive --- */
-@media(max-width:480px) { 
-  .reloj { font-size: 1.5em; } 
-  input, button { width: 95%; } 
-  .calendar-container { max-width: 95vw; }
+@media(max-width:480px) {
+  .reloj { font-size: 1.5em; }
   .calendar-container iframe { height: 280px; }
-  #weather-temp, #weather-emoji { font-size: 1.4em; }
-  #city-name { font-size: 1em; }
 }
-@media(min-width:481px) and (max-width:768px) { 
-  input, button { max-width: 90%; } 
-  .calendar-container { max-width: 99vw; }
+@media(min-width:481px) and (max-width:768px) {
   .calendar-container iframe { height: 320px; }
-  #weather-temp, #weather-emoji { font-size: 1.6em; }
-  #city-name { font-size: 1.05em; }
 }
 </style>
 </head>
