@@ -45,7 +45,7 @@ main {
   margin-bottom: 20px;
 }
 .titulo-logo {
-  width: clamp(270px, 45vw, 480px);
+  width: clamp(405px, 67vw, 720px); /* x1.5 del tamaño original */
   height: auto;
   display: block;
   transition: filter 0.3s;
@@ -73,17 +73,56 @@ body.modo-oscuro .texto-azul { color: #90D5FF; }
   box-sizing: border-box;
 }
 
-/* --- Secciones centradas y responsivas --- */
-.seccion {
-  margin: 15px 0;
-  padding: 15px;
-  border-radius: 8px;
-  width: 100%;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  background-color: rgba(255,255,255,0.9);
+/* --- Secciones centradas, con bordes y responsivas --- */
+.seccion, .weather-widget-seccion {
+  margin: 15px auto;
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  background-color: rgba(255,255,255,0.95);
   transition: background-color 0.3s;
 }
-body.modo-oscuro .seccion { background-color: rgba(50,50,50,0.9); }
+body.modo-oscuro .seccion,
+body.modo-oscuro .weather-widget-seccion {
+  background-color: rgba(50,50,50,0.9);
+}
+
+/* --- Widget del tiempo centrado --- */
+.weather-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+#weather-temp {
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-right: 8px;
+}
+#weather-emoji {
+  font-size: 2.2rem;
+  margin-left: 8px;
+}
+.weather-temp-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+#city-name {
+  font-weight: bold;
+  text-align: center;
+  display: block;
+  margin-top: 4px;
+}
+#details {
+  font-size: 0.9em;
+  text-align: center;
+  display: block;
+  margin-top: 2px;
+}
 
 /* --- Inputs y botones --- */
 input, button {
@@ -120,15 +159,15 @@ body.modo-oscuro #modo-toggle { color: #fff; }
 
 /* --- Calendario responsivo --- */
 .calendar-container {
-  width: 100%;
+  width: 90%;
+  max-width: 600px;
   aspect-ratio: 16 / 9;
   min-height: 280px;
-  max-height: 500px;
-  margin: 20px 0;
-  border-radius: 8px;
+  margin: 20px auto;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  background-color: rgba(255,255,255,0.9);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  background-color: rgba(255,255,255,0.95);
 }
 body.modo-oscuro .calendar-container { background-color: rgba(50,50,50,0.9); }
 .calendar-container iframe {
@@ -138,11 +177,12 @@ body.modo-oscuro .calendar-container { background-color: rgba(50,50,50,0.9); }
   display: block;
 }
 
-/* --- Reloj --- */
+/* --- Reloj centrado --- */
 .reloj {
   font-size: 1.8em;
   font-weight: bold;
   margin: 10px 0;
+  text-align: center;
 }
 
 /* --- Zona horaria --- */
@@ -151,6 +191,7 @@ body.modo-oscuro .calendar-container { background-color: rgba(50,50,50,0.9); }
   font-weight: normal;
   margin: 10px 0;
   color: inherit;
+  text-align: center;
 }
 
 /* --- Firma / pie de página --- */
@@ -206,11 +247,13 @@ body.modo-oscuro .firma { color: #aaa; }
   input, button { width: 95%; }
   .calendar-container { min-height: 260px; }
   .titulo-con-logo { gap: 8px; }
+  #weather-temp, #weather-emoji { font-size: 1.8rem; }
 }
 
 @media(min-width:481px) and (max-width:768px) {
   input, button { max-width: 90%; }
   .calendar-container { min-height: 320px; }
+  #weather-temp, #weather-emoji { font-size: 2rem; }
 }
 </style>
 </head>
