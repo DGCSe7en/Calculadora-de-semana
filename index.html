@@ -25,36 +25,22 @@ input, button { padding: 10px; margin: 5px; font-size: 1em; border-radius: 5px; 
 button { background-color: #3498db; color: white; border: none; cursor: pointer; transition: background-color 0.2s; }
 button:hover { background-color: #2980b9; }
 
-#modo-container{ text-align: center; margin: 10px 20px; }
-#modo-toggle { position: relative; font-size: clamp(1.25rem, 0.9rem + 1vw, 1.75rem); background: none; border: none; cursor: pointer; }
-#modo-toggle:focus { outline: 2px solid #3498db; }
+.switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #fff; border: 2px solid #000; transition: 0.4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 2px; bottom: 2px; background-color: #fff; border: 2px solid #000; transition: 0.4s; border-radius: 50%; }
 
-/* --- Ajuste modo-toggle color según modo --- */
-body.modo-claro #modo-toggle {
-  color: #111;
-}
-body.modo-oscuro #modo-toggle {
-  color: #fff;
-}
+input:checked + .slider { background-color: #3498db; border: none; }
 
-.calendar-container {
-  max-width: 600px;
-  margin: 20px auto;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  background-color: rgba(255,255,255,0.9);
-}
+input:checked + .slider:before { transform: translateX(24px); border: none; }
+
+#modo-switch-container { display: flex; align-items: center; gap: 10px; justify-content: center; margin: 20px 0; }
+
+#modo-texto { font-size: 1rem; font-weight: bold; }
+
+.calendar-container { max-width: 600px; margin: 20px auto; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.9); }
 body.modo-oscuro .calendar-container { background-color: rgba(50,50,50,0.9);}
-.calendar-container iframe {
-  width: 100%;
-  min-width: 250px;
-  height: 350px;
-  max-width: 600px;
-  border: none;
-  display: block;
-  margin: 0 auto;
-}
+.calendar-container iframe { width: 100%; min-width: 250px; height: 350px; max-width: 600px; border: none; display: block; margin: 0 auto; }
 
 .firma { margin-top: 50px; font-size: 0.8em; text-align: center; opacity: 0.7; }
 body.modo-claro .firma { color: #666; }
@@ -77,112 +63,30 @@ body.modo-oscuro .firma { color: #aaa; }
   .calendar-container { max-width: 95vw; }
   .calendar-container iframe { height: 280px; min-width: 0; max-width: 100%; }
   #weather-widget { flex-direction: column; align-items: center; gap: 10px; }
-  #weather-widget .weather-main { 
-    flex-direction: row !important;
-    align-items: center; 
-    gap: 5px; 
-  }
+  #weather-widget .weather-main { flex-direction: row !important; align-items: center; gap: 5px; }
 }
 
 @media(min-width:481px) and (max-width:768px) { 
   input, button { max-width: 90%; } 
   .calendar-container { max-width: 99vw; }
   .calendar-container iframe { height: 320px; min-width: 0; max-width: 100%; }
-  #weather-widget .weather-main {
-    flex-direction: row !important;
-    align-items: center;
-    gap: 15px;
-  }
+  #weather-widget .weather-main { flex-direction: row !important; align-items: center; gap: 15px; }
 }
 
-.weather-widget-seccion {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-  margin: 20px auto;
-}
-
-.weather-main {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  flex-direction: row;
-}
-
-.weather-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.city-search {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  position: relative;
-  width: 100%;
-  max-width: 400px;
-}
-.city-search input {
-  flex: 1;
-  min-width: 150px;
-  margin-right: 0;
-}
-
-.suggestions-list {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  min-width: 100%;
-  max-height: 150px;
-  overflow-y: auto;
-  background: #fff !important;
-  color: #111 !important;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  z-index: 10;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  margin-top: 2px;
-  padding: 0;
-  list-style: none;
-}
-.suggestions-list li {
-  padding: 8px 12px;
-  cursor: pointer;
-  color: #111 !important;
-  background: #fff !important;
-  transition: background-color 0.2s, color 0.2s;
-}
+.weather-widget-seccion { display: flex; flex-direction: column; align-items: center; gap: 15px; margin: 20px auto; }
+.weather-main { display: flex; align-items: center; gap: 15px; flex-direction: row; }
+.weather-info { display: flex; flex-direction: column; align-items: flex-start; }
+.city-search { display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 10px; position: relative; width: 100%; max-width: 400px; }
+.city-search input { flex: 1; min-width: 150px; margin-right: 0; }
+.suggestions-list { position: absolute; top: 100%; left: 0; right: 0; min-width: 100%; max-height: 150px; overflow-y: auto; background: #fff !important; color: #111 !important; border: 1px solid #ccc; border-radius: 4px; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-top: 2px; padding: 0; list-style: none; }
+.suggestions-list li { padding: 8px 12px; cursor: pointer; color: #111 !important; background: #fff !important; transition: background-color 0.2s, color 0.2s; }
 .suggestions-list li.active,
-.suggestions-list li:hover {
-  background-color: #3498db !important;
-  color: #fff !important;
-}
+.suggestions-list li:hover { background-color: #3498db !important; color: #fff !important; }
 
-#weather-temp {
-  font-size: 1.8em;
-  font-weight: bold;
-  color: inherit;
-  margin-right: 10px;
-  display: inline-block;
-  width: 60px;
-  text-align: right;
-}
-#weather-emoji {
-  display: inline-block;
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
-  font-size: 30px;
-  text-align: center;
-}
-#city-name {
-  font-weight: bold;
-}
+#weather-temp { font-size: 1.8em; font-weight: bold; color: inherit; margin-right: 10px; display: inline-block; width: 60px; text-align: right; }
+#weather-emoji { display: inline-block; width: 30px; height: 30px; line-height: 30px; font-size: 30px; text-align: center; }
+#city-name { font-weight: bold; }
+  
 </style>
 </head>
 <body aria-label="Tiempo360" role="main">
@@ -203,8 +107,12 @@ body.modo-oscuro .firma { color: #aaa; }
   <img src="EUS.png" alt="Euskera" data-lang="eu" onclick="cambiarIdioma('eu')" title="Euskera" role="radio" aria-checked="false" tabindex="0">
 </div>
 
-<div id="modo-container">
-  <button id="modo-toggle" onclick="toggleModo()" aria-label="Cambiar modo claro/oscuro" title="Cambiar modo claro/oscuro">☀︎/☾</button>
+<div id="modo-switch-container">
+  <label class="switch">
+    <input type="checkbox" id="modo-switch">
+    <span class="slider"></span>
+  </label>
+  <span id="modo-texto">Modo claro/oscuro</span>
 </div>
 
 <div class="reloj texto-azul" id="reloj" aria-live="polite" aria-atomic="true"></div>
@@ -291,7 +199,7 @@ const traducciones = {
     horaActual: "Hora actual:",
     zonaHorariaTpl: "Hora local de España ({gmt})",
     semanaActual: "Hoy es {fecha} y estamos en la semana número {semana} del año.",
-    footer: "El sitio podría contener errores, por favor contrasta la información.<br>Tiempo360. El tiempo, desde todas sus dimensiones...<br>2025 - Todos los derechos reservados"
+    footer: "El sitio podría contener errores, por favor contrasta la información.<br><br><strong>Tiempo360.</strong> El tiempo, desde todas sus dimensiones...<br>2025 - Todos los derechos reservados"
 },
   ca: {
     tituloAlt: "Tiempo360 - El temps des de totes les seves dimensions...",
@@ -318,7 +226,7 @@ const traducciones = {
     horaActual: "Hora actual:",
     zonaHorariaTpl: "Hora local d'Espanya ({gmt})",
     semanaActual: "Avui és {fecha} i estem a la setmana número {semana} de l’any.",
-    footer: "El lloc podria contenir errors, si us plau contrasta la informació.<br>Tiempo360. El temps, des de totes les seves dimensions...<br>2025 - Tots els drets reservats"
+    footer: "El lloc podria contenir errors, si us plau contrasta la informació.<br><br><strong>Tiempo360.</strong> El temps, des de totes les seves dimensions...<br>2025 - Tots els drets reservats"
 },
   gl: {
     tituloAlt: "Tiempo360 - O tempo desde todas as súas dimensións...",
@@ -345,7 +253,7 @@ const traducciones = {
     horaActual: "Hora actual:",
     zonaHorariaTpl: "Hora local de España ({gmt})",
     semanaActual: "Hoxe é {fecha} e estamos na semana número {semana} do ano.",
-    footer: "O sitio pode conter erros, por favor contrasta a información.<br>Tiempo360. O tempo desde todas as súas dimensións...<br>2025 - Todos os dereitos reservados"
+    footer: "O sitio pode conter erros, por favor contrasta a información.<br><br><strong>Tiempo360.</strong> O tempo desde todas as súas dimensións...<br>2025 - Todos os dereitos reservados"
 },
   eu: {
     tituloAlt: "Tiempo360 - Denbora bere dimentsio guztietatik...",
@@ -372,9 +280,58 @@ const traducciones = {
     horaActual: "Ordu orain:",
     zonaHorariaTpl: "Espainiako ordu lokala ({gmt})",
     semanaActual: "Gaur {fecha} da eta urteko {semana}. astean gaude.",
-    footer: "Guneak akatsak izan ditzake, mesedez kontrastatu informazioa.<br>Tiempo360. Denbora, bere dimentsio guztietatik...<br>2025 - Eskubide guztiak erreserbatuta"
+    footer: "Guneak akatsak izan ditzake, mesedez kontrastatu informazioa.<br><br><strong>Tiempo360.</strong> Denbora, bere dimentsio guztietatik...<br>2025 - Eskubide guztiak erreserbatuta"
 }
 };
+
+const modoSwitch = document.getElementById('modo-switch');
+const modoTexto = document.getElementById('modo-texto');
+
+// Traducciones del texto del switch
+const textoSwitch = {
+  es: "Modo claro/oscuro",
+  ca: "Mode clar/fosc",
+  gl: "Modo claro/escuro",
+  eu: "Argi/ilun modua"
+};
+
+// Inicializa según lo guardado en localStorage
+window.addEventListener('load', () => {
+  const modoGuardado = localStorage.getItem('modo');
+  if (modoGuardado === 'oscuro') {
+    document.body.classList.add('modo-oscuro');
+    modoSwitch.checked = true;
+  } else {
+    document.body.classList.add('modo-claro');
+    modoSwitch.checked = false;
+  }
+  actualizarLogo();
+  const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
+  cambiarIdioma(lang);
+  actualizarTextoSwitch(lang);
+});
+
+// Al cambiar el switch, activa/desactiva el modo
+modoSwitch.addEventListener('change', () => {
+  toggleModo();
+});
+
+// Función para actualizar el texto según idioma
+function actualizarTextoSwitch(lang) {
+  modoTexto.textContent = textoSwitch[lang] || textoSwitch.es;
+}
+
+// Añadir actualización automática al cambiar idioma
+const observer = new MutationObserver(() => {
+  const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
+  actualizarTextoSwitch(lang);
+});
+
+// Observa cambios en las clases de los idiomas (activo/inactivo)
+document.querySelectorAll('#idiomas img').forEach(img => {
+  observer.observe(img, { attributes: true, attributeFilter: ['class'] });
+});
+
 
 function actualizarLogo() {
   const logo = document.getElementById('titulo-img');
