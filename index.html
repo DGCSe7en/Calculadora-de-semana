@@ -27,7 +27,7 @@ button:hover { background-color: #2980b9; }
 
 .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
 .switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #fff; border: 2px solid #000; transition: 0.4s; border-radius: 34px; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #fff; border: 1px solid #000; transition: 0.4s; border-radius: 17px; }
 .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 2px; top: 2px; background-color: #fff; border: 2px solid #000; transition: 0.4s; border-radius: 50%; }
 
 input:checked + .slider { background-color: #3498db; border: none; }
@@ -800,23 +800,48 @@ function actualizarIdiomaCiudad(idioma) {
   obtenerClima(ciudadGuardada);
 }
 
-// --- Limpiar resultados al enfocar inputs ---
-document.getElementById("fecha").addEventListener("focus", () => {
-  document.getElementById("resultado").textContent = "";
-  document.getElementById("errorSemana").textContent = "";
+// --- Inputs de fechas y semanas ---
+const inputsResultados = [
+  { inputId: "fecha", resultadoId: "resultado", errorId: "errorSemana" },
+  { inputId: "fechaInicio", resultadoId: "resultadoDias", errorId: "errorDias" },
+  { inputId: "fechaFin", resultadoId: "resultadoDias", errorId: "errorDias" },
+  { inputId: "semanaInput", resultadoId: "resultadoSemana", errorId: "errorRangoSemana" }
+];
+
+// Función para limpiar resultado y error
+function limpiarResultado(item) {
+  const resultado = document.getElementById(item.resultadoId);
+  const error = item.errorId ? document.getElementById(item.errorId) : null;
+  if (resultado) resultado.textContent = "";
+  if (error) error.textContent = "";
+}
+
+// Limpiar al enfocar y al presionar Escape
+inputsResultados.forEach(item => {
+  const input = document.getElementById(item.inputId);
+  if (!input) return;
+
+  // Al enfocar
+  input.addEventListener("focus", () => limpiarResultado(item));
+
+  // Al presionar Escape
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") limpiarResultado(item);
+  });
 });
-document.getElementById("fechaInicio").addEventListener("focus", () => {
-  document.getElementById("resultadoDias").textContent = "";
-  document.getElementById("errorDias").textContent = "";
+
+// Limpiar resultado al hacer click fuera del input
+document.addEventListener("mousedown", (e) => {
+  inputsResultados.forEach(item => {
+    const input = document.getElementById(item.inputId);
+    if (!input) return;
+    if (!input.contains(e.target)) {  // click fuera del input
+      limpiarResultado(item);
+    }
+  });
 });
-document.getElementById("fechaFin").addEventListener("focus", () => {
-  document.getElementById("resultadoDias").textContent = "";
-  document.getElementById("errorDias").textContent = "";
-});
-document.getElementById("semanaInput").addEventListener("focus", () => {
-  document.getElementById("resultadoSemana").textContent = "";
-  document.getElementById("errorRangoSemana").textContent = "";
-});
+
+// Mantener comportamiento actual del widget de ciudad
 document.getElementById("city-input").addEventListener("focus", () => {
   document.getElementById("suggestions").innerHTML = "";
 });
