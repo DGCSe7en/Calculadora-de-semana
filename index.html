@@ -28,15 +28,15 @@ button:hover { background-color: #2980b9; }
 .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #fff; border: 2px solid #000; transition: 0.4s; border-radius: 34px; }
-.slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 2px; bottom: 2px; background-color: #fff; border: 2px solid #000; transition: 0.4s; border-radius: 50%; }
+.slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 2px; top: 2px; background-color: #fff; border: 2px solid #000; transition: 0.4s; border-radius: 50%; }
 
 input:checked + .slider { background-color: #3498db; border: none; }
 
 input:checked + .slider:before { transform: translateX(24px); border: none; }
 
-#modo-switch-container { display: flex; align-items: center; gap: 10px; justify-content: center; margin: 20px 0; }
+#modo-switch-container { display: flex; align-items: center; gap: 10px; justify-content: center; flex-direction: row-reverse; margin: 30px 0 10px 0; }
 
-#modo-texto { font-size: 1rem; font-weight: bold; }
+#modo-texto { font-size: 1rem; font-weight: normal; }
 
 .calendar-container { max-width: 600px; margin: 20px auto; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.9); }
 body.modo-oscuro .calendar-container { background-color: rgba(50,50,50,0.9);}
@@ -166,8 +166,6 @@ body.modo-oscuro .firma { color: #aaa; }
   <p class="resultado" id="resultadoSemana" aria-live="polite"></p>
   <p class="error" id="errorRangoSemana" aria-live="assertive"><span class="icono">⚠️</span></p>
 </div>
-
-<button id="modo-toggle" onclick="toggleModo()" aria-label="Cambiar modo claro/oscuro" title="Cambiar modo claro/oscuro">☀︎/☾</button> 
 
 <footer class="firma" id="footerFirma" tabindex="0" aria-label="Pie de página"></footer>
 
