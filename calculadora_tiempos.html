@@ -4,20 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calculadora de Tiempos</title>
-<link rel="stylesheet" href="tu_estilo.css"> <!-- tu CSS global -->
 
 <style>
 body { margin: 0; padding: 0; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
 
+/* --- Calculadora --- */
 .calculadora {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   max-width: 360px;
-  margin: 0 auto; 
-  padding: 20px 10px;
+  margin: 20px auto;
+  padding: 10px;
   box-sizing: border-box;
-  min-height: 400px;
+  min-height: 360px; /* centrado vertical opcional */
 }
 
 .display {
@@ -33,6 +33,7 @@ body { margin: 0; padding: 0; overflow: hidden; font-family: 'Segoe UI', sans-se
   overflow-x: auto;
 }
 
+/* Botones */
 button {
   padding: 15px;
   font-size: 1.1em;
@@ -52,6 +53,57 @@ body.modo-oscuro button.color1 { background-color: #555; color: #fff; }
 button.color2 { background-color: #5C6B73; color: #fff; }
 button.color2:hover { background-color: #4A565D; }
 
+/* Botón "=" normal */
+button#igual { grid-column: auto; }
+
+/* --- Switch toggle calculadora --- */
+.calculadora-switch {
+  grid-column: span 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 60px;
+  height: 28px;
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+.calculadora-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #c0c0c0;
+  border-radius: 14px;
+  transition: 0.2s;
+}
+
+body.modo-oscuro .switch-slider { background-color: #555; }
+
+.calculadora-switch input:checked + .switch-slider {
+  background-color: #5C6B73;
+}
+
+.switch-slider::before {
+  content: "";
+  position: absolute;
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+
+.calculadora-switch input:checked + .switch-slider::before {
+  transform: translateX(32px);
+}
 </style>
 </head>
 <body>
@@ -59,8 +111,11 @@ button.color2:hover { background-color: #4A565D; }
 <div class="calculadora">
   <input type="text" class="display" id="display" readonly>
 
-  <!-- Switch formato horas/decimales -->
-  <button id="switchFormato" class="color1" title="Cambiar formato h/dec">h/dec</button>
+  <!-- Switch integrado -->
+  <div class="switch-container calculadora-switch">
+    <input type="checkbox" id="switchFormato" title="Cambiar formato h/dec">
+    <span class="switch-slider"></span>
+  </div>
 
   <!-- Fila 1 -->
   <button class="color2" data-unit="h">H</button>
@@ -98,17 +153,10 @@ const display = document.getElementById('display');
 let expression = '';
 let modeDecimal = false;
 
-// Cambio de formato h/dec
+// Switch integrado
 const switchBtn = document.getElementById('switchFormato');
-switchBtn.addEventListener('click', () => {
-  modeDecimal = !modeDecimal;
-  if(modeDecimal){
-    switchBtn.classList.remove('color1');
-    switchBtn.classList.add('color2');
-  } else {
-    switchBtn.classList.remove('color2');
-    switchBtn.classList.add('color1');
-  }
+switchBtn.addEventListener('change', () => {
+  modeDecimal = switchBtn.checked;
   actualizarDisplay();
 });
 
@@ -140,31 +188,22 @@ document.getElementById('igual').addEventListener('click', ()=>{
 });
 
 // Actualiza display
-function actualizarDisplay(){
-  display.value = expression;
-}
+function actualizarDisplay(){ display.value = expression; }
 
-// --- Lógica de cálculo de tiempos ---
+// --- Lógica cálculo de tiempos ---
 function calcular(exp){
   try {
-    let tokens = exp.split(/\s+/).filter(t=>t!=='');
-    if(tokens.length === 0) return '';
-
-    let stack = [];
-    let currentOp = null;
-
+    let tokens = exp.split(/\s+/).filter(t=>t!==''), stack=[], currentOp=null;
     function tokenToHours(token){
-      if(token.endsWith('h')) return parseFloat(token.replace('h','')) || 0;
+      if(token.endsWith('h')) return parseFloat(token.replace('h',''))||0;
       if(token.endsWith('m')) return (parseFloat(token.replace('m',''))||0)/60;
       if(token.endsWith('s')) return (parseFloat(token.replace('s',''))||0)/3600;
       if(!isNaN(parseFloat(token))) return parseFloat(token);
       return 0;
     }
-
     for(let token of tokens){
-      if(['+', '-', '×', '÷'].includes(token)){
-        currentOp = token;
-      } else {
+      if(['+', '-', '×', '÷'].includes(token)) currentOp = token;
+      else{
         let val = tokenToHours(token);
         if(currentOp){
           if(currentOp==='+') stack.push(stack.pop() + val);
@@ -172,29 +211,20 @@ function calcular(exp){
           else if(currentOp==='×') stack.push(stack.pop() * val);
           else if(currentOp==='÷') stack.push(stack.pop() / val);
           currentOp = null;
-        } else {
-          stack.push(val);
-        }
+        } else stack.push(val);
       }
     }
-
     let totalH = stack.reduce((a,b)=>a+b,0);
-
     if(!modeDecimal){
       let h = Math.floor(totalH);
       let m = Math.floor((totalH - h)*60);
       let s = Math.round(((totalH - h)*60 - m)*60);
       return `${h}h ${m}m ${s}s`;
-    } else {
-      return totalH.toFixed(2);
-    }
-
-  } catch(e) {
-    return 'Error';
-  }
+    } else return totalH.toFixed(2);
+  } catch(e){ return 'Error'; }
 }
 
-// Teclado físico seguro (solo ordenador)
+// Teclado físico seguro
 document.addEventListener('keydown', (e)=>{
   if(e.key.match(/[0-9]/)) expression += e.key;
   else if(['h','m','s','+','-','*','/'].includes(e.key)) expression += e.key==='*'?'×': e.key==='/'?'÷': e.key;
@@ -203,7 +233,7 @@ document.addEventListener('keydown', (e)=>{
   actualizarDisplay();
 });
 
-// --- Ajuste automático de altura para iframe ---
+// Ajuste automático altura iframe
 function ajustarAltura() {
   const altura = document.body.scrollHeight;
   window.parent.postMessage({ tipo: 'ajustarAlturaCalculadora', altura }, '*');
@@ -213,6 +243,5 @@ const observer = new MutationObserver(ajustarAltura);
 observer.observe(document.body, { childList: true, subtree: true });
 
 </script>
-
 </body>
 </html>
