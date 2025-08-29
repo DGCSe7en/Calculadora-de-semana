@@ -225,6 +225,8 @@ const traducciones = {
     semanaActual: "Hoy es {fecha} y estamos en la semana número {semana} del año.",
     labelFechaInicio: "De",
     labelFechaFin: "A",
+    Hora: "Hora",
+    Decimales: "Decimales"
     calculadoraTitulo: "Calculadora de tiempos",
     footer: "El sitio podría contener errores, por favor contrasta la información.<br><br><strong>Tiempo360.</strong> <em>El tiempo, desde todas sus dimensiones...</em><br>2025 - Todos los derechos reservados"
 },
@@ -255,6 +257,8 @@ const traducciones = {
     semanaActual: "Avui és {fecha} i estem a la setmana número {semana} de l’any.",
     labelFechaInicio: "De",
     labelFechaFin: "A",
+    Hora: ,
+    Decimales: ,
     calculadoraTitulo: "Calculadora de temps",
     footer: "El lloc podria contenir errors, si us plau contrasta la informació.<br><br><strong>Tiempo360.</strong> <em>El temps, des de totes les seves dimensions...</em><br>2025 - Tots els drets reservats"
 },
@@ -285,6 +289,8 @@ const traducciones = {
     semanaActual: "Hoxe é {fecha} e estamos na semana número {semana} do ano.",
     labelFechaInicio: "De",
     labelFechaFin: "A",
+    Hora: ,
+    Decimales: ,
     calculadoraTitulo: "Calculadora de tempos",
     footer: "O sitio pode conter erros, por favor contrasta a información.<br><br><strong>Tiempo360.</strong> <em>O tempo desde todas as súas dimensións...</em><br>2025 - Todos os dereitos reservados"
 },
@@ -315,6 +321,8 @@ const traducciones = {
     semanaActual: "Gaur {fecha} da eta urteko {semana}. astean gaude.",
     labelFechaInicio: "Hasiera",
     labelFechaFin: "Amaiera",
+    Hora: ,
+    Decimales: ,
     calculadoraTitulo: "Denbora kalkulagailua",
     footer: "Guneak akatsak izan ditzake, mesedez kontrastatu informazioa.<br><br><strong>Tiempo360.</strong> <em>Denbora, bere dimentsio guztietatik...</em><br>2025 - Eskubide guztiak erreserbatuta"
 }
@@ -492,6 +500,16 @@ function cambiarIdioma(lang) {
   });
   actualizarReloj();
   actualizarIdiomaCiudad(lang);
+  actualizarCalculadoraIdioma(lang);
+}
+
+function actualizarCalculadoraIdioma(lang) {
+  const iframe = document.getElementById('iframeCalculadora');
+  if (!iframe) return;
+
+  const t = traducciones[lang];
+  // Llama a la función del iframe para actualizar texto del switch
+  iframe.contentWindow.actualizarTextoSwitch(lang, t.Horas, t.Decimal);
 }
 
 function actualizarRadiosIdioma(lang) {
