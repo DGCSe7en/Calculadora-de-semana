@@ -139,8 +139,8 @@ body.modo-oscuro .switch-container input { background: #555; }
 </div>
 
 <div class="switch-container">
-  <span id="switch-text">Hora/Dec</span>
-  <input type="checkbox" id="switchFormato">
+  <span id="switch-text">Decimal</span>
+  <input type="checkbox" id="switchFormato" onchange="toggleMode()">
 </div>
 
 <script>
@@ -150,9 +150,9 @@ const display = document.getElementById("display");
 
 // Añadir valor al display
 function appendValue(val) {
-  if(['h','m','s'].includes(val)) {
+  if (['h','m','s'].includes(val)) {
     // Solo añadimos unidad si el último carácter es un número
-    if(expression.length > 0 && !isNaN(expression.slice(-1))) {
+    if (expression.length > 0 && !isNaN(expression.slice(-1))) {
       expression += val + " ";
     }
   } else {
@@ -175,23 +175,23 @@ function backspace() {
 }
 
 // Calcular expresión
-function calcular(exp){
+function calcular(exp) {
   try {
-    if(modeDecimal){
-      // Modo decimal
+    if (modeDecimal) {
+      // --- Modo decimal ---
       exp = exp.replace(/×/g,'*').replace(/÷/g,'/').replace(/%/g,'/100');
       let res = eval(exp);
-      if(res===null || res===undefined || isNaN(res)) return "Error";
+      if (res === null || res === undefined || isNaN(res)) return "Error";
       return res.toString();
     } else {
-      // Modo horas
+      // --- Modo horas ---
       let expCopy = exp.replace(/(\d+(\.\d+)?)h/g, "($1)")
                        .replace(/(\d+(\.\d+)?)m/g, "($1/60)")
                        .replace(/(\d+(\.\d+)?)s/g, "($1/3600)")
                        .replace(/×/g,'*').replace(/÷/g,'/').replace(/%/g,'/100');
 
       let totalH = eval(expCopy);
-      if(totalH===null || totalH===undefined || isNaN(totalH)) return "Error";
+      if (totalH === null || totalH === undefined || isNaN(totalH)) return "Error";
 
       // Convertir a h m s
       let h = Math.floor(totalH);
@@ -200,12 +200,12 @@ function calcular(exp){
       let s = Math.round((rem - m) * 60);
 
       // Normalizar
-      if(s >= 60){ m += Math.floor(s/60); s = s % 60; }
-      if(m >= 60){ h += Math.floor(m/60); m = m % 60; }
+      if (s >= 60) { m += Math.floor(s/60); s = s % 60; }
+      if (m >= 60) { h += Math.floor(m/60); m = m % 60; }
 
       return `${h}h ${m}m ${s}s`;
     }
-  } catch(e){
+  } catch (e) {
     return "Error";
   }
 }
@@ -214,13 +214,13 @@ function calcular(exp){
 function calculateResult() {
   const result = calcular(expression);
   display.value = result;
-  expression = result; // deja el resultado en el display para seguir operando
+  expression = ""; // limpiar para nueva expresión
 }
 
 // Cambiar modo (decimal ↔ horas)
 function toggleMode() {
   modeDecimal = !modeDecimal;
-  document.getElementById("mode-label").textContent = modeDecimal ? "Decimal" : "Horas";
+  document.getElementById("switch-text").textContent = modeDecimal ? "Decimal" : "Horas";
 
   // Deshabilitar/activar botones H, M, S
   document.querySelectorAll(".btn-hms").forEach(btn => {
@@ -229,4 +229,17 @@ function toggleMode() {
 
   clearDisplay();
 }
+
+// --- Conectar botones especiales ---
+document.getElementById("clear").addEventListener("click", clearDisplay);
+document.getElementById("igual").addEventListener("click", calculateResult);
+document.getElementById("parAbre").addEventListener("click", () => appendValue("("));
+document.getElementById("parCierra").addEventListener("click", () => appendValue(")"));
+document.getElementById("coma").addEventListener("click", () => appendValue("."));
+document.getElementById("borrar1").addEventListener("click", backspace);
+
+// Estado inicial: desactivar H, M, S en modo decimal
+document.querySelectorAll(".btn-hms").forEach(btn => {
+  btn.disabled = modeDecimal;
+});
 </script>
