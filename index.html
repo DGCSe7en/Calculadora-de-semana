@@ -1060,6 +1060,16 @@ document.addEventListener("mousedown", (e) => {
     }
   });
 });
+
+window.addEventListener('message', (event) => {
+  // Filtra solo los mensajes de tu iframe si quieres, usando event.origin
+  if(event.data.tipo === 'ajustarAlturaCalculadora') {
+    const iframe = document.getElementById('iframeCalculadora');
+    if(iframe) {
+      iframe.style.height = event.data.altura + 'px';
+    }
+  }
+});
 </script>
 </body>
 </html>
