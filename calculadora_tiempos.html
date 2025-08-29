@@ -1,3 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Tiempos</title>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.3s, color 0.3s;
+}
+body.modo-claro { background-color: #f0f0f0; color: #111; }
+body.modo-oscuro { background-color: #222; color: #fff; }
+
+.calculadora {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  max-width: 360px;
+  margin: 10px auto;
+  padding: 10px;
+  box-sizing: border-box;
+  min-height: auto;
+}
+
+.display {
+  grid-column: 1 / 5;
+  font-size: 1.4em;
+  padding: 10px;
+  text-align: right;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  background-color: #e0e0e0;
+  min-height: 45px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+button {
+  padding: 15px;
+  font-size: 1.1em;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+button.color1 { background-color: #c0c0c0; color: #000; }
+body.modo-oscuro button.color1 { background-color: #555; color: #fff; }
+button.color1:hover { filter: brightness(0.9); }
+button.color2 { background-color: #5C6B73; color: #fff; }
+button.color2:hover { background-color: #4A565D; }
+
+.switch-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 8px auto 12px auto;
+  max-width: 360px;
+}
+.switch-container span { font-weight: normal; }
+.switch-container input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 50px; height: 24px;
+  background: #ccc;
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+body.modo-oscuro .switch-container input { background: #555; }
+.switch-container input:checked { background: #5C6B73; }
+.switch-container input::before {
+  content: "";
+  position: absolute;
+  top: 50%; left: 2px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transform: translateY(-50%);
+  transition: left 0.2s;
+}
+.switch-container input:checked::before { left: calc(100% - 22px); }
+.switch-container input:focus { outline: none; }
+
+@media(max-width:480px) {
+  .calculadora { max-width: 95%; }
+  .switch-container { max-width: 95%; }
+}
+</style>
+</head>
+<body class="modo-claro">
+
+<div class="calculadora">
+  <input type="text" class="display" id="display" readonly>
+
+  <!-- Fila 1 -->
+  <button class="color2" data-unit="h">H</button>
+  <button class="color2" data-unit="m">M</button>
+  <button class="color2" data-unit="s">S</button>
+  <button class="color2" id="porcentaje">%</button>
+
+  <!-- Fila 2 -->
+  <button class="color1" data-num="7">7</button>
+  <button class="color1" data-num="8">8</button>
+  <button class="color1" data-num="9">9</button>
+  <button class="color2" data-op="÷">÷</button>
+
+  <!-- Fila 3 -->
+  <button class="color1" data-num="4">4</button>
+  <button class="color1" data-num="5">5</button>
+  <button class="color1" data-num="6">6</button>
+  <button class="color2" data-op="×">×</button>
+
+  <!-- Fila 4 -->
+  <button class="color1" data-num="1">1</button>
+  <button class="color1" data-num="2">2</button>
+  <button class="color1" data-num="3">3</button>
+  <button class="color2" data-op="-">-</button>
+
+  <!-- Fila 5 -->
+  <button class="color2" id="parAbre">(</button>
+  <button class="color2" id="parCierra">)</button>
+  <button class="color1" data-num="0">0</button>
+  <button class="color2" data-op="+">+</button>
+
+  <!-- Fila 6 -->
+  <button class="color1" id="coma">,</button>
+  <button class="color1" id="clear">C</button>
+  <button class="color1" id="borrar1">&lt;X]</button>
+  <button class="color2" id="igual">=</button>
+</div>
+
+<div class="switch-container">
+  <span id="switch-text">Hora/Dec</span>
+  <input type="checkbox" id="switchFormato">
+</div>
+
 <script>
 const display = document.getElementById('display');
 let expression = '';
