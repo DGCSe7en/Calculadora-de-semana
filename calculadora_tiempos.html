@@ -9,7 +9,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', sans-serif;
-  overflow-x: hidden;
+  overflow-x: hidden; /* ocultar scroll horizontal */
   transition: background-color 0.3s, color 0.3s;
 }
 body.modo-claro { background-color: #f0f0f0; color: #111; }
@@ -18,12 +18,11 @@ body.modo-oscuro { background-color: #222; color: #fff; }
 .calculadora {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  gap: 6px; /* menos gap para que quepa */
   max-width: 360px;
-  margin: 10px auto;
+  margin: 8px auto;
   padding: 10px;
   box-sizing: border-box;
-  min-height: auto;
 }
 
 .display {
@@ -60,7 +59,7 @@ button.color2:hover { background-color: #4A565D; }
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin: 8px auto 12px auto;
+  margin: 6px auto 12px auto;
   max-width: 360px;
 }
 .switch-container span { font-weight: normal; }
@@ -98,61 +97,61 @@ body.modo-oscuro .switch-container input { background: #555; }
 <body class="modo-claro">
 
 <div class="calculadora">
-<!-- Display -->
-<input type="text" class="display" id="display" readonly>
+  <!-- Display -->
+  <input type="text" class="display" id="display" readonly>
 
-<!-- Fila 1 -->
-<button class="color2 btn-hms" onclick="appendValue('h')">H</button>
-<button class="color2 btn-hms" onclick="appendValue('m')">M</button>
-<button class="color2 btn-hms" onclick="appendValue('s')">S</button>
-<button class="color2" onclick="appendValue('%')">%</button>
+  <!-- Fila 1 -->
+  <button class="color2 btn-hms" onclick="appendValue('h')">H</button>
+  <button class="color2 btn-hms" onclick="appendValue('m')">M</button>
+  <button class="color2 btn-hms" onclick="appendValue('s')">S</button>
+  <button class="color2" onclick="appendValue('%')">%</button>
 
-<!-- Fila 2 -->
-<button class="color1" id="parAbre">(</button>
-<button class="color1" id="parCierra">)</button>
-<button class="color1" id="borrar1">⌫</button>
-<button class="color2" data-op="÷">÷</button>
+  <!-- Fila 2 -->
+  <button class="color1" id="parAbre">(</button>
+  <button class="color1" id="parCierra">)</button>
+  <button class="color1" id="borrar1">⌫</button>
+  <button class="color2" data-op="÷">÷</button>
 
-<!-- Fila 3 -->
-<button class="color1" data-num="7">7</button>
-<button class="color1" data-num="8">8</button>
-<button class="color1" data-num="9">9</button>
-<button class="color2" data-op="×">×</button>
+  <!-- Fila 3 -->
+  <button class="color1" data-num="7">7</button>
+  <button class="color1" data-num="8">8</button>
+  <button class="color1" data-num="9">9</button>
+  <button class="color2" data-op="×">×</button>
 
-<!-- Fila 4 -->
-<button class="color1" data-num="4">4</button>
-<button class="color1" data-num="5">5</button>
-<button class="color1" data-num="6">6</button>
-<button class="color2" data-op="-">-</button>
+  <!-- Fila 4 -->
+  <button class="color1" data-num="4">4</button>
+  <button class="color1" data-num="5">5</button>
+  <button class="color1" data-num="6">6</button>
+  <button class="color2" data-op="-">-</button>
 
-<!-- Fila 5 -->
-<button class="color1" data-num="1">1</button>
-<button class="color1" data-num="2">2</button>
-<button class="color1" data-num="3">3</button>
-<button class="color2" data-op="+">+</button>
+  <!-- Fila 5 -->
+  <button class="color1" data-num="1">1</button>
+  <button class="color1" data-num="2">2</button>
+  <button class="color1" data-num="3">3</button>
+  <button class="color2" data-op="+">+</button>
 
-<!-- Fila 6 -->
-<button class="color1" id="clear">C</button>
-<button class="color1" data-num="0">0</button>
-<button class="color1" id="coma">,</button>
-<button class="color2" id="igual">=</button>
+  <!-- Fila 6 -->
+  <button class="color1" id="clear">C</button>
+  <button class="color1" data-num="0">0</button>
+  <button class="color1" id="coma">,</button>
+  <button class="color2" id="igual">=</button>
 </div>
 
+<!-- Switch Hora/Decimal -->
 <div class="switch-container">
-  <span id="switch-text">Decimal</span>
-  <input type="checkbox" id="switchFormato" onchange="toggleMode()">
+  <span id="switch-text">Horas</span>
+  <input type="checkbox" id="switchFormato" checked onchange="toggleMode()">
 </div>
 
 <script>
 let expression = "";
-let modeDecimal = true; // true = modo decimal, false = modo horas
+let modeDecimal = false; // Arranca en Horas, switch encendido
 const display = document.getElementById("display");
 
 // Añadir valor al display
 function appendValue(val) {
   if (['h','m','s'].includes(val)) {
-    // Solo añadimos unidad si el último carácter es un número
-    if (expression.length > 0 && !isNaN(expression.slice(-1))) {
+    if(expression.length > 0 && !isNaN(expression.slice(-1))) {
       expression += val + " ";
     }
   } else {
@@ -178,34 +177,28 @@ function backspace() {
 function calcular(exp) {
   try {
     if (modeDecimal) {
-      // --- Modo decimal ---
       exp = exp.replace(/×/g,'*').replace(/÷/g,'/').replace(/%/g,'/100');
       let res = eval(exp);
-      if (res === null || res === undefined || isNaN(res)) return "Error";
+      if(res===null || res===undefined || isNaN(res)) return "Error";
       return res.toString();
     } else {
-      // --- Modo horas ---
-      let expCopy = exp.replace(/(\d+(\.\d+)?)h/g, "($1)")
-                       .replace(/(\d+(\.\d+)?)m/g, "($1/60)")
-                       .replace(/(\d+(\.\d+)?)s/g, "($1/3600)")
+      let expCopy = exp.replace(/(\d+(\.\d+)?)h/g,"($1)")
+                       .replace(/(\d+(\.\d+)?)m/g,"($1/60)")
+                       .replace(/(\d+(\.\d+)?)s/g,"($1/3600)")
                        .replace(/×/g,'*').replace(/÷/g,'/').replace(/%/g,'/100');
-
       let totalH = eval(expCopy);
-      if (totalH === null || totalH === undefined || isNaN(totalH)) return "Error";
+      if(totalH===null || totalH===undefined || isNaN(totalH)) return "Error";
 
-      // Convertir a h m s
       let h = Math.floor(totalH);
       let rem = (totalH - h) * 60;
       let m = Math.floor(rem);
       let s = Math.round((rem - m) * 60);
-
-      // Normalizar
-      if (s >= 60) { m += Math.floor(s/60); s = s % 60; }
-      if (m >= 60) { h += Math.floor(m/60); m = m % 60; }
+      if(s>=60){ m += Math.floor(s/60); s %= 60; }
+      if(m>=60){ h += Math.floor(m/60); m %= 60; }
 
       return `${h}h ${m}m ${s}s`;
     }
-  } catch (e) {
+  } catch(e) {
     return "Error";
   }
 }
@@ -214,15 +207,15 @@ function calcular(exp) {
 function calculateResult() {
   const result = calcular(expression);
   display.value = result;
-  expression = ""; // limpiar para nueva expresión
+  expression = "";
 }
 
-// Cambiar modo (decimal ↔ horas)
+// Cambiar modo Horas/Decimal
 function toggleMode() {
-  modeDecimal = !modeDecimal;
+  const switchInput = document.getElementById("switchFormato");
+  modeDecimal = !switchInput.checked; // checked = Horas
   document.getElementById("switch-text").textContent = modeDecimal ? "Decimal" : "Horas";
 
-  // Deshabilitar/activar botones H, M, S
   document.querySelectorAll(".btn-hms").forEach(btn => {
     btn.disabled = modeDecimal;
   });
@@ -230,7 +223,7 @@ function toggleMode() {
   clearDisplay();
 }
 
-// --- Conectar botones especiales ---
+// Conectar botones especiales
 document.getElementById("clear").addEventListener("click", clearDisplay);
 document.getElementById("igual").addEventListener("click", calculateResult);
 document.getElementById("parAbre").addEventListener("click", () => appendValue("("));
@@ -238,8 +231,21 @@ document.getElementById("parCierra").addEventListener("click", () => appendValue
 document.getElementById("coma").addEventListener("click", () => appendValue("."));
 document.getElementById("borrar1").addEventListener("click", backspace);
 
-// Estado inicial: desactivar H, M, S en modo decimal
+// Conectar botones numéricos
+document.querySelectorAll("button[data-num]").forEach(btn => {
+  btn.addEventListener("click", () => appendValue(btn.dataset.num));
+});
+
+// Conectar botones de operaciones
+document.querySelectorAll("button[data-op]").forEach(btn => {
+  btn.addEventListener("click", () => appendValue(btn.dataset.op));
+});
+
+// Estado inicial: activar H/M/S según modo
 document.querySelectorAll(".btn-hms").forEach(btn => {
   btn.disabled = modeDecimal;
 });
 </script>
+
+</body>
+</html>
