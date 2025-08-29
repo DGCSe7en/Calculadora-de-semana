@@ -1,100 +1,8 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de Tiempos</title>
-<style>
-/* --- Body --- */
-body { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
-
-body.modo-claro { background-color: #f0f0f0; color: #111; }
-body.modo-oscuro { background-color: #222; color: #fff; }
-
-/* --- Calculadora --- */
-.calculadora { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 360px; margin: 10px auto; padding: 10px; box-sizing: border-box; min-height: auto; }
-
-/* Display sin scroll lateral */
-.display { grid-column: 1 / 5; font-size: 1.4em; padding: 10px; text-align: right; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; background-color: #e0e0e0; min-height: 45px; overflow-x: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-/* Botones base */
-button { padding: 15px; font-size: 1.1em; border-radius: 5px; border: none; cursor: pointer; transition: background-color 0.2s; }
-
-/* Números y 0/C/= */
-button.color1 { background-color: #c0c0c0; color: #000; }
-body.modo-oscuro button.color1 { background-color: #555; color: #fff; }
-button.color1:hover { filter: brightness(0.9); }
-
-/* Operaciones H/M/S + + - × ÷ */
-button.color2 { background-color: #5C6B73; color: #fff; }
-button.color2:hover { background-color: #4A565D; }
-
-/* Switch Hora/Dec debajo */
-.switch-container { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 8px auto 12px auto; max-width: 360px; }
-.switch-container span { font-weight: normal; }
-.switch-container input { appearance: none; -webkit-appearance: none; width: 50px; height: 24px; background: #ccc; border-radius: 12px; position: relative; cursor: pointer; transition: background 0.2s; }
-body.modo-oscuro .switch-container input { background: #555; }
-.switch-container input:checked { background: #5C6B73; }
-.switch-container input::before { content: ""; position: absolute; top: 50%; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transform: translateY(-50%); transition: left 0.2s; }
-.switch-container input:checked::before { left: calc(100% - 22px); }
-.switch-container input:focus { outline: none; }
-
-@media(max-width:480px) {
-  .calculadora { max-width: 95%; }
-  .switch-container { max-width: 95%; }
-}
-</style>
-</head>
-<body class="modo-claro">
-
-<div class="calculadora">
-  <input type="text" class="display" id="display" readonly>
-
-  <!-- Fila 1 -->
-  <button class="color2" data-unit="h">H</button>
-  <button class="color2" data-unit="m">M</button>
-  <button class="color2" data-unit="s">S</button>
-  <button class="color2" data-op="÷">÷</button>
-
-  <!-- Fila 2 -->
-  <button class="color1" data-num="7">7</button>
-  <button class="color1" data-num="8">8</button>
-  <button class="color1" data-num="9">9</button>
-  <button class="color2" data-op="×">×</button>
-
-  <!-- Fila 3 -->
-  <button class="color1" data-num="4">4</button>
-  <button class="color1" data-num="5">5</button>
-  <button class="color1" data-num="6">6</button>
-  <button class="color2" data-op="-">-</button>
-
-  <!-- Fila 4 -->
-  <button class="color1" data-num="1">1</button>
-  <button class="color1" data-num="2">2</button>
-  <button class="color1" data-num="3">3</button>
-  <button class="color2" data-op="+">+</button>
-
-  <!-- Fila 5 -->
-  <button class="color1" id="clear">C</button>
-  <button class="color1" data-num="0">0</button>
-  <button class="color1" id="coma">,</button>
-  <button class="color2" id="igual">=</button>
-</div>
-
-<!-- Switch Hora/Dec -->
-<div class="switch-container">
-  <span id="switch-text">Hora/Dec</span>
-  <input type="checkbox" id="switchFormato">
-</div>
-
 <script>
 const display = document.getElementById('display');
 let expression = '';
+let modeDecimal = true; // true = decimal, false = horas
 
-// Variable de modo: true = decimal, false = horas
-let modeDecimal = true;
-
-// Referencias a botones de unidades H/M/S
 const unitButtons = document.querySelectorAll('[data-unit]');
 
 // Ajusta altura del iframe
@@ -103,74 +11,85 @@ function ajustarAltura() {
   parent.postMessage({ tipo: 'ajustarAlturaCalculadora', altura }, '*');
 }
 
-// Función para actualizar display y ajustar altura
+// Actualiza display
 function actualizarDisplay(){
   display.value = expression;
   ajustarAltura();
 }
 
-// Habilita/deshabilita botones H/M/S según modo
+// Actualiza botones H/M/S
 function actualizarBotones() {
   if(modeDecimal){
-    unitButtons.forEach(btn => {
-      btn.disabled = true;
-      btn.style.opacity = "0.5";
-      btn.style.cursor = "not-allowed";
-    });
+    unitButtons.forEach(btn => { btn.disabled = true; btn.style.opacity="0.5"; btn.style.cursor="not-allowed"; });
   } else {
-    unitButtons.forEach(btn => {
-      btn.disabled = false;
-      btn.style.opacity = "1";
-      btn.style.cursor = "pointer";
-    });
+    unitButtons.forEach(btn => { btn.disabled = false; btn.style.opacity="1"; btn.style.cursor="pointer"; });
   }
 }
 
-// --- Botones numéricos ---
+// Botones numéricos
 document.querySelectorAll('[data-num]').forEach(btn=>{
   btn.addEventListener('click', ()=>{ expression += btn.dataset.num; actualizarDisplay(); });
 });
 
-// --- Botones H/M/S ---
+// Botones H/M/S
 unitButtons.forEach(btn=>{
-  btn.addEventListener('click', ()=>{ expression += btn.dataset.unit; actualizarDisplay(); });
+  btn.addEventListener('click', ()=>{
+    if(expression && !expression.endsWith(' ')) expression += ' ';
+    expression += btn.dataset.unit + ' ';
+    actualizarDisplay();
+  });
 });
 
-// --- Botones de operaciones ---
+// Botones operaciones
 document.querySelectorAll('[data-op]').forEach(btn=>{
   btn.addEventListener('click', ()=>{ expression += ' ' + btn.dataset.op + ' '; actualizarDisplay(); });
 });
 
-// --- Botón C ---
+// Botón C
 document.getElementById('clear').addEventListener('click', ()=>{
   expression = '';
   actualizarDisplay();
 });
 
-// --- Botón = ---
+// Botón coma
+document.getElementById('coma').addEventListener('click', ()=>{
+  if(!modeDecimal) return;
+  expression += '.';
+  actualizarDisplay();
+});
+
+// Botón paréntesis
+document.getElementById('parAbre').addEventListener('click', ()=>{ expression += '('; actualizarDisplay(); });
+document.getElementById('parCierra').addEventListener('click', ()=>{ expression += ')'; actualizarDisplay(); });
+
+// Botón %
+document.getElementById('porcentaje').addEventListener('click', ()=>{
+  if(modeDecimal) expression += '%'; actualizarDisplay();
+});
+
+// Borrar 1 carácter
+document.getElementById('borrar1').addEventListener('click', ()=>{
+  expression = expression.slice(0,-1);
+  actualizarDisplay();
+});
+
+// Botón =
 document.getElementById('igual').addEventListener('click', ()=>{
   expression = calcular(expression);
   actualizarDisplay();
 });
 
-// --- Botón coma ---
-document.getElementById('coma').addEventListener('click', ()=>{
-  if(!modeDecimal) return; // solo en decimal
-  expression += '.';
-  actualizarDisplay();
-});
-
-// --- Switch invertido (activo = Horas) ---
+// Switch invertido
 const switchBtn = document.getElementById('switchFormato');
 switchBtn.addEventListener('change', ()=>{
-  modeDecimal = !switchBtn.checked; // invertido
+  modeDecimal = !switchBtn.checked; 
   actualizarBotones();
 });
 
-// --- Teclado físico ---
+// Teclado físico
 document.addEventListener('keydown', (e)=>{
   if(e.key.match(/[0-9]/)) expression += e.key;
-  else if(['h','m','s','+','-','*','/'].includes(e.key)) expression += e.key==='*'?'×': e.key==='/'?'÷': e.key;
+  else if(['h','m','s','+','-','*','/','(',')'].includes(e.key)) expression += e.key==='*'?'×': e.key==='/'?'÷': e.key;
   else if(e.key==='Enter') expression = calcular(expression);
   else if(e.key==='Backspace') expression = expression.slice(0,-1);
   actualizarDisplay();
@@ -180,19 +99,17 @@ document.addEventListener('keydown', (e)=>{
 function calcular(exp){
   try {
     if(modeDecimal){
-      // Calculadora normal: reemplaza símbolos × ÷ por * /
-      return eval(exp.replace(/×/g, '*').replace(/÷/g, '/')).toString();
+      exp = exp.replace(/×/g,'*').replace(/÷/g,'/').replace(/%/g,'/100');
+      return eval(exp).toString();
     } else {
-      // Cálculo de tiempos
       let tokens = exp.split(/\s+/).filter(t=>t!=='');
+      if(tokens.length===0) return '';
 
-      if(tokens.length === 0) return '';
-
-      let stack = [];
-      let currentOp = null;
+      let stack=[], currentOp=null;
 
       function tokenToHours(token){
-        if(token.endsWith('h')) return parseFloat(token.replace('h','')) || 0;
+        token = token.trim();
+        if(token.endsWith('h')) return parseFloat(token.replace('h',''))||0;
         if(token.endsWith('m')) return (parseFloat(token.replace('m',''))||0)/60;
         if(token.endsWith('s')) return (parseFloat(token.replace('s',''))||0)/3600;
         if(!isNaN(parseFloat(token))) return parseFloat(token);
@@ -200,39 +117,35 @@ function calcular(exp){
       }
 
       for(let token of tokens){
-        if(['+', '-', '×', '÷'].includes(token)){
-          currentOp = token;
+        if(['+', '-', '×', '÷'].includes(token)){ 
+          currentOp=token; 
         } else {
           let val = tokenToHours(token);
           if(currentOp){
-            if(currentOp==='+') stack.push(stack.pop() + val);
-            else if(currentOp==='-') stack.push(stack.pop() - val);
-            else if(currentOp==='×') stack.push(stack.pop() * val);
-            else if(currentOp==='÷') stack.push(stack.pop() / val);
-            currentOp = null;
-          } else {
-            stack.push(val);
-          }
+            if(currentOp==='+') stack.push(stack.pop()+val);
+            else if(currentOp==='-') stack.push(stack.pop()-val);
+            else if(currentOp==='×') stack.push(stack.pop()*val);
+            else if(currentOp==='÷') stack.push(stack.pop()/val);
+            currentOp=null;
+          } else stack.push(val);
         }
       }
 
       let totalH = stack.reduce((a,b)=>a+b,0);
+      let h=Math.floor(totalH);
+      let m=Math.floor((totalH-h)*60);
+      let s=Math.round(((totalH-h)*60 - m)*60);
 
-      let h = Math.floor(totalH);
-      let m = Math.floor((totalH - h)*60);
-      let s = Math.round(((totalH - h)*60 - m)*60);
       return `${h}h ${m}m ${s}s`;
     }
-  } catch(e) {
+  } catch(e){
     return 'Error';
   }
 }
 
-// Ajuste inicial al cargar
+// Ajuste inicial
 window.addEventListener('load', ()=>{
-  ajustarAltura();
   actualizarBotones();
+  actualizarDisplay();
 });
 </script>
-</body>
-</html>
