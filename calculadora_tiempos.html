@@ -17,6 +17,7 @@ body { margin: 0; overflow-x: hidden; font-family: 'Segoe UI', sans-serif; }
   margin: 20px auto;
   padding: 10px;
   box-sizing: border-box;
+  min-height: 360px;
 }
 
 .display {
@@ -41,16 +42,16 @@ button {
   transition: background-color 0.2s;
 }
 
-/* Color1: números y switch en modo 1 */
-button.color1 { background-color: #FF8C42; color: #fff; }
-button.color1:hover { background-color: #e07a35; }
+/* Color neutro números y switch (modo claro) */
+button.color1 { background-color: #c0c0c0; color: #000; }
 
-/* Color2: operaciones y switch en modo 2 */
+/* Color neutro números y switch (modo oscuro) */
+body.modo-oscuro button.color1 { background-color: #555; color: #fff; }
+
+/* Operaciones */
 button.color2 { background-color: #5C6B73; color: #fff; }
 button.color2:hover { background-color: #4A565D; }
 
-/* Botón "=" doble ancho */
-button#igual { grid-column: span 2; }
 </style>
 </head>
 <body>
