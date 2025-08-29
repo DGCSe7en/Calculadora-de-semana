@@ -149,13 +149,14 @@ body.modo-oscuro .firma { color: #aaa; }
 
 <div class="calendar-container" aria-label="Calendario de festivos" role="region">
   <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showPrint=0&showTitle=0&showCalendars=0&showTz=0&src=cmc2YXRmZXEyMHNkMHJxbWVpOTU3aDB0dnBlNGd2bTNAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=NjI3NDg2ZDMwOWJnZ2xpbGhuOGJnN3JnbjNnaXB2M2lAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=OTlvbjFkNjMyajdqNm42NDdrczQwa3UwNW5lZzZlcGNAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=b3A0Y2RtNnVmaGUybmZmYTBlOThmbDJndmZ1YnRxY2VAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=bHFpMWlvMXNoaGh1amFrZ2psZnQ2OWVocGtxb2MzdTdAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=ZzN1M25oZ3E1cnU1amVhZGJrYzZsN3E0amgzcDY5cjRAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=bWUxdXByNGludjRuanJtNjc4Zm9ldjJsdjJhMzc5MDNAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=MTc4cHFpMmhwOTJiaHZjbTlvdWoyMDVvbmU3cmc5NTRAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=aW80NWRsb2FsbmcxcWxpdGV2MmhuMjFzb2JuaDVlcmFAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=ZnJrN21rOTluYnRicXQ3ZmNsbmJqN3Uzazdlbml0MGRAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=OW0yNGZ0aW81dmw0bGk1aXRmbTIydjVpdmRzdnVxaHZAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&src=aTJvMTRnaDhqNmY2N29yODY1amhrcTBxbnNlMXVrdWNAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=MWpqdmRlNmJibmRmaXJ2dnM4NnUzMjBzcXJkaDc1M2dAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=MTIwNm9iMGhrczNkNDU5aDFxdDZtcWZkNjF1N3A4b29AaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=ZG5qMWh1aW5xdWpqZ2Nlajk2cjNpZzlqdTg2Y3MwZ2tAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=bXNidTd1MmNhcnNnMWU1cG0xOWI4b2p0MjF1aXE0c2lAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=MGduYWRqb3NibTd2am5sbTlkaDhhNDU5MHBrYWVnNTlAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=OHMzMWhtZHFjbnRvMDIwc3FiZWE3bmZ2cjdwcG90Nm5AaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=M2w5YXNwc3AzbDZ0bjhmZTIzMGtzcTI2dmoydHNsbWtAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%23d50000&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
-</div>  
+</div>
 
 <div class="seccion">
   <h3 class="texto-azul">Calculadora de tiempos</h3>
   <iframe 
+    id="iframeCalculadora"
     src="calculadora_tiempos.html" 
-    style="width:100%; height:600px; border:none; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+    style="width:100%; border:none; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.15);">
   </iframe>
 </div>
   
@@ -1069,6 +1070,18 @@ document.addEventListener("mousedown", (e) => {
 document.getElementById("city-input").addEventListener("focus", () => {
   document.getElementById("suggestions").innerHTML = "";
 });
+
+// Función para visualizar calculadora de tiempos.
+  const iframe = document.getElementById('iframeCalculadora');
+  iframe.addEventListener('load', () => {
+    try {
+      const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+      iframe.style.height = iframeDocument.body.scrollHeight + 'px';
+    } catch(e) {
+      console.warn('No se pudo ajustar la altura del iframe automáticamente:', e);
+    }
+  });
+ 
 </script>
 </body>
 </html>
