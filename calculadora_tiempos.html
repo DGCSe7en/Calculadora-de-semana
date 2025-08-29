@@ -4,11 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calculadora de Tiempos</title>
-
 <style>
-body { margin: 0; padding: 0; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: 'Segoe UI', sans-serif;
+}
 
-/* --- Calculadora --- */
+/* Grid calculadora */
 .calculadora {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -17,9 +21,10 @@ body { margin: 0; padding: 0; overflow: hidden; font-family: 'Segoe UI', sans-se
   margin: 20px auto;
   padding: 10px;
   box-sizing: border-box;
-  min-height: 360px; /* centrado vertical opcional */
+  min-height: 360px;
 }
 
+/* Display */
 .display {
   grid-column: 1 / 5;
   font-size: 1.4em;
@@ -33,7 +38,7 @@ body { margin: 0; padding: 0; overflow: hidden; font-family: 'Segoe UI', sans-se
   overflow-x: auto;
 }
 
-/* Botones */
+/* Botones generales */
 button {
   padding: 15px;
   font-size: 1.1em;
@@ -45,7 +50,6 @@ button {
 
 /* Color neutro números y switch (modo claro) */
 button.color1 { background-color: #c0c0c0; color: #000; }
-
 /* Color neutro números y switch (modo oscuro) */
 body.modo-oscuro button.color1 { background-color: #555; color: #fff; }
 
@@ -53,10 +57,10 @@ body.modo-oscuro button.color1 { background-color: #555; color: #fff; }
 button.color2 { background-color: #5C6B73; color: #fff; }
 button.color2:hover { background-color: #4A565D; }
 
-/* Botón "=" normal */
-button#igual { grid-column: auto; }
+/* Botón "=" */
+button#igual { grid-column: auto; } /* mismo tamaño que los demás */
 
-/* Switch toggle calculadora con tema */
+/* Switch integrado */
 .calculadora-switch {
   grid-column: span 1;
   display: flex;
@@ -105,6 +109,17 @@ body.modo-oscuro .switch-slider { background-color: #555; }
   transform: translateX(32px);
 }
 
+/* Indicador de formato */
+#formatoLabel {
+  margin-left: 6px;
+  font-size: 0.9em;
+}
+
+/* Ajuste responsive */
+@media (max-width: 480px) {
+  .calculadora { max-width: 95%; }
+  .display { font-size: 1.2em; }
+}
 </style>
 </head>
 <body>
@@ -112,12 +127,12 @@ body.modo-oscuro .switch-slider { background-color: #555; }
 <div class="calculadora">
   <input type="text" class="display" id="display" readonly>
 
-  <!-- Switch integrado -->
-<div class="switch-container calculadora-switch">
-  <input type="checkbox" id="switchFormato" title="Cambiar formato h/dec">
-  <span class="switch-slider"></span>
-  <span id="formatoLabel" style="margin-left:6px; font-size:0.9em;">h/m/s</span>
-</div>
+  <!-- Switch integrado con indicador -->
+  <div class="switch-container calculadora-switch">
+    <input type="checkbox" id="switchFormato" title="Cambiar formato h/dec">
+    <span class="switch-slider"></span>
+    <span id="formatoLabel">h/m/s</span>
+  </div>
 
   <!-- Fila 1 -->
   <button class="color2" data-unit="h">H</button>
@@ -201,40 +216,58 @@ document.getElementById('igual').addEventListener('click', ()=>{
 });
 
 // Actualiza display
-function actualizarDisplay(){ display.value = expression; }
+function actualizarDisplay(){
+  display.value = expression;
+}
 
-// --- Lógica cálculo de tiempos ---
+// --- Lógica de cálculo de tiempos ---
 function calcular(exp){
   try {
-    let tokens = exp.split(/\s+/).filter(t=>t!==''), stack=[], currentOp=null;
+    let tokens = exp.split(/\s+/).filter(t=>t!=='');
+    if(tokens.length===0) return '';
+
+    let stack = [];
+    let currentOp = null;
+
     function tokenToHours(token){
-      if(token.endsWith('h')) return parseFloat(token.replace('h',''))||0;
+      if(token.endsWith('h')) return parseFloat(token.replace('h','')) || 0;
       if(token.endsWith('m')) return (parseFloat(token.replace('m',''))||0)/60;
       if(token.endsWith('s')) return (parseFloat(token.replace('s',''))||0)/3600;
       if(!isNaN(parseFloat(token))) return parseFloat(token);
       return 0;
     }
+
     for(let token of tokens){
-      if(['+', '-', '×', '÷'].includes(token)) currentOp = token;
-      else{
+      if(['+','-','×','÷'].includes(token)){
+        currentOp = token;
+      } else {
         let val = tokenToHours(token);
         if(currentOp){
-          if(currentOp==='+') stack.push(stack.pop() + val);
-          else if(currentOp==='-') stack.push(stack.pop() - val);
-          else if(currentOp==='×') stack.push(stack.pop() * val);
-          else if(currentOp==='÷') stack.push(stack.pop() / val);
+          if(currentOp==='+') stack.push(stack.pop()+val);
+          else if(currentOp==='-') stack.push(stack.pop()-val);
+          else if(currentOp==='×') stack.push(stack.pop()*val);
+          else if(currentOp==='÷') stack.push(stack.pop()/val);
           currentOp = null;
-        } else stack.push(val);
+        } else {
+          stack.push(val);
+        }
       }
     }
+
     let totalH = stack.reduce((a,b)=>a+b,0);
+
     if(!modeDecimal){
       let h = Math.floor(totalH);
       let m = Math.floor((totalH - h)*60);
       let s = Math.round(((totalH - h)*60 - m)*60);
       return `${h}h ${m}m ${s}s`;
-    } else return totalH.toFixed(2);
-  } catch(e){ return 'Error'; }
+    } else {
+      return totalH.toFixed(2);
+    }
+
+  } catch(e) {
+    return 'Error';
+  }
 }
 
 // Teclado físico seguro
@@ -246,7 +279,7 @@ document.addEventListener('keydown', (e)=>{
   actualizarDisplay();
 });
 
-// Ajuste automático altura iframe
+// Ajuste automático de altura para iframe
 function ajustarAltura() {
   const altura = document.body.scrollHeight;
   window.parent.postMessage({ tipo: 'ajustarAlturaCalculadora', altura }, '*');
@@ -254,7 +287,7 @@ function ajustarAltura() {
 window.addEventListener('load', ajustarAltura);
 const observer = new MutationObserver(ajustarAltura);
 observer.observe(document.body, { childList: true, subtree: true });
-
 </script>
+
 </body>
 </html>
