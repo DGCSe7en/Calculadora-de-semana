@@ -405,8 +405,6 @@ document.querySelectorAll('#idiomas img').forEach(img => {
   img.addEventListener('click', () => setTimeout(actualizarLogo, 50));
 });
 
-
-
 function formatoFecha(fecha){ 
   const dia=String(fecha.getDate()).padStart(2,'0'); 
   const mes=String(fecha.getMonth()+1).padStart(2,'0'); 
@@ -568,47 +566,205 @@ function mostrarSemanaActual(lang){
     .replace("{semana}",semanaActual);
 }
 
-function calcularDias(){
-  const inicioVal=document.getElementById("fechaInicio").value;
-  const finVal=document.getElementById("fechaFin").value;
+<script>
+// --- Traducciones coherentes ---
+const traducciones = {
+  es: {
+    tituloAlt: "Tiempo360 - El tiempo desde todas sus dimensiones...",
+    lugarLabel: "Lugar:",
+    buscarBtn: "Buscar",
+    h3Semana: "Número de semana",
+    btnCalcularSemana: "Calcular",
+    semanaDe: "{fecha} > Semana {semana}",
+    diasEntre: "{total} días ({años} años, {meses} meses, {dias} días)",
+    rangoSemana: "Semana {semana}: del {inicio} al {fin}",
+    h3Dias: "Tiempo entre dos fechas",
+    labelDe: "De:",
+    labelA: "a:",
+    btnCalcularDias: "Calcular",
+    h3Rango: "Fechas de una semana",
+    labelSemana: "Semana del año (1-53):",
+    btnMostrarRango: "Mostrar",
+    placeholderInicio: "Fecha de inicio",
+    placeholderFin: "Fecha de fin",
+    placeholderSemana: "Número de semana",
+    placeholderCiudad: "Introduce una ciudad...",
+    errorFecha: "Introduce una fecha válida.",
+    errorFechas: "Introduce fechas válidas en ambos campos.",
+    errorFinAntesInicio: "La fecha final no puede ser anterior a la inicial.",
+    errorSemana: "Introduce un número de semana válido entre 1 y 53.",
+    horaActual: "Hora actual:",
+    zonaHorariaTpl: "Hora local de España ({gmt})",
+    semanaActual: "Hoy es {fecha} y estamos en la semana número {semana} del año.",
+    footer: "El sitio podría contener errores, por favor contrasta la información.<br><br><strong>Tiempo360.</strong> <em>El tiempo, desde todas sus dimensiones...</em><br>2025 - Todos los derechos reservados"
+  },
+  // --- Otras traducciones (ca, gl, eu) se mantienen igual ---
+};
+
+// --- Función de formato de fecha ---
+function formatoFecha(fecha){ 
+  const dia=String(fecha.getDate()).padStart(2,'0'); 
+  const mes=String(fecha.getMonth()+1).padStart(2,'0'); 
+  const año=fecha.getFullYear(); 
+  return `${dia}/${mes}/${año}`; 
+}
+
+// --- Función mostrar errores ---
+function mostrarError(inputId,errorId,mensaje){
+  const input = document.getElementById(inputId);
+  const error = document.getElementById(errorId);
+  if (input) input.classList.add('input-error');
+  if (error) {
+    error.innerHTML = `<span class="icono">⚠️</span>${mensaje}`;
+    error.classList.add('visible');
+  }
+  setTimeout(()=>{ if (input) input.classList.remove('input-error'); },1200);
+  setTimeout(()=>{ if (error) error.classList.remove('visible'); },3000);
+}
+
+// --- Función limpiar inputs ---
+function limpiarInputs(ids) {
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+}
+
+// --- FUNCIONES DE CÁLCULO DE FECHAS ---
+function getSemanaISO(fecha){
+  const tmp = new Date(fecha.getTime());
+  tmp.setHours(0,0,0,0);
+  tmp.setDate(tmp.getDate() + 3 - (tmp.getDay() + 6) % 7);
+  const primerJueves = new Date(tmp.getFullYear(),0,4);
+  return 1 + Math.round(((tmp - primerJueves)/ (7 * 24 * 60 * 60 * 1000)));
+}
+
+// --- Número de semana ---
+function calcularSemana(){
+  const fechaInput=document.getElementById("fecha").value;
   const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
   const t = traducciones[lang];
+  if(!fechaInput){ 
+    mostrarError("fecha","errorSemana",t.errorFecha); 
+    limpiarInputs(["fecha"]);
+    return; 
+  }
+  const fecha=new Date(fechaInput);
+  if(isNaN(fecha)){ 
+    mostrarError("fecha","errorSemana",t.errorFecha); 
+    limpiarInputs(["fecha"]);
+    return; 
+  }
+  const semana=getSemanaISO(fecha);
+  document.getElementById("resultado").innerText = t.semanaDe
+    .replace("{fecha}", formatoFecha(fecha))
+    .replace("{semana}", semana);
+  limpiarInputs(["fecha"]);
+}
+
+// --- Fechas de una semana ---
+function calcularRangoSemana(){
+  const semanaInput = document.getElementById("semanaInput").value;
+  const semana = parseInt(semanaInput, 10);
+  const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
+  const t = traducciones[lang];
+  if(isNaN(semana) || semana < 1 || semana > 53){
+    mostrarError("semanaInput","errorRangoSemana", t.errorSemana);
+    limpiarInputs(["semanaInput"]);
+    return;
+  }
+  const año = new Date().getFullYear();
+  const primerJueves = new Date(año,0,4);
+  const diaSemana = (primerJueves.getDay() + 6) % 7;
+  const inicioSemana = new Date(primerJueves);
+  inicioSemana.setDate(primerJueves.getDate() - diaSemana + (semana - 1) * 7);
+  const finSemana = new Date(inicioSemana);
+  finSemana.setDate(inicioSemana.getDate() + 6);
+  document.getElementById("resultadoSemana").textContent=t.rangoSemana
+    .replace("{semana}", semana)
+    .replace("{inicio}", formatoFecha(inicioSemana))
+    .replace("{fin}", formatoFecha(finSemana));
+  limpiarInputs(["semanaInput"]);
+}
+
+// --- TIEMPO ENTRE DOS FECHAS (corregido) ---
+function calcularDias(){
+  const inicioVal = document.getElementById("fechaInicio").value;
+  const finVal = document.getElementById("fechaFin").value;
+  const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
+  const t = traducciones[lang];
+
   if(!inicioVal || !finVal){
     mostrarError("fechaInicio","errorDias", t.errorFechas);
     limpiarInputs(["fechaInicio","fechaFin"]);
     return;
   }
-  const fechaInicio=new Date(inicioVal);
-  const fechaFin=new Date(finVal);
+
+  const fechaInicio = new Date(inicioVal);
+  const fechaFin = new Date(finVal);
+
   if(isNaN(fechaInicio) || isNaN(fechaFin)){
     mostrarError("fechaInicio","errorDias", t.errorFechas);
     limpiarInputs(["fechaInicio","fechaFin"]);
     return;
   }
+
   if(fechaFin < fechaInicio){
     mostrarError("fechaFin","errorDias", t.errorFinAntesInicio);
     limpiarInputs(["fechaFin"]);
     return;
   }
-  let años=fechaFin.getFullYear()-fechaInicio.getFullYear();
-  let meses=fechaFin.getMonth()-fechaInicio.getMonth();
-  let dias=fechaFin.getDate()-fechaInicio.getDate();
-  if(dias<0){ 
-    meses--; 
-    dias+=new Date(fechaFin.getFullYear(),fechaFin.getMonth(),0).getDate(); 
+
+  let años = fechaFin.getFullYear() - fechaInicio.getFullYear();
+  let meses = fechaFin.getMonth() - fechaInicio.getMonth();
+  let dias = fechaFin.getDate() - fechaInicio.getDate();
+
+  if(dias < 0){
+    meses--;
+    const diasMesAnterior = new Date(fechaFin.getFullYear(), fechaFin.getMonth(), 0).getDate();
+    dias += diasMesAnterior;
   }
-  if(meses<0){ 
-    años--; 
-    meses+=12; 
+
+  if(meses < 0){
+    años--;
+    meses += 12;
   }
-  const diasTotales=Math.round((fechaFin-fechaInicio)/(1000*60*60*24));
-  document.getElementById("resultadoDias").textContent=t.diasEntre
+
+  const diasTotales = Math.round((fechaFin - fechaInicio) / (1000*60*60*24));
+
+  document.getElementById("resultadoDias").textContent = t.diasEntre
     .replace("{total}", diasTotales)
     .replace("{años}", años)
     .replace("{meses}", meses)
     .replace("{dias}", dias);
+
   limpiarInputs(["fechaInicio","fechaFin"]);
 }
+
+// --- Listener botón y Enter ---
+document.getElementById("btnCalcularDias").addEventListener("click", calcularDias);
+["fechaInicio","fechaFin"].forEach(id => {
+  const input = document.getElementById(id);
+  if(input){
+    input.addEventListener("keydown", (e) => {
+      if(e.key === "Enter") calcularDias();
+    });
+  }
+});
+
+// --- Limpiar resultado al click fuera ---
+document.addEventListener("mousedown", (e) => {
+  ["fechaInicio","fechaFin"].forEach(id => {
+    const input = document.getElementById(id);
+    const resultado = document.getElementById("resultadoDias");
+    const error = document.getElementById("errorDias");
+    if(!input) return;
+    if(e.target !== input){
+      if(resultado) resultado.textContent = "";
+      if(error) error.textContent = "";
+    }
+  });
+});
 
 function calcularRangoSemana(){
   const semanaInput = document.getElementById("semanaInput").value;
