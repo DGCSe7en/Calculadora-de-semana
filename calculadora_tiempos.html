@@ -4,9 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calculadora de Tiempos</title>
-<link rel="stylesheet" href="tu_estilo.css"> <!-- enlaza tu CSS global -->
+<link rel="stylesheet" href="tu_estilo.css"> <!-- tu CSS global -->
 
 <style>
+body { margin: 0; overflow-x: hidden; font-family: 'Segoe UI', sans-serif; }
+
 .calculadora {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -16,6 +18,7 @@
   padding: 10px;
   box-sizing: border-box;
 }
+
 .display {
   grid-column: 1 / 5;
   font-size: 1.4em;
@@ -26,7 +29,9 @@
   box-sizing: border-box;
   background-color: #f0f0f0;
   min-height: 45px;
+  overflow-x: auto;
 }
+
 button {
   padding: 15px;
   font-size: 1.1em;
@@ -35,16 +40,17 @@ button {
   cursor: pointer;
   transition: background-color 0.2s;
 }
+
+/* Color1: números y switch en modo 1 */
 button.color1 { background-color: #FF8C42; color: #fff; }
 button.color1:hover { background-color: #e07a35; }
+
+/* Color2: operaciones y switch en modo 2 */
 button.color2 { background-color: #5C6B73; color: #fff; }
 button.color2:hover { background-color: #4A565D; }
 
 /* Botón "=" doble ancho */
 button#igual { grid-column: span 2; }
-
-/* Autoajuste iframe */
-body { margin:0; }
 </style>
 </head>
 <body>
@@ -140,12 +146,10 @@ function actualizarDisplay(){
 // --- Lógica de cálculo de tiempos ---
 function calcular(exp){
   try {
-    // Separar tokens por espacios
     let tokens = exp.split(/\s+/).filter(t=>t!=='');
     if(tokens.length === 0) return '';
 
     let stack = [];
-    let currentUnitValue = 0; // en horas
     let currentOp = null;
 
     function tokenToHours(token){
@@ -175,12 +179,12 @@ function calcular(exp){
 
     let totalH = stack.reduce((a,b)=>a+b,0);
 
-    if(!modeDecimal){ // formato H:M:S
+    if(!modeDecimal){
       let h = Math.floor(totalH);
       let m = Math.floor((totalH - h)*60);
       let s = Math.round(((totalH - h)*60 - m)*60);
       return `${h}h ${m}m ${s}s`;
-    } else { // decimal
+    } else {
       return totalH.toFixed(2);
     }
 
@@ -189,13 +193,24 @@ function calcular(exp){
   }
 }
 
-// Teclado físico (solo ordenador)
+// Teclado físico seguro (solo ordenador)
 document.addEventListener('keydown', (e)=>{
   if(e.key.match(/[0-9]/)) expression += e.key;
+  else if(['h','m','s','+','-','*','/'].includes(e.key)) expression += e.key==='*'?'×': e.key==='/'?'÷': e.key;
   else if(e.key==='Enter') expression = calcular(expression);
   else if(e.key==='Backspace') expression = expression.slice(0,-1);
   actualizarDisplay();
 });
+
+// --- Ajuste automático de altura para iframe ---
+function ajustarAltura() {
+  const altura = document.body.scrollHeight;
+  window.parent.postMessage({ tipo: 'ajustarAlturaCalculadora', altura }, '*');
+}
+window.addEventListener('load', ajustarAltura);
+const observer = new MutationObserver(ajustarAltura);
+observer.observe(document.body, { childList: true, subtree: true });
+
 </script>
 
 </body>
