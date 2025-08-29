@@ -9,7 +9,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', sans-serif;
-  overflow-x: hidden;
+  overflow-x: hidden; /* evitar scroll horizontal */
   transition: background-color 0.3s, color 0.3s;
 }
 body.modo-claro { background-color: #f0f0f0; color: #111; }
@@ -23,11 +23,7 @@ body.modo-oscuro { background-color: #222; color: #fff; }
   margin: 8px auto;
   padding: 10px;
   box-sizing: border-box;
-  border-radius: 10px;
-  background-color: #e0e0e0; /* Claro */
-  transition: background-color 0.3s;
 }
-body.modo-oscuro .calculadora { background-color: #444; } /* Oscuro más claro que fondo general */
 
 .display {
   grid-column: 1 / 5;
@@ -36,14 +32,12 @@ body.modo-oscuro .calculadora { background-color: #444; } /* Oscuro más claro q
   text-align: right;
   border-radius: 5px;
   border: 1px solid #ccc;
-  box-sizing: border-box;
   background-color: #e0e0e0;
   min-height: 45px;
   overflow-x: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-body.modo-oscuro .display { background-color: #666; color: #fff; }
 
 button {
   padding: 15px;
@@ -102,74 +96,91 @@ body.modo-oscuro .switch-container input { background: #555; }
 <body class="modo-claro">
 
 <div class="calculadora">
+  <!-- Display -->
   <input type="text" class="display" id="display" readonly>
 
+  <!-- Fila 1 -->
   <button class="color2 btn-hms" onclick="appendValue('h')">H</button>
   <button class="color2 btn-hms" onclick="appendValue('m')">M</button>
   <button class="color2 btn-hms" onclick="appendValue('s')">S</button>
   <button class="color2" onclick="appendValue('%')">%</button>
 
+  <!-- Fila 2 -->
   <button class="color1" id="parAbre">(</button>
   <button class="color1" id="parCierra">)</button>
   <button class="color1" id="borrar1">⌫</button>
   <button class="color2" data-op="÷">÷</button>
 
+  <!-- Fila 3 -->
   <button class="color1" data-num="7">7</button>
   <button class="color1" data-num="8">8</button>
   <button class="color1" data-num="9">9</button>
   <button class="color2" data-op="×">×</button>
 
+  <!-- Fila 4 -->
   <button class="color1" data-num="4">4</button>
   <button class="color1" data-num="5">5</button>
   <button class="color1" data-num="6">6</button>
   <button class="color2" data-op="-">-</button>
 
+  <!-- Fila 5 -->
   <button class="color1" data-num="1">1</button>
   <button class="color1" data-num="2">2</button>
   <button class="color1" data-num="3">3</button>
   <button class="color2" data-op="+">+</button>
 
+  <!-- Fila 6 -->
   <button class="color1" id="clear">C</button>
   <button class="color1" data-num="0">0</button>
   <button class="color1" id="coma">,</button>
   <button class="color2" id="igual">=</button>
 </div>
 
+<!-- Switch Hora/Decimal -->
 <div class="switch-container">
   <span id="switch-text">Horas</span>
-  <input type="checkbox" id="switchFormato" checked onchange="toggleMode()">
+  <input type="checkbox" id="switchFormato" checked>
 </div>
 
 <script>
 let expression = "";
-let modeDecimal = false; // Arranca en Horas, switch encendido
+let modeDecimal = false; // Arranca en Horas
 const display = document.getElementById("display");
+const switchFormato = document.getElementById("switchFormato");
+const switchText = document.getElementById("switch-text");
 
-const traduccionesSwitch = {
-  es: { horas: "Horas", decimal: "Decimal" },
-  ca: { horas: "Hores", decimal: "Decimal" },
-  gl: { horas: "Horas", decimal: "Decimal" },
-  eu: { horas: "Orduak", decimal: "Desimalak" }
-};
-
+// Añadir valor al display
 function appendValue(val) {
   if (['h','m','s'].includes(val)) {
-    if(expression.length > 0 && !isNaN(expression.slice(-1))) expression += val + " ";
+    if(expression.length > 0 && !isNaN(expression.slice(-1))) {
+      expression += val + " ";
+    }
   } else {
     expression += val;
   }
   display.value = expression;
 }
 
-function clearDisplay() { expression=""; display.value=""; }
-function backspace() { expression=expression.trim().slice(0,-1); display.value=expression; }
+// Borrar todo
+function clearDisplay() {
+  expression = "";
+  display.value = "";
+}
 
+// Borrar último carácter
+function backspace() {
+  expression = expression.trim();
+  expression = expression.slice(0, -1);
+  display.value = expression;
+}
+
+// Calcular expresión
 function calcular(exp) {
   try {
-    if(modeDecimal){
+    if (modeDecimal) {
       exp = exp.replace(/×/g,'*').replace(/÷/g,'/').replace(/%/g,'/100');
       let res = eval(exp);
-      if(res===null||res===undefined||isNaN(res)) return "Error";
+      if(isNaN(res)) return "Error";
       return res.toString();
     } else {
       let expCopy = exp.replace(/(\d+(\.\d+)?)h/g,"($1)")
@@ -177,30 +188,43 @@ function calcular(exp) {
                        .replace(/(\d+(\.\d+)?)s/g,"($1/3600)")
                        .replace(/×/g,'*').replace(/÷/g,'/').replace(/%/g,'/100');
       let totalH = eval(expCopy);
-      if(totalH===null||totalH===undefined||isNaN(totalH)) return "Error";
-      let h=Math.floor(totalH);
-      let rem=(totalH-h)*60;
-      let m=Math.floor(rem);
-      let s=Math.round((rem-m)*60);
-      if(s>=60){ m+=Math.floor(s/60); s%=60; }
-      if(m>=60){ h+=Math.floor(m/60); m%=60; }
+      if(isNaN(totalH)) return "Error";
+
+      let h = Math.floor(totalH);
+      let rem = (totalH - h) * 60;
+      let m = Math.floor(rem);
+      let s = Math.round((rem - m) * 60);
+      if(s>=60){ m += Math.floor(s/60); s %= 60; }
+      if(m>=60){ h += Math.floor(m/60); m %= 60; }
+
       return `${h}h ${m}m ${s}s`;
     }
-  } catch(e){ return "Error"; }
+  } catch(e) {
+    return "Error";
+  }
 }
 
+// Ejecutar "="
 function calculateResult() {
-  const result = calcular(expression);
-  display.value = result;
-  expression="";
+  display.value = calcular(expression);
+  expression = "";
 }
 
+// Cambiar modo Horas/Decimal
 function toggleMode() {
-  const switchInput = document.getElementById("switchFormato");
-  modeDecimal = !switchInput.checked;
-  document.getElementById("switch-text").textContent = modeDecimal ? getCurrentLangText().decimal : getCurrentLangText().horas;
-  document.querySelectorAll(".btn-hms").forEach(btn => btn.disabled=modeDecimal);
+  modeDecimal = !switchFormato.checked;
+  switchText.textContent = modeDecimal ? "Decimal" : "Horas";
+  document.querySelectorAll(".btn-hms").forEach(btn => btn.disabled = modeDecimal);
   clearDisplay();
+}
+
+// Función que el index puede llamar para actualizar texto según idioma
+function actualizarTextoSwitch(lang, textoHoras, textoDecimal) {
+  const switchText = document.getElementById("switch-text");
+  if (!switchText) return;
+
+  // Actualiza texto según modo actual
+  switchText.textContent = modeDecimal ? textoDecimal : textoHoras;
 }
 
 // Conectar botones
@@ -210,24 +234,21 @@ document.getElementById("parAbre").addEventListener("click", () => appendValue("
 document.getElementById("parCierra").addEventListener("click", () => appendValue(")"));
 document.getElementById("coma").addEventListener("click", () => appendValue("."));
 document.getElementById("borrar1").addEventListener("click", backspace);
-document.querySelectorAll("button[data-num]").forEach(btn=>btn.addEventListener("click", ()=>appendValue(btn.dataset.num)));
-document.querySelectorAll("button[data-op]").forEach(btn=>btn.addEventListener("click", ()=>appendValue(btn.dataset.op)));
-document.querySelectorAll(".btn-hms").forEach(btn=>btn.disabled=modeDecimal);
 
-// Traducción del switch vía postMessage
-let currentLang = 'es';
-function getCurrentLangText(){ return traduccionesSwitch[currentLang] || traduccionesSwitch.es; }
-
-window.addEventListener('message', (event)=>{
-  if(event.data?.type==='cambiarIdioma'){
-    currentLang = event.data.lang;
-    document.getElementById('switch-text').textContent = modeDecimal ? getCurrentLangText().decimal : getCurrentLangText().horas;
-  } else if(event.data?.type==='cambiarModo'){
-    // Para sincronizar modo oscuro/claro
-    if(event.data.modo==='oscuro'){ document.body.classList.replace('modo-claro','modo-oscuro'); }
-    else{ document.body.classList.replace('modo-oscuro','modo-claro'); }
-  }
+// Botones numéricos y operaciones
+document.querySelectorAll("button[data-num]").forEach(btn => {
+  btn.addEventListener("click", () => appendValue(btn.dataset.num));
 });
+document.querySelectorAll("button[data-op]").forEach(btn => {
+  btn.addEventListener("click", () => appendValue(btn.dataset.op));
+});
+
+// Estado inicial H/M/S
+document.querySelectorAll(".btn-hms").forEach(btn => btn.disabled = modeDecimal);
+
+// Conectar switch
+switchFormato.addEventListener("change", toggleMode);
 </script>
+
 </body>
 </html>
