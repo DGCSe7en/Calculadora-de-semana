@@ -90,111 +90,84 @@ body.modo-oscuro .switch-container input { background: #555; }
 <script>
 const display = document.getElementById('display');
 let expression = '';
-let modeDecimal = false;
 
-// Función para ajustar altura del iframe
+// Variable de modo: true = decimal, false = horas
+let modeDecimal = true;
+
+// Referencias a botones de unidades H/M/S
+const unitButtons = document.querySelectorAll('[data-unit]');
+
+// Ajusta altura del iframe
 function ajustarAltura() {
   const altura = document.body.scrollHeight;
   parent.postMessage({ tipo: 'ajustarAlturaCalculadora', altura }, '*');
 }
 
-// Botones numéricos
+// Función para actualizar display y ajustar altura
+function actualizarDisplay(){
+  display.value = expression;
+  ajustarAltura();
+}
+
+// Habilita/deshabilita botones H/M/S según modo
+function actualizarBotones() {
+  if(modeDecimal){
+    unitButtons.forEach(btn => {
+      btn.disabled = true;
+      btn.style.opacity = "0.5";
+      btn.style.cursor = "not-allowed";
+    });
+  } else {
+    unitButtons.forEach(btn => {
+      btn.disabled = false;
+      btn.style.opacity = "1";
+      btn.style.cursor = "pointer";
+    });
+  }
+}
+
+// --- Botones numéricos ---
 document.querySelectorAll('[data-num]').forEach(btn=>{
   btn.addEventListener('click', ()=>{ expression += btn.dataset.num; actualizarDisplay(); });
 });
 
-// Botones de unidades H/M/S
-document.querySelectorAll('[data-unit]').forEach(btn=>{
+// --- Botones H/M/S ---
+unitButtons.forEach(btn=>{
   btn.addEventListener('click', ()=>{ expression += btn.dataset.unit; actualizarDisplay(); });
 });
 
-// Botones de operaciones
+// --- Botones de operaciones ---
 document.querySelectorAll('[data-op]').forEach(btn=>{
   btn.addEventListener('click', ()=>{ expression += ' ' + btn.dataset.op + ' '; actualizarDisplay(); });
 });
 
-// Botón C
+// --- Botón C ---
 document.getElementById('clear').addEventListener('click', ()=>{
   expression = '';
   actualizarDisplay();
 });
 
-// Botón =
+// --- Botón = ---
 document.getElementById('igual').addEventListener('click', ()=>{
   expression = calcular(expression);
   actualizarDisplay();
 });
 
-// Botón coma
+// --- Botón coma ---
 document.getElementById('coma').addEventListener('click', ()=>{
-  if(modeDecimal) expression += '.';
+  if(!modeDecimal) return; // solo en decimal
+  expression += '.';
   actualizarDisplay();
 });
 
-// Switch Hora/Dec
+// --- Switch invertido (activo = Horas) ---
 const switchBtn = document.getElementById('switchFormato');
 switchBtn.addEventListener('change', ()=>{
-  modeDecimal = switchBtn.checked;
+  modeDecimal = !switchBtn.checked; // invertido
+  actualizarBotones();
 });
 
-// Actualiza display
-function actualizarDisplay(){
-  display.value = expression;
-  ajustarAltura(); // ajusta iframe al actualizar
-}
-
-// --- Lógica de cálculo de tiempos ---
-function calcular(exp){
-  try {
-    let tokens = exp.split(/\s+/).filter(t=>t!=='');
-
-    if(tokens.length === 0) return '';
-
-    let stack = [];
-    let currentOp = null;
-
-    function tokenToHours(token){
-      if(token.endsWith('h')) return parseFloat(token.replace('h','')) || 0;
-      if(token.endsWith('m')) return (parseFloat(token.replace('m',''))||0)/60;
-      if(token.endsWith('s')) return (parseFloat(token.replace('s',''))||0)/3600;
-      if(!isNaN(parseFloat(token))) return parseFloat(token);
-      return 0;
-    }
-
-    for(let token of tokens){
-      if(['+', '-', '×', '÷'].includes(token)){
-        currentOp = token;
-      } else {
-        let val = tokenToHours(token);
-        if(currentOp){
-          if(currentOp==='+') stack.push(stack.pop() + val);
-          else if(currentOp==='-') stack.push(stack.pop() - val);
-          else if(currentOp==='×') stack.push(stack.pop() * val);
-          else if(currentOp==='÷') stack.push(stack.pop() / val);
-          currentOp = null;
-        } else {
-          stack.push(val);
-        }
-      }
-    }
-
-    let totalH = stack.reduce((a,b)=>a+b,0);
-
-    if(!modeDecimal){
-      let h = Math.floor(totalH);
-      let m = Math.floor((totalH - h)*60);
-      let s = Math.round(((totalH - h)*60 - m)*60);
-      return `${h}h ${m}m ${s}s`;
-    } else {
-      return totalH.toFixed(2);
-    }
-
-  } catch(e) {
-    return 'Error';
-  }
-}
-
-// Teclado físico
+// --- Teclado físico ---
 document.addEventListener('keydown', (e)=>{
   if(e.key.match(/[0-9]/)) expression += e.key;
   else if(['h','m','s','+','-','*','/'].includes(e.key)) expression += e.key==='*'?'×': e.key==='/'?'÷': e.key;
@@ -203,8 +176,63 @@ document.addEventListener('keydown', (e)=>{
   actualizarDisplay();
 });
 
-// Ajusta altura al cargar
-window.addEventListener('load', ajustarAltura);
+// --- Lógica de cálculo ---
+function calcular(exp){
+  try {
+    if(modeDecimal){
+      // Calculadora normal: reemplaza símbolos × ÷ por * /
+      return eval(exp.replace(/×/g, '*').replace(/÷/g, '/')).toString();
+    } else {
+      // Cálculo de tiempos
+      let tokens = exp.split(/\s+/).filter(t=>t!=='');
+
+      if(tokens.length === 0) return '';
+
+      let stack = [];
+      let currentOp = null;
+
+      function tokenToHours(token){
+        if(token.endsWith('h')) return parseFloat(token.replace('h','')) || 0;
+        if(token.endsWith('m')) return (parseFloat(token.replace('m',''))||0)/60;
+        if(token.endsWith('s')) return (parseFloat(token.replace('s',''))||0)/3600;
+        if(!isNaN(parseFloat(token))) return parseFloat(token);
+        return 0;
+      }
+
+      for(let token of tokens){
+        if(['+', '-', '×', '÷'].includes(token)){
+          currentOp = token;
+        } else {
+          let val = tokenToHours(token);
+          if(currentOp){
+            if(currentOp==='+') stack.push(stack.pop() + val);
+            else if(currentOp==='-') stack.push(stack.pop() - val);
+            else if(currentOp==='×') stack.push(stack.pop() * val);
+            else if(currentOp==='÷') stack.push(stack.pop() / val);
+            currentOp = null;
+          } else {
+            stack.push(val);
+          }
+        }
+      }
+
+      let totalH = stack.reduce((a,b)=>a+b,0);
+
+      let h = Math.floor(totalH);
+      let m = Math.floor((totalH - h)*60);
+      let s = Math.round(((totalH - h)*60 - m)*60);
+      return `${h}h ${m}m ${s}s`;
+    }
+  } catch(e) {
+    return 'Error';
+  }
+}
+
+// Ajuste inicial al cargar
+window.addEventListener('load', ()=>{
+  ajustarAltura();
+  actualizarBotones();
+});
 </script>
 </body>
 </html>
