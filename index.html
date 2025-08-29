@@ -321,99 +321,244 @@ const textoSwitch = { es: "Modo claro/oscuro", ca: "Mode clar/fosc", gl: "Modo c
 const modoSwitch = document.getElementById('modo-switch');
 const modoTexto = document.getElementById('modo-texto');
 const inputCity = document.getElementById("city-input");
-
-// --- Funciones auxiliares ---
-function formatoFecha(fecha){ const dia = String(fecha.getDate()).padStart(2,'0'); const mes = String(fecha.getMonth()+1).padStart(2,'0'); const año = fecha.getFullYear(); return `${dia}/${mes}/${año}`; }
-
-function obtenerGMTMadrid() { const diff = - (new Date().getTimezoneOffset()); return (diff === 120) ? 'GMT+2' : 'GMT+1'; }
-
-// --- Manejo de errores ---
-function mostrarError(inputId,errorId,mensaje){ const input = document.getElementById(inputId); const error = document.getElementById(errorId); if (input) input.classList.add('input-error'); if (error) { error.innerHTML = `<span class="icono">⚠️</span>${mensaje}`; error.classList.add('visible'); } setTimeout(()=>{ if (input) input.classList.remove('input-error'); },1200); setTimeout(()=>{ if (error) error.classList.remove('visible'); },3000); }
-
-// --- Toggle modo claro/oscuro ---
-function toggleModo() { const body = document.body; if(body.classList.contains('modo-oscuro')) { body.classList.remove('modo-oscuro'); body.classList.add('modo-claro'); localStorage.setItem('modo','claro'); } else { body.classList.remove('modo-claro'); body.classList.add('modo-oscuro'); localStorage.setItem('modo','oscuro'); } actualizarLogo() }
-
-// --- Actualiza logo y alt según idioma y modo ---
-function actualizarLogo() { const overlay = document.getElementById('logo-overlay'); if (!overlay) return; const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es'; const t = traducciones[lang]; overlay.src = document.body.classList.contains('modo-oscuro') ? 'Logoweb_Dark.png' : 'Logoweb_Clear.png'; overlay.alt = t.tituloAlt || "Tiempo360 - El tiempo desde todas sus dimensiones..."; }
-
-// --- Actualiza texto switch ---
-function actualizarTextoSwitch(lang) { modoTexto.textContent = textoSwitch[lang] || textoSwitch.es; }
-
-// --- Cambio de idioma ---
-function cambiarIdioma(lang) { document.documentElement.lang = lang; document.querySelectorAll('#idiomas img').forEach(img => { img.classList.remove('active'); img.setAttribute("aria-checked","false"); });
-  const img = document.querySelector(`#idiomas img[data-lang="${lang}"]`); if(img) { img.classList.add('active'); img.setAttribute("aria-checked","true"); img.focus(); }
-  actualizarTextoSwitch(lang); actualizarLogo(); actualizarPlaceholderCiudad(); mostrarSemanaActual(lang); actualizarReloj(); actualizarIdiomaCiudad(lang);
-  
-  // Actualizar textos de inputs y botones
-  const t = traducciones[lang]; document.getElementById('h3Semana').textContent = t.h3Semana; document.getElementById('btnCalcularSemana').textContent = t.btnCalcularSemana; document.getElementById('h3Dias').textContent = t.h3Dias; document.querySelector(".fechas-linea .label-de").textContent = t.labelDe; document.querySelector(".fechas-linea .label-a").textContent = t.labelA; document.getElementById("btnCalcularDias").textContent = t.btnCalcularDias; document.getElementById('h3Rango').textContent = t.h3Rango; document.getElementById('labelSemana').textContent = t.labelSemana; document.getElementById('btnMostrarRango').textContent = t.btnMostrarRango; document.getElementById('footerFirma').innerHTML = t.footer; }
-
-// --- Reloj ---
-function actualizarReloj(){ const ahora = new Date(); const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es'; const t = traducciones[lang]; document.getElementById("reloj").innerText = `${t.horaActual} ${ahora.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false, timeZone:'Europe/Madrid'})}`; const gmt = obtenerGMTMadrid(); document.getElementById("zonaHoraria").innerText = t.zonaHorariaTpl.replace("{gmt}", gmt); }
-
-// --- Semana actual ---
-function getSemanaISO(fecha){ const tmp = new Date(fecha.getTime()); tmp.setHours(0,0,0,0); tmp.setDate(tmp.getDate() + 3 - (tmp.getDay() + 6) % 7); const primerJueves = new Date(tmp.getFullYear(),0,4); return 1 + Math.round(((tmp - primerJueves)/ (7*24*60*60*1000))); }
-function mostrarSemanaActual(lang){ const hoy = new Date(); const semanaActual = getSemanaISO(hoy); const t = traducciones[lang]; document.getElementById("semanaActual").innerText = t.semanaActual .replace("{fecha}", formatoFecha(hoy)) .replace("{semana}", semanaActual); }
-
-// --- Inicialización ---
-window.addEventListener('load', () => { const modoGuardado = localStorage.getItem('modo'); if(modoGuardado === 'oscuro') { document.body.classList.add('modo-oscuro'); modoSwitch.checked = true; } else { document.body.classList.add('modo-claro'); modoSwitch.checked = false; }
-const lang = localStorage.getItem("idiomaSeleccionado") || 'es'; cambiarIdioma(lang); actualizarLogo(); actualizarTextoSwitch(lang); actualizarReloj();
-
-// Cargar clima
-const ciudadGuardada = localStorage.getItem("ciudadGuardada") || "Madrid"; obtenerClima(ciudadGuardada); }); modoSwitch.addEventListener('change', toggleModo);
-
-// --- CONFIG CLIMA ---
-const apiKey = "6190233d77058dc3f79f839252cc0058";
-// const saveBtn = document.getElementById("save-city"); // ELIMINADO
-const inputCity = document.getElementById("city-input");
 const cityName = document.getElementById("city-name");
 const details = document.getElementById("details");
 
-// --- FUNCIONES ---
-function getEmoji(weatherMain) { const mapping = { Thunderstorm: "⛈️", Drizzle: "🌦️", Rain: "🌧️", Snow: "❄️", Clear: "☀️", Clouds: "☁️", Mist: "🌫️", Smoke: "💨", Haze: "🌤️", Dust: "🌪️", Fog: "🌫️", Sand: "🏜️", Ash: "🌋", Squall: "💨", Tornado: "🌪️" }; return mapping[weatherMain] || "🌍"; }
-async function obtenerClima(ciudad) { try { const idioma = localStorage.getItem("idiomaSeleccionado") || "es"; const resultados = await buscarCiudad(ciudad); if (!resultados[0]) { cityName.textContent = traducir("Ciudad no encontrada", idioma); details.textContent = ""; document.getElementById("weather-temp").textContent = ""; document.getElementById("weather-emoji").textContent = ""; return; }
-const { lat, lon } = resultados[0]; obtenerClimaPorCoordenadas(lat, lon); localStorage.setItem("ciudadGuardada", ciudad); } catch(err) { console.error("Error al obtener el clima:", err); } }
-async function obtenerClimaPorCoordenadas(lat, lon) { try { const idioma = localStorage.getItem("idiomaSeleccionado") || "es"; const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=${idioma}`; const resp = await fetch(url); const data = await resp.json(); if (data.cod !== 200) { cityName.textContent = traducir("Ciudad no encontrada", idioma); details.textContent = ""; document.getElementById("weather-temp").textContent = ""; document.getElementById("weather-emoji").textContent = ""; return; } document.getElementById("weather-temp").textContent = `${Math.round(data.main.temp)}°`; cityName.textContent = `${data.name}, ${data.sys.country}`; details.textContent = `${data.weather[0].description} • ${traducir("Viento", idioma)}: ${data.wind.speed} m/s • ${traducir("Min", idioma)}: ${Math.round(data.main.temp_min)}° / ${traducir("Max", idioma)}: ${Math.round(data.main.temp_max)}°`; document.getElementById("weather-emoji").textContent = getEmoji(data.weather[0].main); } catch(err) { console.error("Error al obtener el clima por coordenadas:", err); } }
-async function buscarCiudad(query) { if (!query) return []; try { const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=5&appid=${apiKey}`; const resp = await fetch(url); const data = await resp.json(); return data; } catch(err) { console.error("Error al buscar ciudad:", err); return []; } }
-function traducir(texto, idioma) { const diccionario = { "Ciudad no encontrada": { es:"Ciudad no encontrada", ca:"Ciutat no trobada", gl:"Cidade non atopada", eu:"Hiria ez da aurkitu" }, "Viento": { es:"Viento", ca:"Vent", gl:"Vento", eu:"Haizea" }, "Min": { es:"Min", ca:"Mín", gl:"Mín", eu:"Gutx" }, "Max": { es:"Max", ca:"Màx", gl:"Máx", eu:"Geh" } }; return diccionario[texto]?.[idioma] || texto; }
+// --- Funciones auxiliares ---
+const formatoFecha = fecha => {
+  const dia = String(fecha.getDate()).padStart(2,'0');
+  const mes = String(fecha.getMonth()+1).padStart(2,'0');
+  const año = fecha.getFullYear();
+  return `${dia}/${mes}/${año}`;
+};
+const obtenerGMTMadrid = () => - (new Date().getTimezoneOffset()) === 120 ? 'GMT+2' : 'GMT+1';
 
-// --- Autocompletar ciudad accesible ---
-let timeoutId; let selectedIndex = -1; let currentSuggestions = [];
-inputCity.addEventListener("input", () => { clearTimeout(timeoutId); timeoutId = setTimeout(async () => { const query = inputCity.value.trim(); const lista = document.getElementById("suggestions"); lista.innerHTML = ""; selectedIndex = -1; currentSuggestions = []; inputCity.setAttribute("aria-expanded", "false"); if (!query) return; const resultados = await buscarCiudad(query); currentSuggestions = resultados; if (resultados.length > 0) { resultados.forEach((ciudad, idx) => { const li = document.createElement("li"); li.textContent = `${ciudad.name}, ${ciudad.country}`; li.setAttribute("role", "option"); li.setAttribute("id", "suggestion-" + idx); li.setAttribute("tabindex", "-1"); li.addEventListener("mousedown", e => { e.preventDefault(); seleccionarCiudadSugerencia(idx); }); lista.appendChild(li); }); inputCity.setAttribute("aria-expanded", "true"); } }, 300); });
-inputCity.addEventListener("keydown", (e) => { const lista = document.getElementById("suggestions"); if (!currentSuggestions.length) return; if (e.key === "ArrowDown") { e.preventDefault(); selectedIndex = (selectedIndex + 1) % currentSuggestions.length; actualizarSeleccion(); } else if (e.key === "ArrowUp") { e.preventDefault(); selectedIndex = (selectedIndex - 1 + currentSuggestions.length) % currentSuggestions.length; actualizarSeleccion(); } else if (e.key === "Enter") { if (selectedIndex >= 0 && currentSuggestions[selectedIndex]) { e.preventDefault(); seleccionarCiudadSugerencia(selectedIndex); } } else if (e.key === "Escape") { lista.innerHTML = ""; selectedIndex = -1; currentSuggestions = []; inputCity.setAttribute("aria-expanded", "false"); } });
+// --- Manejo de errores ---
+function mostrarError(inputId,errorId,mensaje){
+  const input = document.getElementById(inputId);
+  const error = document.getElementById(errorId);
+  if(input) input.classList.add('input-error');
+  if(error){ error.innerHTML = `<span class="icono">⚠️</span>${mensaje}`; error.classList.add('visible'); }
+  setTimeout(()=>{ if(input) input.classList.remove('input-error'); },1200);
+  setTimeout(()=>{ if(error) error.classList.remove('visible'); },3000);
+}
 
-function actualizarSeleccion() {const lista = document.getElementById("suggestions"); Array.from(lista.children).forEach((li, idx) => { if (idx === selectedIndex) { li.classList.add("active"); li.setAttribute("aria-selected", "true"); li.scrollIntoView({ block: "nearest" }); } else { li.classList.remove("active"); li.setAttribute("aria-selected", "false"); } }); }
+// --- Modo claro/oscuro ---
+function toggleModo(){
+  document.body.classList.toggle('modo-oscuro');
+  document.body.classList.toggle('modo-claro');
+  localStorage.setItem('modo', document.body.classList.contains('modo-oscuro') ? 'oscuro' : 'claro');
+  actualizarLogo();
+}
 
-function seleccionarCiudadSugerencia(idx) { if (!currentSuggestions[idx]) return; inputCity.value = currentSuggestions[idx].name; obtenerClima(currentSuggestions[idx].name); inputCity.value = ""; document.getElementById("suggestions").innerHTML = ""; selectedIndex = -1; currentSuggestions = []; inputCity.setAttribute("aria-expanded", "false"); inputCity.focus(); }
-document.addEventListener("mousedown", (e) => { const searchDiv = document.querySelector('.city-search'); if (!searchDiv.contains(e.target)) { document.getElementById("suggestions").innerHTML = ""; selectedIndex = -1; currentSuggestions = []; inputCity.setAttribute("aria-expanded", "false"); } });
-document.querySelectorAll('#idiomas img').forEach(img => { img.addEventListener("keydown", function(e) { const idiomas = Array.from(document.querySelectorAll('#idiomas img')); let idx = idiomas.indexOf(document.activeElement); if (e.key === "ArrowRight") { e.preventDefault(); idiomas[(idx + 1) % idiomas.length].focus(); } else if (e.key === "ArrowLeft") { e.preventDefault(); idiomas[(idx - 1 + idiomas.length) % idiomas.length].focus(); } else if (e.key === " " || e.key === "Enter") { e.preventDefault(); img.click(); } }); });
+// --- Actualiza logo y alt ---
+function actualizarLogo(){
+  const overlay = document.getElementById('logo-overlay');
+  if(!overlay) return;
+  const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
+  const t = traducciones[lang];
+  overlay.src = document.body.classList.contains('modo-oscuro') ? 'Logoweb_Dark.png' : 'Logoweb_Clear.png';
+  overlay.alt = t.tituloAlt || "Tiempo360 - El tiempo desde todas sus dimensiones...";
+}
 
-// --- ELIMINADO: evento de buscar con botón, ya no existe el botón "Buscar" ---
+// --- Texto switch ---
+function actualizarTextoSwitch(lang){
+  modoTexto.textContent = textoSwitch[lang] || textoSwitch.es;
+}
 
-function actualizarPlaceholderCiudad() { const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es'; const t = traducciones[lang]; inputCity.placeholder = t.placeholderCiudad || "Introduce una ciudad..."; }
-window.addEventListener("load", () => { actualizarPlaceholderCiudad(); const ciudadGuardada = localStorage.getItem("ciudadGuardada") || "Madrid"; obtenerClima(ciudadGuardada); });
+// --- Cambio de idioma ---
+function cambiarIdioma(lang){
+  localStorage.setItem("idiomaSeleccionado", lang);
+  document.documentElement.lang = lang;
+  document.querySelectorAll('#idiomas img').forEach(img => {
+    img.classList.remove('active');
+    img.setAttribute("aria-checked","false");
+  });
+  const img = document.querySelector(`#idiomas img[data-lang="${lang}"]`);
+  if(img){ img.classList.add('active'); img.setAttribute("aria-checked","true"); img.focus(); }
+  const t = traducciones[lang];
 
-function actualizarIdiomaCiudad(idioma) { localStorage.setItem("idiomaSeleccionado", idioma); actualizarPlaceholderCiudad(); const ciudadGuardada = localStorage.getItem("ciudadGuardada") || "Madrid"; obtenerClima(ciudadGuardada); }
+  // Actualiza textos principales
+  actualizarTextoSwitch(lang);
+  actualizarLogo();
+  actualizarPlaceholderCiudad();
+  mostrarSemanaActual(lang);
+  actualizarReloj();
+  actualizarIdiomaCiudad(lang);
 
-// --- Inputs de fechas y semanas ---
-const inputsResultados = [ { inputId: "fecha", resultadoId: "resultado", errorId: "errorSemana" }, { inputId: "fechaInicio", resultadoId: "resultadoDias", errorId: "errorDias" }, { inputId: "fechaFin", resultadoId: "resultadoDias", errorId: "errorDias" }, { inputId: "semanaInput", resultadoId: "resultadoSemana", errorId: "errorRangoSemana" } ];
+  document.getElementById('h3Semana').textContent = t.h3Semana;
+  document.getElementById('btnCalcularSemana').textContent = t.btnCalcularSemana;
+  document.getElementById('h3Dias').textContent = t.h3Dias;
+  document.querySelector(".fechas-linea .label-de").textContent = t.labelDe;
+  document.querySelector(".fechas-linea .label-a").textContent = t.labelA;
+  document.getElementById("btnCalcularDias").textContent = t.btnCalcularDias;
+  document.getElementById('h3Rango').textContent = t.h3Rango;
+  document.getElementById('labelSemana').textContent = t.labelSemana;
+  document.getElementById('btnMostrarRango').textContent = t.btnMostrarRango;
+  document.getElementById('footerFirma').innerHTML = t.footer;
+}
 
-// Función para limpiar resultado y error
-function limpiarResultado(item) { const resultado = document.getElementById(item.resultadoId); const error = item.errorId ? document.getElementById(item.errorId) : null; if (resultado) resultado.textContent = ""; if (error) error.textContent = ""; }
+// --- Reloj ---
+function actualizarReloj(){
+  const ahora = new Date();
+  const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
+  const t = traducciones[lang];
+  document.getElementById("reloj").innerText = `${t.horaActual} ${ahora.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false,timeZone:'Europe/Madrid'})}`;
+  document.getElementById("zonaHoraria").innerText = t.zonaHorariaTpl.replace("{gmt}", obtenerGMTMadrid());
+}
 
-// Limpiar al enfocar y al presionar Escape
-inputsResultados.forEach(item => { const input = document.getElementById(item.inputId); if (!input) return;
+// --- Semana actual ---
+function getSemanaISO(fecha){
+  const tmp = new Date(fecha.getTime());
+  tmp.setHours(0,0,0,0);
+  tmp.setDate(tmp.getDate() + 3 - (tmp.getDay() + 6) % 7);
+  const primerJueves = new Date(tmp.getFullYear(),0,4);
+  return 1 + Math.round((tmp - primerJueves)/(7*24*60*60*1000));
+}
+function mostrarSemanaActual(lang){
+  const hoy = new Date();
+  const semanaActual = getSemanaISO(hoy);
+  const t = traducciones[lang];
+  document.getElementById("semanaActual").innerText = t.semanaActual
+    .replace("{fecha}", formatoFecha(hoy))
+    .replace("{semana}", semanaActual);
+}
 
-// Al enfocar
-input.addEventListener("focus", () => limpiarResultado(item));
+// --- Placeholder ciudad ---
+function actualizarPlaceholderCiudad(){
+  const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
+  inputCity.placeholder = traducciones[lang].placeholderCiudad || "Introduce una ciudad...";
+}
 
-// Al presionar Escape
-input.addEventListener("keydown", (e) => { if (e.key === "Escape") limpiarResultado(item); }); });
+// --- Clima ---
+const apiKey = "6190233d77058dc3f79f839252cc0058";
 
-// Limpiar resultado al hacer click fuera del input
-document.addEventListener("mousedown", (e) => { inputsResultados.forEach(item => { const input = document.getElementById(item.inputId); if (!input) return; if (!input.contains(e.target)) { limpiarResultado(item); } }); });
+function getEmoji(weatherMain){
+  const mapping = {Thunderstorm:"⛈️",Drizzle:"🌦️",Rain:"🌧️",Snow:"❄️",Clear:"☀️",Clouds:"☁️",Mist:"🌫️",Smoke:"💨",Haze:"🌤️",Dust:"🌪️",Fog:"🌫️",Sand:"🏜️",Ash:"🌋",Squall:"💨",Tornado:"🌪️"};
+  return mapping[weatherMain]||"🌍";
+}
+async function buscarCiudad(query){
+  if(!query) return [];
+  try {
+    const resp = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=5&appid=${apiKey}`);
+    return await resp.json();
+  } catch(e){ console.error(e); return []; }
+}
+async function obtenerClima(ciudad){
+  try {
+    const lang = localStorage.getItem("idiomaSeleccionado") || "es";
+    const resultados = await buscarCiudad(ciudad);
+    if(!resultados[0]){
+      cityName.textContent = traducir("Ciudad no encontrada", lang);
+      details.textContent = "";
+      document.getElementById("weather-temp").textContent = "";
+      document.getElementById("weather-emoji").textContent = "";
+      return;
+    }
+    const {lat, lon} = resultados[0];
+    await obtenerClimaPorCoordenadas(lat, lon);
+    localStorage.setItem("ciudadGuardada", ciudad);
+  } catch(e){ console.error(e); }
+}
+async function obtenerClimaPorCoordenadas(lat, lon){
+  try {
+    const lang = localStorage.getItem("idiomaSeleccionado") || "es";
+    const resp = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=${lang}`);
+    const data = await resp.json();
+    if(data.cod!==200){
+      cityName.textContent = traducir("Ciudad no encontrada", lang);
+      details.textContent = "";
+      document.getElementById("weather-temp").textContent = "";
+      document.getElementById("weather-emoji").textContent = "";
+      return;
+    }
+    document.getElementById("weather-temp").textContent = `${Math.round(data.main.temp)}°`;
+    cityName.textContent = `${data.name}, ${data.sys.country}`;
+    details.textContent = `${data.weather[0].description} • ${traducir("Viento",lang)}: ${data.wind.speed} m/s • ${traducir("Min",lang)}: ${Math.round(data.main.temp_min)}° / ${traducir("Max",lang)}: ${Math.round(data.main.temp_max)}°`;
+    document.getElementById("weather-emoji").textContent = getEmoji(data.weather[0].main);
+  } catch(e){ console.error(e); }
+}
+function traducir(texto, idioma){
+  const dic = { "Ciudad no encontrada": { es:"Ciudad no encontrada", ca:"Ciutat no trobada", gl:"Cidade non atopada", eu:"Hiria ez da aurkitu" },
+                "Viento": { es:"Viento", ca:"Vent", gl:"Vento", eu:"Haizea" },
+                "Min": { es:"Min", ca:"Mín", gl:"Mín", eu:"Gutx" },
+                "Max": { es:"Max", ca:"Màx", gl:"Máx", eu:"Geh" } };
+  return dic[texto]?.[idioma]||texto;
+}
 
-// Mantener comportamiento actual del widget de ciudad
-document.getElementById("city-input").addEventListener("focus", () => { document.getElementById("suggestions").innerHTML = ""; });
+// --- Autocompletado ciudad ---
+let timeoutId, selectedIndex = -1, currentSuggestions = [];
+inputCity.addEventListener("input", ()=>{
+  clearTimeout(timeoutId);
+  timeoutId = setTimeout(async ()=>{
+    const query = inputCity.value.trim();
+    const lista = document.getElementById("suggestions");
+    lista.innerHTML=""; selectedIndex=-1; currentSuggestions=[]; inputCity.setAttribute("aria-expanded","false");
+    if(!query) return;
+    const resultados = await buscarCiudad(query);
+    currentSuggestions = resultados;
+    if(resultados.length>0){
+      resultados.forEach((ciudad, idx)=>{
+        const li = document.createElement("li");
+        li.textContent = `${ciudad.name}, ${ciudad.country}`;
+        li.setAttribute("role","option");
+        li.setAttribute("id","suggestion-"+idx);
+        li.setAttribute("tabindex","-1");
+        li.addEventListener("mousedown", e=>{ e.preventDefault(); seleccionarCiudadSugerencia(idx); });
+        lista.appendChild(li);
+      });
+      inputCity.setAttribute("aria-expanded","true");
+    }
+  },300);
+});
+inputCity.addEventListener("keydown", (e)=>{
+  const lista = document.getElementById("suggestions");
+  if(!currentSuggestions.length) return;
+  if(e.key==="ArrowDown"){ e.preventDefault(); selectedIndex=(selectedIndex+1)%currentSuggestions.length; actualizarSeleccion(); }
+  else if(e.key==="ArrowUp"){ e.preventDefault(); selectedIndex=(selectedIndex-1+currentSuggestions.length)%currentSuggestions.length; actualizarSeleccion(); }
+  else if(e.key==="Enter"){ if(selectedIndex>=0 && currentSuggestions[selectedIndex]){ e.preventDefault(); seleccionarCiudadSugerencia(selectedIndex); } }
+  else if(e.key==="Escape"){ lista.innerHTML=""; selectedIndex=-1; currentSuggestions=[]; inputCity.setAttribute("aria-expanded","false"); }
+});
+function actualizarSeleccion(){
+  const lista = document.getElementById("suggestions");
+  Array.from(lista.children).forEach((li, idx)=>{
+    if(idx===selectedIndex){ li.classList.add("active"); li.setAttribute("aria-selected","true"); li.scrollIntoView({block:"nearest"}); }
+    else{ li.classList.remove("active"); li.setAttribute("aria-selected","false"); }
+  });
+}
+function seleccionarCiudadSugerencia(idx){
+  if(!currentSuggestions[idx]) return;
+  inputCity.value=currentSuggestions[idx].name;
+  obtenerClima(currentSuggestions[idx].name);
+  inputCity.value=""; document.getElementById("suggestions").innerHTML="";
+  selectedIndex=-1; currentSuggestions=[]; inputCity.setAttribute("aria-expanded","false"); inputCity.focus();
+}
+document.addEventListener("mousedown", e=>{
+  const searchDiv = document.querySelector('.city-search');
+  if(!searchDiv.contains(e.target)){
+    document.getElementById("suggestions").innerHTML=""; selectedIndex=-1; currentSuggestions=[]; inputCity.setAttribute("aria-expanded","false");
+  }
+});
+
+// --- Inicialización ---
+window.addEventListener("load", ()=>{
+  // Modo
+  const modoGuardado = localStorage.getItem('modo')||'claro';
+  document.body.classList.add(modoGuardado==='oscuro'?'modo-oscuro':'modo-claro');
+  modoSwitch.checked = modoGuardado==='oscuro';
+
+  // Idioma
+  const lang = localStorage.getItem("idiomaSeleccionado") || 'es';
+  cambiarIdioma(lang);
+
+  // Clima
+  const ciudadGuardada = localStorage.getItem("ciudadGuardada") || "Madrid";
+  obtenerClima(ciudadGuardada);
+
+  actualizarReloj();
+  actualizarPlaceholderCiudad();
+});
+modoSwitch.addEventListener('change', toggleModo);
 
 </script>
 </body>
