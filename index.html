@@ -62,7 +62,7 @@ body.modo-oscuro .firma { color: #aaa; }
   #weather-widget .weather-main { flex-direction: row !important; align-items: center; gap: 5px; }
 }
 
-  @media(min-width:481px) and (max-width:768px) { 
+@media(min-width:481px) and (max-width:768px) { 
   input, button { max-width: 90%; } 
   .calendar-container { max-width: 99vw; }
   .calendar-container iframe { height: 320px; min-width: 0; max-width: 100%; }
@@ -82,17 +82,21 @@ body.modo-oscuro .firma { color: #aaa; }
 #weather-temp { font-size: 1.8em; font-weight: bold; color: inherit; margin-right: 10px; display: inline-block; width: 60px; text-align: right; }
 #weather-emoji { display: inline-block; width: 30px; height: 30px; line-height: 30px; font-size: 30px; text-align: center; }
 #city-name { font-weight: bold; }
-  
+
+/* --- BLOQUES DE FECHAS --- */
 .fechas-linea { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
-.fechas-linea label { display: flex; align-items: center; gap: 4px; }
-.fechas-linea .a-label { font-weight: bold; }
 .fechas-linea button { flex-shrink: 0; }
 
-@media(max-width:480px) {
-.fechas-linea { flex-direction: column; gap: 5px; }
-.fechas-linea button { width: 90%; }
-}
+/* Cada bloque label + input */
+.fecha-bloque { display: flex; flex-direction: row; align-items: center; gap: 10px; flex-wrap: wrap; }
+.fecha-label { font-weight: bold; text-align: right; flex: 0 0 120px; min-width: 100px; } 
+.fecha-bloque input { flex: 1 1 200px; max-width: 300px; box-sizing: border-box; }
 
+/* Responsividad específica de fechas */
+@media(max-width:480px) {
+  .fechas-linea { flex-direction: column; gap: 5px; }
+  .fechas-linea button { width: 90%; }
+}
 </style>
 </head>
 <body aria-label="Tiempo360" role="main">
@@ -164,13 +168,19 @@ body.modo-oscuro .firma { color: #aaa; }
 
 <div class="seccion" aria-label="Cálculo de días entre dos fechas" role="region">
   <h3 class="texto-azul" id="h3Dias" tabindex="0"></h3>
-  <input type="date" id="fechaInicio" aria-label="Fecha de inicio">
-  <span id="a-label">a</span>
-  <input type="date" id="fechaFin" aria-label="Fecha de fin">
+  <div class="fecha-bloque">
+    <label for="fechaInicio" class="fecha-label" id="labelFechaInicio">De:</label>
+    <input type="date" id="fechaInicio" aria-label="Fecha de inicio">
+    <label for="fechaFin" class="fecha-label" id="labelFechaFin">A:</label>
+    <input type="date" id="fechaFin" aria-label="Fecha de fin">
+  </div>
+
   <button id="btnCalcularDias" onclick="calcularDias()" aria-label="Calcular días"></button>
+
   <p class="resultado" id="resultadoDias" aria-live="polite"></p>
   <p class="error" id="errorDias" aria-live="assertive"><span class="icono">⚠️</span></p>
 </div>
+
 
 <div class="seccion" aria-label="Cálculo de fechas de una semana" role="region">
   <h3 class="texto-azul" id="h3Rango" tabindex="0"></h3>
@@ -211,6 +221,8 @@ const traducciones = {
     horaActual: "Hora actual:",
     zonaHorariaTpl: "Hora local de España ({gmt})",
     semanaActual: "Hoy es {fecha} y estamos en la semana número {semana} del año.",
+    labelFechaInicio: "De",
+    labelFechaFin: "A",
     footer: "El sitio podría contener errores, por favor contrasta la información.<br><br><strong>Tiempo360.</strong> <em>El tiempo, desde todas sus dimensiones...</em><br>2025 - Todos los derechos reservados"
 },
   ca: {
@@ -238,6 +250,8 @@ const traducciones = {
     horaActual: "Hora actual:",
     zonaHorariaTpl: "Hora local d'Espanya ({gmt})",
     semanaActual: "Avui és {fecha} i estem a la setmana número {semana} de l’any.",
+    labelFechaInicio: "De",
+    labelFechaFin: "A",
     footer: "El lloc podria contenir errors, si us plau contrasta la informació.<br><br><strong>Tiempo360.</strong> <em>El temps, des de totes les seves dimensions...</em><br>2025 - Tots els drets reservats"
 },
   gl: {
@@ -265,6 +279,8 @@ const traducciones = {
     horaActual: "Hora actual:",
     zonaHorariaTpl: "Hora local de España ({gmt})",
     semanaActual: "Hoxe é {fecha} e estamos na semana número {semana} do ano.",
+    labelFechaInicio: "De",
+    labelFechaFin: "A",
     footer: "O sitio pode conter erros, por favor contrasta a información.<br><br><strong>Tiempo360.</strong> <em>O tempo desde todas as súas dimensións...</em><br>2025 - Todos os dereitos reservados"
 },
   eu: {
@@ -292,6 +308,8 @@ const traducciones = {
     horaActual: "Ordu orain:",
     zonaHorariaTpl: "Espainiako ordu lokala ({gmt})",
     semanaActual: "Gaur {fecha} da eta urteko {semana}. astean gaude.",
+    labelFechaInicio: "Hasiera",
+    labelFechaFin: "Amaiera",
     footer: "Guneak akatsak izan ditzake, mesedez kontrastatu informazioa.<br><br><strong>Tiempo360.</strong> <em>Denbora, bere dimentsio guztietatik...</em><br>2025 - Eskubide guztiak erreserbatuta"
 }
 };
@@ -456,7 +474,8 @@ function cambiarIdioma(lang) {
   document.getElementById('fechaInicio').placeholder = t.placeholderInicio;
   document.getElementById('fechaFin').placeholder = t.placeholderFin;
   document.getElementById('semanaInput').placeholder = t.placeholderSemana;
-  document.getElementById('a-label').textContent = (lang === 'ca' || lang === 'gl') ? 'a' : (lang === 'eu') ? 'eta' : 'a';
+  document.getElementById("labelFechaInicio").textContent = t.labelFechaInicio;
+  document.getElementById("labelFechaFin").textContent = t.labelFechaFin;
   mostrarSemanaActual(lang);
   ['resultado', 'resultadoDias', 'resultadoSemana'].forEach(id => {
     if(document.getElementById(id)) document.getElementById(id).textContent = "";
