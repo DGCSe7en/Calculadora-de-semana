@@ -56,7 +56,7 @@ button.color2:hover { background-color: #4A565D; }
 /* Botón "=" normal */
 button#igual { grid-column: auto; }
 
-/* --- Switch toggle calculadora --- */
+/* Switch toggle calculadora con tema */
 .calculadora-switch {
   grid-column: span 1;
   display: flex;
@@ -104,6 +104,7 @@ body.modo-oscuro .switch-slider { background-color: #555; }
 .calculadora-switch input:checked + .switch-slider::before {
   transform: translateX(32px);
 }
+
 </style>
 </head>
 <body>
@@ -112,10 +113,11 @@ body.modo-oscuro .switch-slider { background-color: #555; }
   <input type="text" class="display" id="display" readonly>
 
   <!-- Switch integrado -->
-  <div class="switch-container calculadora-switch">
-    <input type="checkbox" id="switchFormato" title="Cambiar formato h/dec">
-    <span class="switch-slider"></span>
-  </div>
+<div class="switch-container calculadora-switch">
+  <input type="checkbox" id="switchFormato" title="Cambiar formato h/dec">
+  <span class="switch-slider"></span>
+  <span id="formatoLabel" style="margin-left:6px; font-size:0.9em;">h/m/s</span>
+</div>
 
   <!-- Fila 1 -->
   <button class="color2" data-unit="h">H</button>
@@ -153,12 +155,23 @@ const display = document.getElementById('display');
 let expression = '';
 let modeDecimal = false;
 
-// Switch integrado
+// Switch integrado + indicador
 const switchBtn = document.getElementById('switchFormato');
+const formatoLabel = document.getElementById('formatoLabel');
+
+function actualizarFormatoLabel() {
+  formatoLabel.textContent = switchBtn.checked ? "decimal" : "h/m/s";
+}
+
+// Evento change del switch
 switchBtn.addEventListener('change', () => {
   modeDecimal = switchBtn.checked;
   actualizarDisplay();
+  actualizarFormatoLabel();
 });
+
+// Inicializar label al cargar
+actualizarFormatoLabel();
 
 // Botones numéricos
 document.querySelectorAll('[data-num]').forEach(btn=>{
