@@ -220,6 +220,10 @@ function toggleMode() {
 
 // Función que el index puede llamar para actualizar texto según idioma
 function actualizarTextoSwitch(lang, textoHoras, textoDecimal) {
+  const switchText = document.getElementById("switch-text");
+  if (!switchText) return;
+
+  // Actualiza texto según modo actual
   switchText.textContent = modeDecimal ? textoDecimal : textoHoras;
 }
 
