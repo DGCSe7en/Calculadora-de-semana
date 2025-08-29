@@ -102,10 +102,10 @@ body.modo-oscuro .switch-container input { background: #555; }
 <input type="text" class="display" id="display" readonly>
 
 <!-- Fila 1 -->
-<button class="color2" data-unit="h">H</button>
-<button class="color2" data-unit="m">M</button>
-<button class="color2" data-unit="s">S</button>
-<button class="color2" id="porcentaje">%</button>
+<button class="color2 btn-hms" onclick="appendValue('h')">H</button>
+<button class="color2 btn-hms" onclick="appendValue('m')">M</button>
+<button class="color2 btn-hms" onclick="appendValue('s')">S</button>
+<button class="color2" onclick="appendValue('%')">%</button>
 
 <!-- Fila 2 -->
 <button class="color1" id="parAbre">(</button>
@@ -144,153 +144,89 @@ body.modo-oscuro .switch-container input { background: #555; }
 </div>
 
 <script>
-const display = document.getElementById('display');
-let expression = '';
-let modeDecimal = true; // true = decimal, false = horas
+let expression = "";
+let modeDecimal = true; // true = modo decimal, false = modo horas
+const display = document.getElementById("display");
 
-const unitButtons = document.querySelectorAll('[data-unit]');
-
-// Ajusta altura del iframe
-function ajustarAltura() {
-  const altura = document.body.scrollHeight;
-  parent.postMessage({ tipo: 'ajustarAlturaCalculadora', altura }, '*');
-}
-
-// Actualiza display
-function actualizarDisplay(){
-  display.value = expression;
-  ajustarAltura();
-}
-
-// Actualiza botones H/M/S
-function actualizarBotones() {
-  if(modeDecimal){
-    unitButtons.forEach(btn => { btn.disabled = true; btn.style.opacity="0.5"; btn.style.cursor="not-allowed"; });
+// Añadir valor al display
+function appendValue(val) {
+  if(['h','m','s'].includes(val)) {
+    // Solo añadimos unidad si el último carácter es un número
+    if(expression.length > 0 && !isNaN(expression.slice(-1))) {
+      expression += val + " ";
+    }
   } else {
-    unitButtons.forEach(btn => { btn.disabled = false; btn.style.opacity="1"; btn.style.cursor="pointer"; });
+    expression += val;
   }
+  display.value = expression;
 }
 
-// Botones numéricos
-document.querySelectorAll('[data-num]').forEach(btn=>{
-  btn.addEventListener('click', ()=>{ expression += btn.dataset.num; actualizarDisplay(); });
-});
+// Borrar todo
+function clearDisplay() {
+  expression = "";
+  display.value = "";
+}
 
-// Botones H/M/S
-unitButtons.forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    if(expression && !expression.endsWith(' ')) expression += ' ';
-    expression += btn.dataset.unit + ' ';
-    actualizarDisplay();
-  });
-});
+// Borrar último carácter
+function backspace() {
+  expression = expression.trim();
+  expression = expression.slice(0, -1);
+  display.value = expression;
+}
 
-// Botones operaciones
-document.querySelectorAll('[data-op]').forEach(btn=>{
-  btn.addEventListener('click', ()=>{ expression += ' ' + btn.dataset.op + ' '; actualizarDisplay(); });
-});
-
-// Botón C
-document.getElementById('clear').addEventListener('click', ()=>{
-  expression = '';
-  actualizarDisplay();
-});
-
-// Botón coma
-document.getElementById('coma').addEventListener('click', ()=>{
-  if(!modeDecimal) return;
-  expression += '.';
-  actualizarDisplay();
-});
-
-// Botón paréntesis
-document.getElementById('parAbre').addEventListener('click', ()=>{ expression += '('; actualizarDisplay(); });
-document.getElementById('parCierra').addEventListener('click', ()=>{ expression += ')'; actualizarDisplay(); });
-
-// Botón %
-document.getElementById('porcentaje').addEventListener('click', ()=>{
-  if(modeDecimal) expression += '%'; actualizarDisplay();
-});
-
-// Borrar 1 carácter
-document.getElementById('borrar1').addEventListener('click', ()=>{
-  expression = expression.slice(0,-1);
-  actualizarDisplay();
-});
-
-// Botón =
-document.getElementById('igual').addEventListener('click', ()=>{
-  expression = calcular(expression);
-  actualizarDisplay();
-});
-
-// Switch invertido
-const switchBtn = document.getElementById('switchFormato');
-switchBtn.addEventListener('change', ()=>{
-  modeDecimal = !switchBtn.checked; 
-  actualizarBotones();
-});
-
-// Teclado físico
-document.addEventListener('keydown', (e)=>{
-  if(e.key.match(/[0-9]/)) expression += e.key;
-  else if(['h','m','s','+','-','*','/','(',')'].includes(e.key)) expression += e.key==='*'?'×': e.key==='/'?'÷': e.key;
-  else if(e.key==='Enter') expression = calcular(expression);
-  else if(e.key==='Backspace') expression = expression.slice(0,-1);
-  actualizarDisplay();
-});
-
-// --- Lógica de cálculo ---
+// Calcular expresión
 function calcular(exp){
   try {
     if(modeDecimal){
+      // Modo decimal
       exp = exp.replace(/×/g,'*').replace(/÷/g,'/').replace(/%/g,'/100');
-      return eval(exp).toString();
+      let res = eval(exp);
+      if(res===null || res===undefined || isNaN(res)) return "Error";
+      return res.toString();
     } else {
-      let tokens = exp.split(/\s+/).filter(t=>t!=='');
-      if(tokens.length===0) return '';
+      // Modo horas
+      let expCopy = exp.replace(/(\d+(\.\d+)?)h/g, "($1)")
+                       .replace(/(\d+(\.\d+)?)m/g, "($1/60)")
+                       .replace(/(\d+(\.\d+)?)s/g, "($1/3600)")
+                       .replace(/×/g,'*').replace(/÷/g,'/').replace(/%/g,'/100');
 
-      let stack=[], currentOp=null;
+      let totalH = eval(expCopy);
+      if(totalH===null || totalH===undefined || isNaN(totalH)) return "Error";
 
-      function tokenToHours(token){
-        token = token.trim();
-        if(token.endsWith('h')) return parseFloat(token.replace('h',''))||0;
-        if(token.endsWith('m')) return (parseFloat(token.replace('m',''))||0)/60;
-        if(token.endsWith('s')) return (parseFloat(token.replace('s',''))||0)/3600;
-        if(!isNaN(parseFloat(token))) return parseFloat(token);
-        return 0;
-      }
+      // Convertir a h m s
+      let h = Math.floor(totalH);
+      let rem = (totalH - h) * 60;
+      let m = Math.floor(rem);
+      let s = Math.round((rem - m) * 60);
 
-      for(let token of tokens){
-        if(['+', '-', '×', '÷'].includes(token)){ 
-          currentOp=token; 
-        } else {
-          let val = tokenToHours(token);
-          if(currentOp){
-            if(currentOp==='+') stack.push(stack.pop()+val);
-            else if(currentOp==='-') stack.push(stack.pop()-val);
-            else if(currentOp==='×') stack.push(stack.pop()*val);
-            else if(currentOp==='÷') stack.push(stack.pop()/val);
-            currentOp=null;
-          } else stack.push(val);
-        }
-      }
-
-      let totalH = stack.reduce((a,b)=>a+b,0);
-      let h=Math.floor(totalH);
-      let m=Math.floor((totalH-h)*60);
-      let s=Math.round(((totalH-h)*60 - m)*60);
+      // Normalizar
+      if(s >= 60){ m += Math.floor(s/60); s = s % 60; }
+      if(m >= 60){ h += Math.floor(m/60); m = m % 60; }
 
       return `${h}h ${m}m ${s}s`;
     }
   } catch(e){
-    return 'Error';
+    return "Error";
   }
 }
 
-// Ajuste inicial
-window.addEventListener('load', ()=>{
-  actualizarBotones();
-  actualizarDisplay();
-});
+// Ejecutar "="
+function calculateResult() {
+  const result = calcular(expression);
+  display.value = result;
+  expression = result; // deja el resultado en el display para seguir operando
+}
+
+// Cambiar modo (decimal ↔ horas)
+function toggleMode() {
+  modeDecimal = !modeDecimal;
+  document.getElementById("mode-label").textContent = modeDecimal ? "Decimal" : "Horas";
+
+  // Deshabilitar/activar botones H, M, S
+  document.querySelectorAll(".btn-hms").forEach(btn => {
+    btn.disabled = modeDecimal;
+  });
+
+  clearDisplay();
+}
 </script>
