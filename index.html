@@ -11,24 +11,24 @@ body { font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; m
 body.modo-claro { background-image: url('./LIGHT.webp'); background-size: cover; background-position: center; background-repeat: no-repeat; color: #1a1a1a; }
 body.modo-oscuro { background-image: url('./DARK.webp'); background-size: cover; background-position: center; background-repeat: no-repeat; color: #e0e0e0; }
 .texto-azul { color: inherit; }
-body.modo-claro .texto-azul { color: #0D47A1 !important; }
-body.modo-oscuro .texto-azul { color: #90D5FF !important; }
+body.modo-claro .texto-azul { color: #4A565D !important; }
+body.modo-oscuro .texto-azul { color: #5C6B73 !important; }
 
 h1, h3 { font-size: 1.2em; margin: 10px 0; }
 .reloj { font-size: 1.8em; font-weight: bold; margin: 10px 0; }
 .zona, #semanaActual { font-size: 1em; font-weight: normal; margin: 10px 0; color: inherit; }
 
 .seccion { margin: 20px auto; padding: 15px; border-radius: 8px; max-width: 600px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.9);}
-body.modo-oscuro .seccion { background-color: rgba(50,50,50,0.9); }
+body.modo-oscuro .seccion { background-color: rgba(50,50,50,0.9); box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
 
 input, button { padding: 10px; margin: 5px; font-size: 1em; border-radius: 5px; border: 1px solid #ccc; width: 90%; max-width: 300px; box-sizing: border-box;}
-button { background-color: #3498db; color: white; border: none; cursor: pointer; transition: background-color 0.2s; }
-button:hover { background-color: #2980b9; }
+button { background-color: #5C6B73; color: white; border: none; cursor: pointer; transition: background-color 0.2s; }
+button:hover { background-color: #4A565D; }
 
 #modo-switch-container { display: flex; align-items: center; justify-content: center; margin: 30px 0 10px 0; }
 .switch-container { display: flex; align-items: center; gap: 7px; cursor: pointer; }
 #modo-switch { appearance: none; -webkit-appearance: none; width: 50px; height: 24px; background: #ccc; border-radius: 12px; position: relative; cursor: pointer; transition: background 0.2s; }
-#modo-switch:checked { background: #1e90ff; }
+#modo-switch:checked { background: #5C6B73; }
 #modo-switch::before { content: ""; position: absolute; top: 50%; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transform: translateY(-50%); transition: left 0.2s; }
 #modo-switch:checked::before { left: calc(100% - 22px); }
 #modo-switch:focus { outline: none; }
@@ -50,7 +50,7 @@ body.modo-oscuro .firma { color: #aaa; }
 
 #idiomas { display: flex; justify-content: center; gap: 10px; margin-top: 30px; margin-bottom: 20px; }
 #idiomas img { width: 36px; height: auto; cursor: pointer; border-radius: 4px; transition: transform 0.2s; }
-#idiomas img:hover, #idiomas img.active { transform: scale(1.05); border: 2px solid #3498db; }
+#idiomas img:hover, #idiomas img.active { transform: scale(1.05); border: 2px solid #5C6B73; }
 
 /* --- Responsive para móviles --- */
 @media(max-width:480px) { 
@@ -77,12 +77,22 @@ body.modo-oscuro .firma { color: #aaa; }
 .suggestions-list { position: absolute; top: 100%; left: 0; right: 0; min-width: 100%; max-height: 150px; overflow-y: auto; background: #fff !important; color: #111 !important; border: 1px solid #ccc; border-radius: 4px; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-top: 2px; padding: 0; list-style: none; }
 .suggestions-list li { padding: 8px 12px; cursor: pointer; color: #111 !important; background: #fff !important; transition: background-color 0.2s, color 0.2s; }
 .suggestions-list li.active,
-.suggestions-list li:hover { background-color: #3498db !important; color: #fff !important; }
+.suggestions-list li:hover { background-color: #5C6B73 !important; color: #fff !important; }
 
 #weather-temp { font-size: 1.8em; font-weight: bold; color: inherit; margin-right: 10px; display: inline-block; width: 60px; text-align: right; }
 #weather-emoji { display: inline-block; width: 30px; height: 30px; line-height: 30px; font-size: 30px; text-align: center; }
 #city-name { font-weight: bold; }
   
+.fechas-linea { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
+.fechas-linea label { display: flex; align-items: center; gap: 4px; }
+.fechas-linea .a-label { font-weight: bold; }
+.fechas-linea button { flex-shrink: 0; }
+
+@media(max-width:480px) {
+.fechas-linea { flex-direction: column; gap: 5px; }
+.fechas-linea button { width: 90%; }
+}
+
 </style>
 </head>
 <body aria-label="Tiempo360" role="main">
