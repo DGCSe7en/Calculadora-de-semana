@@ -3,171 +3,172 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de tiempos</title>
-<link rel="stylesheet" href="index.css"> <!-- tu CSS global -->
+<title>Calculadora de Tiempos Pro</title>
+<link rel="stylesheet" href="index.css">
 <style>
-  /* Contenedor principal de la calculadora */
-  .calc-container {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 15px;
-    border-radius: 12px;
-    background-color: rgba(255,255,255,0.9);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  body.modo-oscuro .calc-container {
-    background-color: rgba(50,50,50,0.9);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  }
-
-  /* Pantalla de la calculadora */
-  #calc-display {
-    width: 95%;
-    font-size: 1.5em;
-    padding: 10px;
-    margin-bottom: 15px;
-    text-align: right;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    background-color: #f7f7f7;
-  }
-  body.modo-oscuro #calc-display {
-    background-color: #333;
-    color: #e0e0e0;
-    border: 1px solid #666;
-  }
-
-  /* Botonera */
-  .calc-buttons {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-    width: 100%;
-  }
-
-  /* Botones Color 1: números y switch posición 1 */
-  .btn-num, .btn-switch-1 {
-    background-color: #F4A261;
-    color: #fff;
-  }
-  .btn-num:hover, .btn-switch-1:hover {
-    background-color: #E76F51;
-  }
-
-  /* Botones Color 2: operaciones y switch posición 2 */
-  .btn-op, .btn-switch-2 {
-    background-color: #4A565D; /* texto azul de tu CSS */
-    color: #fff;
-  }
-  body.modo-claro .btn-op, body.modo-claro .btn-switch-2 {
-    background-color: #4A565D;
-  }
-  body.modo-oscuro .btn-op, body.modo-oscuro .btn-switch-2 {
-    background-color: #5C6B73;
-  }
-  .btn-op:hover, .btn-switch-2:hover {
-    background-color: #3b474f;
-  }
-
-  button {
-    font-size: 1em;
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    user-select: none;
-  }
+.calculadora { max-width: 380px; margin: 0 auto; padding: 15px; border-radius: 10px; background-color: rgba(255,255,255,0.95); box-shadow:0 2px 8px rgba(0,0,0,0.2);}
+body.modo-oscuro .calculadora { background-color: rgba(50,50,50,0.95);}
+#display { width:100%; height:70px; font-size:1.4em; margin-bottom:10px; padding:10px; border-radius:6px; border:1px solid #ccc; background:#f0f0f0; color:#111; box-sizing:border-box;}
+body.modo-oscuro #display { background:#333; color:#e0e0e0; }
+.calculadora-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px;}
+button { padding:15px; font-size:1.2em; border-radius:6px; border:none; cursor:pointer; transition:0.2s;}
+.btn-num, #hora-decimal { background-color:#5C6B73; color:#fff; }
+.btn-num:hover, #hora-decimal:hover { background-color:#4A565D; }
+.btn-op { background-color:#4A90E2; color:#fff; }
+body.modo-oscuro .btn-op { background-color:#5C6B73; }
+.btn-op:hover { opacity:0.85; }
+.btn-equal { grid-column: span 2; }
+@media(max-width:480px){ .calculadora{max-width:95vw;} #display{height:50px; font-size:1.2em;} button{padding:12px; font-size:1em;} }
 </style>
 </head>
 <body>
 
-<div class="calc-container">
-  <input type="text" id="calc-display" readonly aria-label="Pantalla de la calculadora">
-
-  <div class="calc-buttons">
-    <!-- Números -->
-    <button class="btn-num" data-val="7">7</button>
-    <button class="btn-num" data-val="8">8</button>
-    <button class="btn-num" data-val="9">9</button>
-    <button class="btn-op" data-op="÷">÷</button>
-    <button class="btn-op" data-op="C">C</button>
-
-    <button class="btn-num" data-val="4">4</button>
-    <button class="btn-num" data-val="5">5</button>
-    <button class="btn-num" data-val="6">6</button>
-    <button class="btn-op" data-op="x">x</button>
-    <button class="btn-op" data-op="h">h</button>
-
-    <button class="btn-num" data-val="1">1</button>
-    <button class="btn-num" data-val="2">2</button>
-    <button class="btn-num" data-val="3">3</button>
-    <button class="btn-op" data-op="-">-</button>
-    <button class="btn-op" data-op="m">m</button>
-
-    <button class="btn-num" data-val="0">0</button>
-    <button class="btn-num" data-val=".">.</button>
-    <button class="btn-op" data-op="=">=</button>
-    <button class="btn-op" data-op="+">+</button>
-    <button class="btn-op" data-op="s">s</button>
-
-    <!-- Switch hora/decimal -->
-    <button id="switchFormat" class="btn-switch-1">hora/decim.</button>
+<div class="calculadora" role="region" aria-label="Calculadora de tiempos profesional">
+  <input type="text" id="display" readonly aria-label="Pantalla de la calculadora">
+  <div style="text-align:right; margin-bottom:5px;">
+    <span id="resultadoHHMMSS" style="margin-right:10px;"></span>
+    <span id="resultadoDecimal"></span>
   </div>
+
+  <div class="calculadora-grid">
+    <button class="btn-op" data-unit="h">H</button>
+    <button class="btn-op" data-unit="m">M</button>
+    <button class="btn-op" data-unit="s">S</button>
+    <button class="btn-op" data-op="/">÷</button>
+
+    <button class="btn-num">7</button>
+    <button class="btn-num">8</button>
+    <button class="btn-num">9</button>
+    <button class="btn-op" data-op="*">X</button>
+
+    <button class="btn-num">4</button>
+    <button class="btn-num">5</button>
+    <button class="btn-num">6</button>
+    <button class="btn-op" data-op="-">-</button>
+
+    <button class="btn-num">1</button>
+    <button class="btn-num">2</button>
+    <button class="btn-num">3</button>
+    <button class="btn-op" data-op="+">+</button>
+
+    <button class="btn-num">0</button>
+    <button class="btn-op" id="clear">C</button>
+    <button class="btn-equal btn-op" id="equal">=</button>
+  </div>
+
+  <button id="hora-decimal">Hora/Decim.</button>
 </div>
 
 <script>
-  const display = document.getElementById('calc-display');
-  let current = '';
-  let isDecimal = false;
+let display = document.getElementById("display");
+let resultadoHHMMSS = document.getElementById("resultadoHHMMSS");
+let resultadoDecimal = document.getElementById("resultadoDecimal");
+let currentInput = "";
+let isDecimal = false;
+let pendingOperation = null;
+let totalSeconds = 0;
 
-  // Botones
-  document.querySelectorAll('.btn-num, .btn-op').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const val = btn.dataset.val || btn.dataset.op;
-      if(val === 'C'){
-        current = '';
-        display.value = '';
-      } else if(val === '='){
-        try {
-          // Lógica futura de cálculo de tiempos
-          display.value = current; // por ahora solo muestra entrada
-        } catch(e){
-          display.value = 'Error';
-        }
-      } else {
-        current += val;
-        display.value = current;
-      }
-    });
+// Conversión de texto a segundos
+function parseTimeString(str){
+  str = str.toLowerCase().replace(/\s/g,'');
+  let h=0,m=0,s=0;
+  let match;
+  if(match=str.match(/(\d+\.?\d*)h/)) h=parseFloat(match[1]);
+  if(match=str.match(/(\d+\.?\d*)m/)) m=parseFloat(match[1]);
+  if(match=str.match(/(\d+\.?\d*)s/)) s=parseFloat(match[1]);
+  if(isDecimal && str && !str.includes('h') && !str.includes('m') && !str.includes('s')) h=parseFloat(str);
+  return Math.round(h*3600 + m*60 + s);
+}
+
+// Formato HH:MM:SS
+function formatHHMMSS(sec){
+  let h=Math.floor(sec/3600);
+  let m=Math.floor((sec%3600)/60);
+  let s=Math.floor(sec%60);
+  return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+}
+
+// Formato decimal horas
+function formatDecimal(sec){ return (sec/3600).toFixed(2); }
+
+// Actualiza pantalla y resultados
+function updateDisplay(val){
+  display.value = val;
+  resultadoHHMMSS.textContent = "HH:MM:SS: "+formatHHMMSS(totalSeconds);
+  resultadoDecimal.textContent = "Decimal: "+formatDecimal(totalSeconds)+"h";
+}
+
+// Botones numéricos
+document.querySelectorAll(".btn-num").forEach(b=>{
+  b.addEventListener("click", ()=>{ currentInput += b.textContent; display.value=currentInput; });
+});
+
+// Botones unidades
+document.querySelectorAll(".btn-op[data-unit]").forEach(b=>{
+  b.addEventListener("click", ()=>{
+    if(currentInput) currentInput += b.dataset.unit;
+    else currentInput = "0"+b.dataset.unit;
+    display.value = currentInput;
   });
+});
 
-  // Switch hora/decimal
-  document.getElementById('switchFormat').addEventListener('click', () => {
-    isDecimal = !isDecimal;
-    alert(`Formato cambiado a ${isDecimal ? 'decimal' : 'horas:minutos'}`);
+// Operadores
+document.querySelectorAll(".btn-op[data-op]").forEach(b=>{
+  b.addEventListener("click", ()=>{
+    calculatePending();
+    pendingOperation = b.dataset.op;
   });
+});
 
-  // Permitir escribir con teclado (solo en PC)
-  if(!/Mobi|Android/i.test(navigator.userAgent)){
-    document.addEventListener('keydown', e => {
-      if(/\d|\./.test(e.key)){
-        current += e.key;
-        display.value = current;
-      } else if(e.key === 'Backspace'){
-        current = current.slice(0,-1);
-        display.value = current;
-      } else if(e.key === 'Enter'){
-        display.value = current; // por ahora
-      } else if(['+','-','*','/'].includes(e.key)){
-        const opMap = {'*':'x','/':'÷'};
-        current += opMap[e.key] || e.key;
-        display.value = current;
-      }
-    });
-  }
+// Clear
+document.getElementById("clear").addEventListener("click", ()=>{
+  currentInput="";
+  totalSeconds=0;
+  pendingOperation=null;
+  updateDisplay(currentInput);
+});
+
+// Equal
+document.getElementById("equal").addEventListener("click", ()=>{
+  calculatePending();
+  pendingOperation=null;
+  currentInput="";
+  updateDisplay(currentInput);
+});
+
+// Hora/Decimal
+document.getElementById("hora-decimal").addEventListener("click", ()=>{
+  isDecimal=!isDecimal;
+  updateDisplay(currentInput);
+});
+
+// Cálculo
+function calculatePending(){
+  if(!currentInput) return;
+  let val=parseTimeString(currentInput);
+  if(pendingOperation){
+    switch(pendingOperation){
+      case "+": totalSeconds+=val; break;
+      case "-": totalSeconds-=val; break;
+      case "*": totalSeconds*=val/3600; break;
+      case "/": totalSeconds/=val/3600; break;
+    }
+  } else { totalSeconds=val; }
+  currentInput="";
+  updateDisplay(currentInput);
+}
+
+// Teclado
+document.addEventListener("keydown", e=>{
+  if(e.key>='0' && e.key<='9'){ currentInput+=e.key; display.value=currentInput; }
+  if(e.key==='Backspace'){ currentInput=currentInput.slice(0,-1); display.value=currentInput; }
+  if(e.key==='Enter'){ document.getElementById("equal").click(); }
+  if(e.key==='Escape'){ document.getElementById("clear").click(); }
+  if(e.key==='+'){ document.querySelector(".btn-op[data-op='+']").click(); }
+  if(e.key==='-'){ document.querySelector(".btn-op[data-op='-']").click(); }
+  if(e.key==='*'){ document.querySelector(".btn-op[data-op='*']").click(); }
+  if(e.key==='/'){ document.querySelector(".btn-op[data-op='/']").click(); }
+});
 </script>
 
 </body>
