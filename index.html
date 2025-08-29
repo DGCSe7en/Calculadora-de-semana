@@ -11,24 +11,24 @@ body { font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; m
 body.modo-claro { background-image: url('./LIGHT.webp'); background-size: cover; background-position: center; background-repeat: no-repeat; color: #1a1a1a; }
 body.modo-oscuro { background-image: url('./DARK.webp'); background-size: cover; background-position: center; background-repeat: no-repeat; color: #e0e0e0; }
 .texto-azul { color: inherit; }
-body.modo-claro .texto-azul { color: #4A565D !important; }
-body.modo-oscuro .texto-azul { color: #5C6B73 !important; }
+body.modo-claro .texto-azul { color: #0D47A1 !important; }
+body.modo-oscuro .texto-azul { color: #90D5FF !important; }
 
 h1, h3 { font-size: 1.2em; margin: 10px 0; }
 .reloj { font-size: 1.8em; font-weight: bold; margin: 10px 0; }
 .zona, #semanaActual { font-size: 1em; font-weight: normal; margin: 10px 0; color: inherit; }
 
 .seccion { margin: 20px auto; padding: 15px; border-radius: 8px; max-width: 600px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.9);}
-body.modo-oscuro .seccion { background-color: rgba(50,50,50,0.9); box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+body.modo-oscuro .seccion { background-color: rgba(50,50,50,0.9); }
 
 input, button { padding: 10px; margin: 5px; font-size: 1em; border-radius: 5px; border: 1px solid #ccc; width: 90%; max-width: 300px; box-sizing: border-box;}
-button { background-color: #5C6B73; color: white; border: none; cursor: pointer; transition: background-color 0.2s; }
-button:hover { background-color: #4A565D; }
+button { background-color: #3498db; color: white; border: none; cursor: pointer; transition: background-color 0.2s; }
+button:hover { background-color: #2980b9; }
 
 #modo-switch-container { display: flex; align-items: center; justify-content: center; margin: 30px 0 10px 0; }
 .switch-container { display: flex; align-items: center; gap: 7px; cursor: pointer; }
 #modo-switch { appearance: none; -webkit-appearance: none; width: 50px; height: 24px; background: #ccc; border-radius: 12px; position: relative; cursor: pointer; transition: background 0.2s; }
-#modo-switch:checked { background: #5C6B73; }
+#modo-switch:checked { background: #1e90ff; }
 #modo-switch::before { content: ""; position: absolute; top: 50%; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transform: translateY(-50%); transition: left 0.2s; }
 #modo-switch:checked::before { left: calc(100% - 22px); }
 #modo-switch:focus { outline: none; }
@@ -50,7 +50,7 @@ body.modo-oscuro .firma { color: #aaa; }
 
 #idiomas { display: flex; justify-content: center; gap: 10px; margin-top: 30px; margin-bottom: 20px; }
 #idiomas img { width: 36px; height: auto; cursor: pointer; border-radius: 4px; transition: transform 0.2s; }
-#idiomas img:hover, #idiomas img.active { transform: scale(1.05); border: 2px solid #5C6B73; }
+#idiomas img:hover, #idiomas img.active { transform: scale(1.05); border: 2px solid #3498db; }
 
 /* --- Responsive para móviles --- */
 @media(max-width:480px) { 
@@ -77,23 +77,12 @@ body.modo-oscuro .firma { color: #aaa; }
 .suggestions-list { position: absolute; top: 100%; left: 0; right: 0; min-width: 100%; max-height: 150px; overflow-y: auto; background: #fff !important; color: #111 !important; border: 1px solid #ccc; border-radius: 4px; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-top: 2px; padding: 0; list-style: none; }
 .suggestions-list li { padding: 8px 12px; cursor: pointer; color: #111 !important; background: #fff !important; transition: background-color 0.2s, color 0.2s; }
 .suggestions-list li.active,
-.suggestions-list li:hover { background-color: #5C6B73 !important; color: #fff !important; }
+.suggestions-list li:hover { background-color: #3498db !important; color: #fff !important; }
 
 #weather-temp { font-size: 1.8em; font-weight: bold; color: inherit; margin-right: 10px; display: inline-block; width: 60px; text-align: right; }
 #weather-emoji { display: inline-block; width: 30px; height: 30px; line-height: 30px; font-size: 30px; text-align: center; }
 #city-name { font-weight: bold; }
   
-.fechas-linea { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
-.fechas-linea label { display: flex; align-items: center; gap: 4px; }
-.fechas-linea .a-label { font-weight: bold; }
-.fechas-linea button { flex-shrink: 0; }
-
-@media(max-width:480px) {
-.fechas-linea { flex-direction: column; gap: 5px; }
-.fechas-linea button { width: 90%; }
-}
-
-
 </style>
 </head>
 <body aria-label="Tiempo360" role="main">
@@ -144,7 +133,7 @@ body.modo-oscuro .firma { color: #aaa; }
 
 <div class="calendar-container" aria-label="Calendario de festivos" role="region">
   <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showPrint=0&showTitle=0&showCalendars=0&showTz=0&src=cmc2YXRmZXEyMHNkMHJxbWVpOTU3aDB0dnBlNGd2bTNAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=NjI3NDg2ZDMwOWJnZ2xpbGhuOGJnN3JnbjNnaXB2M2lAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=OTlvbjFkNjMyajdqNm42NDdrczQwa3UwNW5lZzZlcGNAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=b3A0Y2RtNnVmaGUybmZmYTBlOThmbDJndmZ1YnRxY2VAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=bHFpMWlvMXNoaGh1amFrZ2psZnQ2OWVocGtxb2MzdTdAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=ZzN1M25oZ3E1cnU1amVhZGJrYzZsN3E0amgzcDY5cjRAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=bWUxdXByNGludjRuanJtNjc4Zm9ldjJsdjJhMzc5MDNAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=MTc4cHFpMmhwOTJiaHZjbTlvdWoyMDVvbmU3cmc5NTRAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=aW80NWRsb2FsbmcxcWxpdGV2MmhuMjFzb2JuaDVlcmFAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=ZnJrN21rOTluYnRicXQ3ZmNsbmJqN3Uzazdlbml0MGRAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=OW0yNGZ0aW81dmw0bGk1aXRmbTIydjVpdmRzdnVxaHZAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&src=aTJvMTRnaDhqNmY2N29yODY1amhrcTBxbnNlMXVrdWNAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=MWpqdmRlNmJibmRmaXJ2dnM4NnUzMjBzcXJkaDc1M2dAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=MTIwNm9iMGhrczNkNDU5aDFxdDZtcWZkNjF1N3A4b29AaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=ZG5qMWh1aW5xdWpqZ2Nlajk2cjNpZzlqdTg2Y3MwZ2tAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=bXNidTd1MmNhcnNnMWU1cG0xOWI4b2p0MjF1aXE0c2lAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=MGduYWRqb3NibTd2am5sbTlkaDhhNDU5MHBrYWVnNTlAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=OHMzMWhtZHFjbnRvMDIwc3FiZWE3bmZ2cjdwcG90Nm5AaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=M2w5YXNwc3AzbDZ0bjhmZTIzMGtzcTI2dmoydHNsbWtAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%23d50000&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
-</div> 
+</div>  
 
 <div class="seccion">
   <h3 class="texto-azul">Calculadora de tiempos</h3>
@@ -165,17 +154,10 @@ body.modo-oscuro .firma { color: #aaa; }
 
 <div class="seccion" aria-label="Cálculo de días entre dos fechas" role="region">
   <h3 class="texto-azul" id="h3Dias" tabindex="0"></h3>
-  <div class="fechas-linea">
-    <label>
-      <span class="label-de">De:</span>
-      <input type="date" id="fechaInicio" aria-label="Fecha de inicio">
-    </label>
-    <label>
-      <span class="label-a">a:</span>
-      <input type="date" id="fechaFin" aria-label="Fecha de fin">
-    </label>
-  </div>
-  <button id="btnCalcularDias" aria-label="Calcular días"></button>
+  <input type="date" id="fechaInicio" aria-label="Fecha de inicio">
+  <span id="a-label">a</span>
+  <input type="date" id="fechaFin" aria-label="Fecha de fin">
+  <button id="btnCalcularDias" onclick="calcularDias()" aria-label="Calcular días"></button>
   <p class="resultado" id="resultadoDias" aria-live="polite"></p>
   <p class="error" id="errorDias" aria-live="assertive"><span class="icono">⚠️</span></p>
 </div>
@@ -204,8 +186,6 @@ const traducciones = {
     diasEntre: "{total} días ({años} años, {meses} meses, {dias} días)",
     rangoSemana: "Semana {semana}: del {inicio} al {fin}",
     h3Dias: "Tiempo entre dos fechas",
-    labelDe: "De:",
-    labelA: "a:",
     btnCalcularDias: "Calcular",
     h3Rango: "Fechas de una semana",
     labelSemana: "Semana del año (1-53):",
@@ -233,8 +213,6 @@ const traducciones = {
     diasEntre: "{total} dies ({años} anys, {meses} mesos, {dias} dies)",
     rangoSemana: "Setmana {semana}: del {inicio} al {fin}",
     h3Dias: "Temps entre dues dates",
-    labelDe: "De:",
-    labelA: "a:",
     btnCalcularDias: "Calcular",
     h3Rango: "Dates d’una setmana",
     labelSemana: "Setmana de l’any (1-53):",
@@ -262,8 +240,6 @@ const traducciones = {
     diasEntre: "{total} días ({años} anos, {meses} meses, {dias} días)",
     rangoSemana: "Semana {semana}: do {inicio} ao {fin}",
     h3Dias: "Tempo entre dúas datas",
-    labelDe: "De:",
-    labelA: "a:",
     btnCalcularDias: "Calcular",
     h3Rango: "Datas dunha semana",
     labelSemana: "Semana do ano (1-53):",
@@ -291,8 +267,6 @@ const traducciones = {
     diasEntre: "{total} egun ({años} urte, {meses} hilabete, {dias} egun)",
     rangoSemana: "{semana}. astea: {inicio}tik {fin}ra",
     h3Dias: "Bi daten arteko denbora",
-    labelDe: "Hasiera:",
-    labelA: "eta",
     btnCalcularDias: "Kalkulatu",
     h3Rango: "Aste bateko datak",
     labelSemana: "Urteko astea (1-53):",
@@ -362,52 +336,21 @@ document.querySelectorAll('#idiomas img').forEach(img => {
 
 
 function actualizarLogo() {
-  const obj = document.getElementById('logo-svg');
-  const png = document.getElementById('logo-png');
-  if (!obj || !png) return;
+  const logo = document.getElementById('titulo-img');
+  if (!logo) return;
 
-  // --- Color dinámico del SVG ---
-  const colorElem = document.body.querySelector('.texto-azul');
-  const color = colorElem ? getComputedStyle(colorElem).color : '#000';
-
-  function aplicarColorSVG() {
-    const svgDoc = obj.contentDocument;
-    if (!svgDoc) return;
-
-    svgDoc.querySelectorAll('path, circle, rect, polygon').forEach(el => {
-      el.setAttribute('fill', color);
-    });
-  }
-
-  if (obj.contentDocument) {
-    aplicarColorSVG();
-  } else {
-    obj.addEventListener('load', () => aplicarColorSVG(), { once: true });
-  }
-
-  // --- PNG según modo claro/oscuro ---
-  const modoOscuro = document.body.classList.contains('modo-oscuro');
-  png.src = modoOscuro ? 'Logoweb_Dark.png' : 'Logoweb_Clear.png';
-
-  // --- Alt según idioma ---
+  // Detectar idioma activo
   const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
-  const t = traducciones[lang] || {};
-  png.alt = t.tituloAlt || "Tiempo360 - El tiempo desde todas sus dimensiones...";
+  const t = traducciones[lang];
+
+  // Cambiar imagen según modo
+  logo.src = document.body.classList.contains('modo-oscuro') 
+    ? 'Logoweb_Dark.png' 
+    : 'Logoweb_Clear.png';
+
+  // Actualizar alt según idioma
+  logo.alt = t.tituloAlt || "Tiempo360 - El tiempo desde todas sus dimensiones...";
 }
-
-// --- Eventos ---
-window.addEventListener('load', actualizarLogo);
-
-// Switch de modo
-const modoSwitch = document.querySelector('#modo-switch');
-if (modoSwitch) {
-  modoSwitch.addEventListener('change', actualizarLogo);
-}
-
-// Cambios de idioma
-document.querySelectorAll('#idiomas img').forEach(img => {
-  img.addEventListener('click', () => setTimeout(actualizarLogo, 50));
-});
 
 function formatoFecha(fecha){ 
   const dia=String(fecha.getDate()).padStart(2,'0'); 
@@ -495,9 +438,7 @@ function cambiarIdioma(lang) {
   document.getElementById('h3Semana').textContent = t.h3Semana;
   document.getElementById('btnCalcularSemana').textContent = t.btnCalcularSemana;
   document.getElementById('h3Dias').textContent = t.h3Dias;
-  document.querySelector(".fechas-linea .label-de").textContent = t.labelDe;
-  document.querySelector(".fechas-linea .label-a").textContent = t.labelA;
-  document.getElementById("btnCalcularDias").textContent = t.btnCalcularDias;
+  document.getElementById('btnCalcularDias').textContent = t.btnCalcularDias;
   document.getElementById('h3Rango').textContent = t.h3Rango;
   document.getElementById('labelSemana').textContent = t.labelSemana;
   document.getElementById('btnMostrarRango').textContent = t.btnMostrarRango;
@@ -505,6 +446,7 @@ function cambiarIdioma(lang) {
   document.getElementById('fechaInicio').placeholder = t.placeholderInicio;
   document.getElementById('fechaFin').placeholder = t.placeholderFin;
   document.getElementById('semanaInput').placeholder = t.placeholderSemana;
+  document.getElementById('a-label').textContent = (lang === 'ca' || lang === 'gl') ? 'a' : (lang === 'eu') ? 'eta' : 'a';
   mostrarSemanaActual(lang);
   ['resultado', 'resultadoDias', 'resultadoSemana'].forEach(id => {
     if(document.getElementById(id)) document.getElementById(id).textContent = "";
@@ -570,205 +512,47 @@ function mostrarSemanaActual(lang){
     .replace("{semana}",semanaActual);
 }
 
-<script>
-// --- Traducciones coherentes ---
-const traducciones = {
-  es: {
-    tituloAlt: "Tiempo360 - El tiempo desde todas sus dimensiones...",
-    lugarLabel: "Lugar:",
-    buscarBtn: "Buscar",
-    h3Semana: "Número de semana",
-    btnCalcularSemana: "Calcular",
-    semanaDe: "{fecha} > Semana {semana}",
-    diasEntre: "{total} días ({años} años, {meses} meses, {dias} días)",
-    rangoSemana: "Semana {semana}: del {inicio} al {fin}",
-    h3Dias: "Tiempo entre dos fechas",
-    labelDe: "De:",
-    labelA: "a:",
-    btnCalcularDias: "Calcular",
-    h3Rango: "Fechas de una semana",
-    labelSemana: "Semana del año (1-53):",
-    btnMostrarRango: "Mostrar",
-    placeholderInicio: "Fecha de inicio",
-    placeholderFin: "Fecha de fin",
-    placeholderSemana: "Número de semana",
-    placeholderCiudad: "Introduce una ciudad...",
-    errorFecha: "Introduce una fecha válida.",
-    errorFechas: "Introduce fechas válidas en ambos campos.",
-    errorFinAntesInicio: "La fecha final no puede ser anterior a la inicial.",
-    errorSemana: "Introduce un número de semana válido entre 1 y 53.",
-    horaActual: "Hora actual:",
-    zonaHorariaTpl: "Hora local de España ({gmt})",
-    semanaActual: "Hoy es {fecha} y estamos en la semana número {semana} del año.",
-    footer: "El sitio podría contener errores, por favor contrasta la información.<br><br><strong>Tiempo360.</strong> <em>El tiempo, desde todas sus dimensiones...</em><br>2025 - Todos los derechos reservados"
-  },
-  // --- Otras traducciones (ca, gl, eu) se mantienen igual ---
-};
-
-// --- Función de formato de fecha ---
-function formatoFecha(fecha){ 
-  const dia=String(fecha.getDate()).padStart(2,'0'); 
-  const mes=String(fecha.getMonth()+1).padStart(2,'0'); 
-  const año=fecha.getFullYear(); 
-  return `${dia}/${mes}/${año}`; 
-}
-
-// --- Función mostrar errores ---
-function mostrarError(inputId,errorId,mensaje){
-  const input = document.getElementById(inputId);
-  const error = document.getElementById(errorId);
-  if (input) input.classList.add('input-error');
-  if (error) {
-    error.innerHTML = `<span class="icono">⚠️</span>${mensaje}`;
-    error.classList.add('visible');
-  }
-  setTimeout(()=>{ if (input) input.classList.remove('input-error'); },1200);
-  setTimeout(()=>{ if (error) error.classList.remove('visible'); },3000);
-}
-
-// --- Función limpiar inputs ---
-function limpiarInputs(ids) {
-  ids.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-}
-
-// --- FUNCIONES DE CÁLCULO DE FECHAS ---
-function getSemanaISO(fecha){
-  const tmp = new Date(fecha.getTime());
-  tmp.setHours(0,0,0,0);
-  tmp.setDate(tmp.getDate() + 3 - (tmp.getDay() + 6) % 7);
-  const primerJueves = new Date(tmp.getFullYear(),0,4);
-  return 1 + Math.round(((tmp - primerJueves)/ (7 * 24 * 60 * 60 * 1000)));
-}
-
-// --- Número de semana ---
-function calcularSemana(){
-  const fechaInput=document.getElementById("fecha").value;
-  const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
-  const t = traducciones[lang];
-  if(!fechaInput){ 
-    mostrarError("fecha","errorSemana",t.errorFecha); 
-    limpiarInputs(["fecha"]);
-    return; 
-  }
-  const fecha=new Date(fechaInput);
-  if(isNaN(fecha)){ 
-    mostrarError("fecha","errorSemana",t.errorFecha); 
-    limpiarInputs(["fecha"]);
-    return; 
-  }
-  const semana=getSemanaISO(fecha);
-  document.getElementById("resultado").innerText = t.semanaDe
-    .replace("{fecha}", formatoFecha(fecha))
-    .replace("{semana}", semana);
-  limpiarInputs(["fecha"]);
-}
-
-// --- Fechas de una semana ---
-function calcularRangoSemana(){
-  const semanaInput = document.getElementById("semanaInput").value;
-  const semana = parseInt(semanaInput, 10);
-  const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
-  const t = traducciones[lang];
-  if(isNaN(semana) || semana < 1 || semana > 53){
-    mostrarError("semanaInput","errorRangoSemana", t.errorSemana);
-    limpiarInputs(["semanaInput"]);
-    return;
-  }
-  const año = new Date().getFullYear();
-  const primerJueves = new Date(año,0,4);
-  const diaSemana = (primerJueves.getDay() + 6) % 7;
-  const inicioSemana = new Date(primerJueves);
-  inicioSemana.setDate(primerJueves.getDate() - diaSemana + (semana - 1) * 7);
-  const finSemana = new Date(inicioSemana);
-  finSemana.setDate(inicioSemana.getDate() + 6);
-  document.getElementById("resultadoSemana").textContent=t.rangoSemana
-    .replace("{semana}", semana)
-    .replace("{inicio}", formatoFecha(inicioSemana))
-    .replace("{fin}", formatoFecha(finSemana));
-  limpiarInputs(["semanaInput"]);
-}
-
-// --- TIEMPO ENTRE DOS FECHAS (corregido) ---
 function calcularDias(){
-  const inicioVal = document.getElementById("fechaInicio").value;
-  const finVal = document.getElementById("fechaFin").value;
+  const inicioVal=document.getElementById("fechaInicio").value;
+  const finVal=document.getElementById("fechaFin").value;
   const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
   const t = traducciones[lang];
-
   if(!inicioVal || !finVal){
     mostrarError("fechaInicio","errorDias", t.errorFechas);
     limpiarInputs(["fechaInicio","fechaFin"]);
     return;
   }
-
-  const fechaInicio = new Date(inicioVal);
-  const fechaFin = new Date(finVal);
-
+  const fechaInicio=new Date(inicioVal);
+  const fechaFin=new Date(finVal);
   if(isNaN(fechaInicio) || isNaN(fechaFin)){
     mostrarError("fechaInicio","errorDias", t.errorFechas);
     limpiarInputs(["fechaInicio","fechaFin"]);
     return;
   }
-
   if(fechaFin < fechaInicio){
     mostrarError("fechaFin","errorDias", t.errorFinAntesInicio);
     limpiarInputs(["fechaFin"]);
     return;
   }
-
-  let años = fechaFin.getFullYear() - fechaInicio.getFullYear();
-  let meses = fechaFin.getMonth() - fechaInicio.getMonth();
-  let dias = fechaFin.getDate() - fechaInicio.getDate();
-
-  if(dias < 0){
-    meses--;
-    const diasMesAnterior = new Date(fechaFin.getFullYear(), fechaFin.getMonth(), 0).getDate();
-    dias += diasMesAnterior;
+  let años=fechaFin.getFullYear()-fechaInicio.getFullYear();
+  let meses=fechaFin.getMonth()-fechaInicio.getMonth();
+  let dias=fechaFin.getDate()-fechaInicio.getDate();
+  if(dias<0){ 
+    meses--; 
+    dias+=new Date(fechaFin.getFullYear(),fechaFin.getMonth(),0).getDate(); 
   }
-
-  if(meses < 0){
-    años--;
-    meses += 12;
+  if(meses<0){ 
+    años--; 
+    meses+=12; 
   }
-
-  const diasTotales = Math.round((fechaFin - fechaInicio) / (1000*60*60*24));
-
-  document.getElementById("resultadoDias").textContent = t.diasEntre
+  const diasTotales=Math.round((fechaFin-fechaInicio)/(1000*60*60*24));
+  document.getElementById("resultadoDias").textContent=t.diasEntre
     .replace("{total}", diasTotales)
     .replace("{años}", años)
     .replace("{meses}", meses)
     .replace("{dias}", dias);
-
   limpiarInputs(["fechaInicio","fechaFin"]);
 }
-
-// --- Listener botón y Enter ---
-document.getElementById("btnCalcularDias").addEventListener("click", calcularDias);
-["fechaInicio","fechaFin"].forEach(id => {
-  const input = document.getElementById(id);
-  if(input){
-    input.addEventListener("keydown", (e) => {
-      if(e.key === "Enter") calcularDias();
-    });
-  }
-});
-
-// --- Limpiar resultado al click fuera ---
-document.addEventListener("mousedown", (e) => {
-  ["fechaInicio","fechaFin"].forEach(id => {
-    const input = document.getElementById(id);
-    const resultado = document.getElementById("resultadoDias");
-    const error = document.getElementById("errorDias");
-    if(!input) return;
-    if(e.target !== input){
-      if(resultado) resultado.textContent = "";
-      if(error) error.textContent = "";
-    }
-  });
-});
 
 function calcularRangoSemana(){
   const semanaInput = document.getElementById("semanaInput").value;
@@ -1059,6 +843,11 @@ document.addEventListener("mousedown", (e) => {
       limpiarResultado(item);
     }
   });
+});
+
+// Mantener comportamiento actual del widget de ciudad
+document.getElementById("city-input").addEventListener("focus", () => {
+  document.getElementById("suggestions").innerHTML = "";
 });
 
 window.addEventListener('message', (event) => {
