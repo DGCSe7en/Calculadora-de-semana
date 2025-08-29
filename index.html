@@ -104,7 +104,8 @@ body.modo-oscuro .firma { color: #aaa; }
 <header>
   <h1 id="titulo" tabindex="0">
     <div id="logo-container" style="position: relative; display: inline-block;">
-      <img id="logo-svg" src="Logoweb_Color.svg" alt="" style="display: block; width: 100%; height: auto;">
+      <object id="logo-svg" type="image/svg+xml" data="Logoweb_Color.svg" style="display: block; width: 100%; height: auto;"></object>
+
       <img id="logo-png" src="Logoweb_Clear.png" alt="Tiempo360 - El tiempo desde todas sus dimensiones..." 
            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
     </div>
@@ -357,26 +358,53 @@ document.querySelectorAll('#idiomas img').forEach(img => {
 
 
 function actualizarLogo() {
-  const svg = document.getElementById('logo-svg');
+  const obj = document.getElementById('logo-svg');
   const png = document.getElementById('logo-png');
-  if (!svg || !png) return;
+  if (!obj || !png) return;
 
+  // --- Color dinámico del SVG ---
+  const colorElem = document.body.querySelector('.texto-azul');
+  const color = colorElem ? getComputedStyle(colorElem).color : '#000';
+
+  function aplicarColorSVG() {
+    const svgDoc = obj.contentDocument;
+    if (!svgDoc) return;
+
+    svgDoc.querySelectorAll('path, circle, rect, polygon').forEach(el => {
+      el.setAttribute('fill', color);
+    });
+  }
+
+  if (obj.contentDocument) {
+    aplicarColorSVG();
+  } else {
+    obj.addEventListener('load', () => aplicarColorSVG(), { once: true });
+  }
+
+  // --- PNG según modo claro/oscuro ---
   const modoOscuro = document.body.classList.contains('modo-oscuro');
-
-  // PNG según modo
   png.src = modoOscuro ? 'Logoweb_Dark.png' : 'Logoweb_Clear.png';
 
-  // Color del SVG según modo
-  // Método: usar filter CSS para aproximar el color deseado
-  svg.style.filter = modoOscuro 
-    ? 'invert(34%) sepia(11%) saturate(11%) hue-rotate(184deg) brightness(90%) contrast(88%)'  // #5C6B73
-    : 'invert(28%) sepia(8%) saturate(12%) hue-rotate(182deg) brightness(94%) contrast(91%)';  // #4A565D
-
-  // Actualizar alt según idioma
+  // --- Alt según idioma ---
   const lang = document.querySelector('#idiomas img.active')?.dataset.lang || 'es';
-  const t = traducciones[lang];
+  const t = traducciones[lang] || {};
   png.alt = t.tituloAlt || "Tiempo360 - El tiempo desde todas sus dimensiones...";
 }
+
+// --- Eventos ---
+window.addEventListener('load', actualizarLogo);
+
+// Switch de modo
+const modoSwitch = document.querySelector('#modo-switch');
+if (modoSwitch) {
+  modoSwitch.addEventListener('change', actualizarLogo);
+}
+
+// Cambios de idioma
+document.querySelectorAll('#idiomas img').forEach(img => {
+  img.addEventListener('click', () => setTimeout(actualizarLogo, 50));
+});
+
 
 
 function formatoFecha(fecha){ 
