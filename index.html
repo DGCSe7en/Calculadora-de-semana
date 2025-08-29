@@ -225,6 +225,7 @@ const traducciones = {
     semanaActual: "Hoy es {fecha} y estamos en la semana número {semana} del año.",
     labelFechaInicio: "De",
     labelFechaFin: "A",
+    calculadoraTitulo: "Calculadora de tiempos",
     footer: "El sitio podría contener errores, por favor contrasta la información.<br><br><strong>Tiempo360.</strong> <em>El tiempo, desde todas sus dimensiones...</em><br>2025 - Todos los derechos reservados"
 },
   ca: {
@@ -254,6 +255,7 @@ const traducciones = {
     semanaActual: "Avui és {fecha} i estem a la setmana número {semana} de l’any.",
     labelFechaInicio: "De",
     labelFechaFin: "A",
+    calculadoraTitulo: "Calculadora de temps",
     footer: "El lloc podria contenir errors, si us plau contrasta la informació.<br><br><strong>Tiempo360.</strong> <em>El temps, des de totes les seves dimensions...</em><br>2025 - Tots els drets reservats"
 },
   gl: {
@@ -283,6 +285,7 @@ const traducciones = {
     semanaActual: "Hoxe é {fecha} e estamos na semana número {semana} do ano.",
     labelFechaInicio: "De",
     labelFechaFin: "A",
+    calculadoraTitulo: "Calculadora de tempos",
     footer: "O sitio pode conter erros, por favor contrasta a información.<br><br><strong>Tiempo360.</strong> <em>O tempo desde todas as súas dimensións...</em><br>2025 - Todos os dereitos reservados"
 },
   eu: {
@@ -312,6 +315,7 @@ const traducciones = {
     semanaActual: "Gaur {fecha} da eta urteko {semana}. astean gaude.",
     labelFechaInicio: "Hasiera",
     labelFechaFin: "Amaiera",
+    calculadoraTitulo: "Denbora kalkulagailua",
     footer: "Guneak akatsak izan ditzake, mesedez kontrastatu informazioa.<br><br><strong>Tiempo360.</strong> <em>Denbora, bere dimentsio guztietatik...</em><br>2025 - Eskubide guztiak erreserbatuta"
 }
 };
@@ -478,6 +482,7 @@ function cambiarIdioma(lang) {
   document.getElementById('semanaInput').placeholder = t.placeholderSemana;
   document.getElementById("labelFechaInicio").textContent = t.labelFechaInicio;
   document.getElementById("labelFechaFin").textContent = t.labelFechaFin;
+  document.querySelector('#iframeCalculadora').previousElementSibling.textContent = traducciones[lang].calculadoraTitulo;
   mostrarSemanaActual(lang);
   ['resultado', 'resultadoDias', 'resultadoSemana'].forEach(id => {
     if(document.getElementById(id)) document.getElementById(id).textContent = "";
