@@ -98,43 +98,44 @@ body.modo-oscuro .switch-container input { background: #555; }
 <body class="modo-claro">
 
 <div class="calculadora">
-  <input type="text" class="display" id="display" readonly>
+<!-- Display -->
+<input type="text" class="display" id="display" readonly>
 
-  <!-- Fila 1 -->
-  <button class="color2" data-unit="h">H</button>
-  <button class="color2" data-unit="m">M</button>
-  <button class="color2" data-unit="s">S</button>
-  <button class="color2" id="porcentaje">%</button>
+<!-- Fila 1 -->
+<button class="color2" data-unit="h">H</button>
+<button class="color2" data-unit="m">M</button>
+<button class="color2" data-unit="s">S</button>
+<button class="color2" id="porcentaje">%</button>
 
-  <!-- Fila 2 -->
-  <button class="color1" data-num="7">7</button>
-  <button class="color1" data-num="8">8</button>
-  <button class="color1" data-num="9">9</button>
-  <button class="color2" data-op="÷">÷</button>
+<!-- Fila 2 -->
+<button class="color1" id="parAbre">(</button>
+<button class="color1" id="parCierra">)</button>
+<button class="color1" id="borrar1">⌫</button>
+<button class="color2" data-op="÷">÷</button>
 
-  <!-- Fila 3 -->
-  <button class="color1" data-num="4">4</button>
-  <button class="color1" data-num="5">5</button>
-  <button class="color1" data-num="6">6</button>
-  <button class="color2" data-op="×">×</button>
+<!-- Fila 3 -->
+<button class="color1" data-num="7">7</button>
+<button class="color1" data-num="8">8</button>
+<button class="color1" data-num="9">9</button>
+<button class="color2" data-op="×">×</button>
 
-  <!-- Fila 4 -->
-  <button class="color1" data-num="1">1</button>
-  <button class="color1" data-num="2">2</button>
-  <button class="color1" data-num="3">3</button>
-  <button class="color2" data-op="-">-</button>
+<!-- Fila 4 -->
+<button class="color1" data-num="4">4</button>
+<button class="color1" data-num="5">5</button>
+<button class="color1" data-num="6">6</button>
+<button class="color2" data-op="-">-</button>
 
-  <!-- Fila 5 -->
-  <button class="color2" id="parAbre">(</button>
-  <button class="color2" id="parCierra">)</button>
-  <button class="color1" data-num="0">0</button>
-  <button class="color2" data-op="+">+</button>
+<!-- Fila 5 -->
+<button class="color1" data-num="1">1</button>
+<button class="color1" data-num="2">2</button>
+<button class="color1" data-num="3">3</button>
+<button class="color2" data-op="+">+</button>
 
-  <!-- Fila 6 -->
-  <button class="color1" id="coma">,</button>
-  <button class="color1" id="clear">C</button>
-  <button class="color1" id="borrar1">&lt;X]</button>
-  <button class="color2" id="igual">=</button>
+<!-- Fila 6 -->
+<button class="color1" id="clear">C</button>
+<button class="color1" data-num="0">0</button>
+<button class="color1" id="coma">,</button>
+<button class="color2" id="igual">=</button>
 </div>
 
 <div class="switch-container">
