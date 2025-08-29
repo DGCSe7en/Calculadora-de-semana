@@ -83,18 +83,18 @@ body.modo-oscuro .firma { color: #aaa; }
 #weather-emoji { display: inline-block; width: 30px; height: 30px; line-height: 30px; font-size: 30px; text-align: center; }
 #city-name { font-weight: bold; }
 
-/* --- CONTENEDOR GENERAL --- */
+/* Contenedor general de fechas */
 .fechas-linea { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 0 16px; box-sizing: border-box; }
-/* --- BLOQUES DE FECHAS --- */
-.fecha-bloque { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 300px; }
+/* Cada bloque label + input */
+.fecha-bloque { display: flex; align-items: center; gap: 8px; width: 100%; max-width: 250px; justify-content: center; }
 /* Label de fechas */
-.fecha-label { font-weight: normal; text-align: right; flex: 0 0 40px; }
-/* Inputs de fechas */
-.fecha-bloque input { flex: 1 1 auto; max-width: 200px; text-align: center; box-sizing: border-box; }
+.fecha-label { font-weight: normal; text-align: right; flex: 0 0 auto; min-width: 40px; }
+/* Input de fechas */
+.fecha-bloque input { flex: 1 1 auto; max-width: 150px; text-align: center; box-sizing: border-box; }
 /* Botón calcular */
 .fechas-linea button { padding: 8px 20px; min-width: 120px; cursor: pointer; }
-/* --- RESPONSIVIDAD --- */
-@media (max-width: 480px) { .fecha-bloque { flex-direction: row; justify-content: center; width: 100%; } .fecha-bloque input { max-width: 90%; } .fechas-linea { padding: 0 10px; gap: 10px; } }
+/* Responsividad */
+@media (max-width: 480px) {.fecha-bloque input { max-width: 90%; } .fechas-linea { padding: 0 10px; } }
 
 </style>
 </head>
@@ -167,18 +167,21 @@ body.modo-oscuro .firma { color: #aaa; }
 
 <div class="seccion" aria-label="Cálculo de días entre dos fechas" role="region">
   <h3 class="texto-azul" id="h3Dias" tabindex="0"></h3>
-  <div class="fecha-bloque">
-    <label for="fechaInicio" class="fecha-label" id="labelFechaInicio">De:</label>
-    <input type="date" id="fechaInicio" aria-label="Fecha de inicio">
-    <label for="fechaFin" class="fecha-label" id="labelFechaFin">A:</label>
-    <input type="date" id="fechaFin" aria-label="Fecha de fin">
+  <div class="fechas-linea">
+    <div class="fecha-bloque">
+      <label for="fechaInicio" class="fecha-label" id="labelFechaInicio">De:</label>
+      <input type="date" id="fechaInicio" aria-label="Fecha de inicio">
+    </div>
+    <div class="fecha-bloque">
+      <label for="fechaFin" class="fecha-label" id="labelFechaFin">A:</label>
+      <input type="date" id="fechaFin" aria-label="Fecha de fin">
+    </div>
+    <button id="btnCalcularDias" onclick="calcularDias()" aria-label="Calcular días"></button>
   </div>
-
-  <button id="btnCalcularDias" onclick="calcularDias()" aria-label="Calcular días"></button>
-
   <p class="resultado" id="resultadoDias" aria-live="polite"></p>
   <p class="error" id="errorDias" aria-live="assertive"><span class="icono">⚠️</span></p>
 </div>
+
 
 
 <div class="seccion" aria-label="Cálculo de fechas de una semana" role="region">
