@@ -6,13 +6,15 @@
 <title>Calculadora de Tiempos</title>
 <style>
 body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
+  margin: 0; padding: 0;
   font-family: 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-/* Grid calculadora */
+body.modo-claro { background-color: #f0f0f0; color: #111; }
+body.modo-oscuro { background-color: #222; color: #fff; }
+
 .calculadora {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -21,10 +23,9 @@ body {
   margin: 20px auto;
   padding: 10px;
   box-sizing: border-box;
-  min-height: 360px;
+  min-height: auto;
 }
 
-/* Display */
 .display {
   grid-column: 1 / 5;
   font-size: 1.4em;
@@ -33,12 +34,12 @@ body {
   border-radius: 5px;
   border: 1px solid #ccc;
   box-sizing: border-box;
-  background-color: #f0f0f0;
+  background-color: #e0e0e0;
   min-height: 45px;
   overflow-x: auto;
 }
 
-/* Botones generales */
+/* Botones base */
 button {
   padding: 15px;
   font-size: 1.1em;
@@ -48,91 +49,63 @@ button {
   transition: background-color 0.2s;
 }
 
-/* Color neutro números y switch (modo claro) */
+/* Números y 0/C/= */
 button.color1 { background-color: #c0c0c0; color: #000; }
-/* Color neutro números y switch (modo oscuro) */
 body.modo-oscuro button.color1 { background-color: #555; color: #fff; }
+button.color1:hover { filter: brightness(0.9); }
 
-/* Operaciones */
+/* Operaciones H/M/S + + - × ÷ */
 button.color2 { background-color: #5C6B73; color: #fff; }
 button.color2:hover { background-color: #4A565D; }
 
 /* Botón "=" */
-button#igual { grid-column: auto; } /* mismo tamaño que los demás */
+button#igual { }
 
-/* Switch integrado */
-.calculadora-switch {
-  grid-column: span 1;
+/* Switch Hora/Dec debajo */
+.switch-container {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
+  margin: 12px auto 20px auto;
+  max-width: 360px;
+}
+.switch-container span { font-weight: normal; }
+.switch-container input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 50px; height: 24px;
+  background: #ccc;
+  border-radius: 12px;
   position: relative;
-  width: 60px;
-  height: 28px;
-  margin: 0 auto;
   cursor: pointer;
+  transition: background 0.2s;
 }
-
-.calculadora-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.switch-slider {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #c0c0c0;
-  border-radius: 14px;
-  transition: 0.2s;
-}
-
-body.modo-oscuro .switch-slider { background-color: #555; }
-
-.calculadora-switch input:checked + .switch-slider {
-  background-color: #5C6B73;
-}
-
-.switch-slider::before {
+body.modo-oscuro .switch-container input { background: #555; }
+.switch-container input:checked { background: #5C6B73; }
+.switch-container input::before {
   content: "";
   position: absolute;
-  height: 22px;
-  width: 22px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
+  top: 50%; left: 2px;
+  width: 20px; height: 20px;
   border-radius: 50%;
-  transition: 0.2s;
+  background: #fff;
+  transform: translateY(-50%);
+  transition: left 0.2s;
 }
+.switch-container input:checked::before { left: calc(100% - 22px); }
+.switch-container input:focus { outline: none; }
 
-.calculadora-switch input:checked + .switch-slider::before {
-  transform: translateX(32px);
-}
-
-/* Indicador de formato */
-#formatoLabel {
-  margin-left: 6px;
-  font-size: 0.9em;
-}
-
-/* Ajuste responsive */
-@media (max-width: 480px) {
+@media(max-width:480px) {
   .calculadora { max-width: 95%; }
-  .display { font-size: 1.2em; }
+  .switch-container { max-width: 95%; }
 }
 </style>
 </head>
-<body>
+<body class="modo-claro">
 
 <div class="calculadora">
   <input type="text" class="display" id="display" readonly>
-
-  <!-- Switch integrado con indicador -->
-  <div class="switch-container calculadora-switch">
-    <input type="checkbox" id="switchFormato" title="Cambiar formato h/dec">
-    <span class="switch-slider"></span>
-    <span id="formatoLabel">h/m/s</span>
-  </div>
 
   <!-- Fila 1 -->
   <button class="color2" data-unit="h">H</button>
@@ -162,31 +135,19 @@ body.modo-oscuro .switch-slider { background-color: #555; }
   <button class="color1" data-num="0">0</button>
   <button class="color1" id="clear">C</button>
   <button class="color1" id="igual">=</button>
+  <button class="color1" id="coma">,</button>
+</div>
+
+<!-- Switch Hora/Dec -->
+<div class="switch-container">
+  <span id="switch-text">Hora/Dec</span>
+  <input type="checkbox" id="switchFormato">
 </div>
 
 <script>
-// Variables principales
 const display = document.getElementById('display');
 let expression = '';
 let modeDecimal = false;
-
-// Switch integrado + indicador
-const switchBtn = document.getElementById('switchFormato');
-const formatoLabel = document.getElementById('formatoLabel');
-
-function actualizarFormatoLabel() {
-  formatoLabel.textContent = switchBtn.checked ? "decimal" : "h/m/s";
-}
-
-// Evento change del switch
-switchBtn.addEventListener('change', () => {
-  modeDecimal = switchBtn.checked;
-  actualizarDisplay();
-  actualizarFormatoLabel();
-});
-
-// Inicializar label al cargar
-actualizarFormatoLabel();
 
 // Botones numéricos
 document.querySelectorAll('[data-num]').forEach(btn=>{
@@ -215,6 +176,18 @@ document.getElementById('igual').addEventListener('click', ()=>{
   actualizarDisplay();
 });
 
+// Botón coma
+document.getElementById('coma').addEventListener('click', ()=>{
+  if(modeDecimal) expression += '.';
+  actualizarDisplay();
+});
+
+// Switch Hora/Dec
+const switchBtn = document.getElementById('switchFormato');
+switchBtn.addEventListener('change', ()=>{
+  modeDecimal = switchBtn.checked;
+});
+
 // Actualiza display
 function actualizarDisplay(){
   display.value = expression;
@@ -224,7 +197,8 @@ function actualizarDisplay(){
 function calcular(exp){
   try {
     let tokens = exp.split(/\s+/).filter(t=>t!=='');
-    if(tokens.length===0) return '';
+
+    if(tokens.length === 0) return '';
 
     let stack = [];
     let currentOp = null;
@@ -238,15 +212,15 @@ function calcular(exp){
     }
 
     for(let token of tokens){
-      if(['+','-','×','÷'].includes(token)){
+      if(['+', '-', '×', '÷'].includes(token)){
         currentOp = token;
       } else {
         let val = tokenToHours(token);
         if(currentOp){
-          if(currentOp==='+') stack.push(stack.pop()+val);
-          else if(currentOp==='-') stack.push(stack.pop()-val);
-          else if(currentOp==='×') stack.push(stack.pop()*val);
-          else if(currentOp==='÷') stack.push(stack.pop()/val);
+          if(currentOp==='+') stack.push(stack.pop() + val);
+          else if(currentOp==='-') stack.push(stack.pop() - val);
+          else if(currentOp==='×') stack.push(stack.pop() * val);
+          else if(currentOp==='÷') stack.push(stack.pop() / val);
           currentOp = null;
         } else {
           stack.push(val);
@@ -270,7 +244,7 @@ function calcular(exp){
   }
 }
 
-// Teclado físico seguro
+// Teclado físico
 document.addEventListener('keydown', (e)=>{
   if(e.key.match(/[0-9]/)) expression += e.key;
   else if(['h','m','s','+','-','*','/'].includes(e.key)) expression += e.key==='*'?'×': e.key==='/'?'÷': e.key;
@@ -278,16 +252,6 @@ document.addEventListener('keydown', (e)=>{
   else if(e.key==='Backspace') expression = expression.slice(0,-1);
   actualizarDisplay();
 });
-
-// Ajuste automático de altura para iframe
-function ajustarAltura() {
-  const altura = document.body.scrollHeight;
-  window.parent.postMessage({ tipo: 'ajustarAlturaCalculadora', altura }, '*');
-}
-window.addEventListener('load', ajustarAltura);
-const observer = new MutationObserver(ajustarAltura);
-observer.observe(document.body, { childList: true, subtree: true });
 </script>
-
 </body>
 </html>
