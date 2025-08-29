@@ -1060,22 +1060,6 @@ document.addEventListener("mousedown", (e) => {
     }
   });
 });
-
-// Mantener comportamiento actual del widget de ciudad
-document.getElementById("city-input").addEventListener("focus", () => {
-  document.getElementById("suggestions").innerHTML = "";
-});
-
-// Visualizacion de calculadora de tiempo
-  const iframe = document.getElementById('iframeCalculadora');
-  iframe.addEventListener('load', () => {
-    try {
-      const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-      iframe.style.height = iframeDocument.body.scrollHeight + 'px';
-    } catch(e) {
-      console.warn('No se pudo ajustar la altura del iframe automáticamente:', e);
-    }
-  });
 </script>
 </body>
 </html>
