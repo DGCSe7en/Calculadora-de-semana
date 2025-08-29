@@ -431,7 +431,7 @@ function mostrarError(inputId,errorId,mensaje){
   setTimeout(()=>{ if (input) input.classList.remove('input-error'); },1200);
   setTimeout(()=>{ if (error) error.classList.remove('visible'); },3000);
 }
-
+  
 // --- Toggle modo claro/oscuro ---
 function toggleModo(){
   const body = document.body;
@@ -444,79 +444,49 @@ function toggleModo(){
     body.classList.add('modo-oscuro');
     localStorage.setItem('modo','oscuro');
   }
-  actualizarLogo(); // <--- Siempre
-}
+  actualizarLogo();
 
-window.onload=function(){
-  const modoGuardado=localStorage.getItem('modo');
-  if(modoGuardado==='oscuro'){
-  document.body.classList.add('modo-oscuro');
-} else {
-  document.body.classList.add('modo-claro');
+  // ENVIAR AL IFRAME para sincronizar modo
+  const iframe = document.getElementById('iframeCalculadora');
+  if (iframe) {
+    const modo = body.classList.contains('modo-oscuro') ? 'oscuro' : 'claro';
+    iframe.contentWindow.postMessage({type:'cambiarModo', modo}, '*');
+  }
 }
-actualizarLogo(); // <--- Siempre
-  cambiarIdioma('es');
-  actualizarRadiosIdioma('es');
-};
 
 // --- Cambio de idioma ---
-function cambiarIdioma(lang) {
+function cambiarIdioma(lang){
   document.documentElement.lang = lang;
-  document.querySelectorAll('#idiomas img').forEach(img => {
+  document.querySelectorAll('#idiomas img').forEach(img=>{
     img.classList.remove('active');
-    img.setAttribute("aria-checked", "false");
-    actualizarLogo();
+    img.setAttribute("aria-checked","false");
   });
   const img = document.querySelector(`#idiomas img[data-lang="${lang}"]`);
-  if (img) {
+  if(img){
     img.classList.add('active');
-    img.setAttribute("aria-checked", "true");
-    img.focus();
+    img.setAttribute("aria-checked","true");
   }
-  actualizarRadiosIdioma(lang);
-  const t = traducciones[lang];
-  if (!t) return;
-  // document.getElementById("save-city").textContent = t.buscarBtn; // ELIMINADO PORQUE YA NO HAY BOTÓN
-  document.getElementById('h3Semana').textContent = t.h3Semana;
-  document.getElementById('btnCalcularSemana').textContent = t.btnCalcularSemana;
-  document.getElementById('h3Dias').textContent = t.h3Dias;
-  document.getElementById('btnCalcularDias').textContent = t.btnCalcularDias;
-  document.getElementById('h3Rango').textContent = t.h3Rango;
-  document.getElementById('labelSemana').textContent = t.labelSemana;
-  document.getElementById('btnMostrarRango').textContent = t.btnMostrarRango;
-  document.getElementById('footerFirma').innerHTML = t.footer;
-  document.getElementById('fechaInicio').placeholder = t.placeholderInicio;
-  document.getElementById('fechaFin').placeholder = t.placeholderFin;
-  document.getElementById('semanaInput').placeholder = t.placeholderSemana;
-  document.getElementById("labelFechaInicio").textContent = t.labelFechaInicio;
-  document.getElementById("labelFechaFin").textContent = t.labelFechaFin;
-  document.querySelector('#iframeCalculadora').previousElementSibling.textContent = traducciones[lang].calculadoraTitulo;
-  mostrarSemanaActual(lang);
-  ['resultado', 'resultadoDias', 'resultadoSemana'].forEach(id => {
-    if(document.getElementById(id)) document.getElementById(id).textContent = "";
-  });
-  ['errorSemana', 'errorDias', 'errorRangoSemana'].forEach(id => {
-    if(document.getElementById(id)) document.getElementById(id).textContent = "";
-  });
-  actualizarReloj();
-  actualizarIdiomaCiudad(lang);
-  actualizarCalculadoraIdioma(lang);
-}
 
-function actualizarCalculadoraIdioma(lang) {
+  const t = traducciones[lang];
+  if(!t) return;
+  document.querySelector('#iframeCalculadora').previousElementSibling.textContent = t.calculadoraTitulo;
+
+  // ENVIAR AL IFRAME para actualizar idioma
   const iframe = document.getElementById('iframeCalculadora');
-  if (!iframe) return;
-
-  const t = traducciones[lang];
-  // Llama a la función del iframe para actualizar texto del switch
-  iframe.contentWindow.actualizarTextoSwitch(lang, t.Horas, t.Decimal);
+  if (iframe) {
+    iframe.contentWindow.postMessage({type:'cambiarIdioma', lang}, '*');
+  }
 }
 
-function actualizarRadiosIdioma(lang) {
-  document.querySelectorAll('#idiomas img').forEach(img => {
-    img.setAttribute("aria-checked", img.dataset.lang === lang ? "true" : "false");
-  });
-}
+// --- Al cargar la página ---
+window.addEventListener('load', ()=>{
+  const modoGuardado = localStorage.getItem('modo') || 'claro';
+  document.body.classList.add(modoGuardado==='oscuro' ? 'modo-oscuro' : 'modo-claro');
+  actualizarLogo();
+
+  const lang = 'es'; // por defecto
+  cambiarIdioma(lang);
+});
 
 // --- Función de limpieza de todos los inputs relevantes ---
 function limpiarInputs(ids) {
