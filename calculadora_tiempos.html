@@ -9,7 +9,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', sans-serif;
-  overflow-x: hidden; /* ocultar scroll horizontal */
+  overflow-x: hidden; /* evitar scroll horizontal */
   transition: background-color 0.3s, color 0.3s;
 }
 body.modo-claro { background-color: #f0f0f0; color: #111; }
@@ -18,7 +18,7 @@ body.modo-oscuro { background-color: #222; color: #fff; }
 .calculadora {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 6px; /* menos gap para que quepa */
+  gap: 6px;
   max-width: 360px;
   margin: 8px auto;
   padding: 10px;
@@ -32,7 +32,6 @@ body.modo-oscuro { background-color: #222; color: #fff; }
   text-align: right;
   border-radius: 5px;
   border: 1px solid #ccc;
-  box-sizing: border-box;
   background-color: #e0e0e0;
   min-height: 45px;
   overflow-x: hidden;
@@ -140,13 +139,15 @@ body.modo-oscuro .switch-container input { background: #555; }
 <!-- Switch Hora/Decimal -->
 <div class="switch-container">
   <span id="switch-text">Horas</span>
-  <input type="checkbox" id="switchFormato" checked onchange="toggleMode()">
+  <input type="checkbox" id="switchFormato" checked>
 </div>
 
 <script>
 let expression = "";
-let modeDecimal = false; // Arranca en Horas, switch encendido
+let modeDecimal = false; // Arranca en Horas
 const display = document.getElementById("display");
+const switchFormato = document.getElementById("switchFormato");
+const switchText = document.getElementById("switch-text");
 
 // Añadir valor al display
 function appendValue(val) {
@@ -179,7 +180,7 @@ function calcular(exp) {
     if (modeDecimal) {
       exp = exp.replace(/×/g,'*').replace(/÷/g,'/').replace(/%/g,'/100');
       let res = eval(exp);
-      if(res===null || res===undefined || isNaN(res)) return "Error";
+      if(isNaN(res)) return "Error";
       return res.toString();
     } else {
       let expCopy = exp.replace(/(\d+(\.\d+)?)h/g,"($1)")
@@ -187,7 +188,7 @@ function calcular(exp) {
                        .replace(/(\d+(\.\d+)?)s/g,"($1/3600)")
                        .replace(/×/g,'*').replace(/÷/g,'/').replace(/%/g,'/100');
       let totalH = eval(expCopy);
-      if(totalH===null || totalH===undefined || isNaN(totalH)) return "Error";
+      if(isNaN(totalH)) return "Error";
 
       let h = Math.floor(totalH);
       let rem = (totalH - h) * 60;
@@ -205,25 +206,24 @@ function calcular(exp) {
 
 // Ejecutar "="
 function calculateResult() {
-  const result = calcular(expression);
-  display.value = result;
+  display.value = calcular(expression);
   expression = "";
 }
 
 // Cambiar modo Horas/Decimal
 function toggleMode() {
-  const switchInput = document.getElementById("switchFormato");
-  modeDecimal = !switchInput.checked; // checked = Horas
-  document.getElementById("switch-text").textContent = modeDecimal ? "Decimal" : "Horas";
-
-  document.querySelectorAll(".btn-hms").forEach(btn => {
-    btn.disabled = modeDecimal;
-  });
-
+  modeDecimal = !switchFormato.checked;
+  switchText.textContent = modeDecimal ? "Decimal" : "Horas";
+  document.querySelectorAll(".btn-hms").forEach(btn => btn.disabled = modeDecimal);
   clearDisplay();
 }
 
-// Conectar botones especiales
+// Función que el index puede llamar para actualizar texto según idioma
+function actualizarTextoSwitch(lang, textoHoras, textoDecimal) {
+  switchText.textContent = modeDecimal ? textoDecimal : textoHoras;
+}
+
+// Conectar botones
 document.getElementById("clear").addEventListener("click", clearDisplay);
 document.getElementById("igual").addEventListener("click", calculateResult);
 document.getElementById("parAbre").addEventListener("click", () => appendValue("("));
@@ -231,20 +231,19 @@ document.getElementById("parCierra").addEventListener("click", () => appendValue
 document.getElementById("coma").addEventListener("click", () => appendValue("."));
 document.getElementById("borrar1").addEventListener("click", backspace);
 
-// Conectar botones numéricos
+// Botones numéricos y operaciones
 document.querySelectorAll("button[data-num]").forEach(btn => {
   btn.addEventListener("click", () => appendValue(btn.dataset.num));
 });
-
-// Conectar botones de operaciones
 document.querySelectorAll("button[data-op]").forEach(btn => {
   btn.addEventListener("click", () => appendValue(btn.dataset.op));
 });
 
-// Estado inicial: activar H/M/S según modo
-document.querySelectorAll(".btn-hms").forEach(btn => {
-  btn.disabled = modeDecimal;
-});
+// Estado inicial H/M/S
+document.querySelectorAll(".btn-hms").forEach(btn => btn.disabled = modeDecimal);
+
+// Conectar switch
+switchFormato.addEventListener("change", toggleMode);
 </script>
 
 </body>
