@@ -5,51 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calculadora de Tiempos</title>
 <style>
-body {
-  margin: 0; padding: 0;
-  font-family: 'Segoe UI', sans-serif;
-  overflow-x: hidden;
-  transition: background-color 0.3s, color 0.3s;
-}
+/* --- Body --- */
+body { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
 
 body.modo-claro { background-color: #f0f0f0; color: #111; }
 body.modo-oscuro { background-color: #222; color: #fff; }
 
-.calculadora {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  max-width: 360px;
-  margin: 10px auto;
-  padding: 10px;
-  box-sizing: border-box;
-  min-height: auto;
-}
+/* --- Calculadora --- */
+.calculadora { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 360px; margin: 10px auto; padding: 10px; box-sizing: border-box; min-height: auto; }
 
-.display {
-  grid-column: 1 / 5;
-  font-size: 1.4em;
-  padding: 10px;
-  text-align: right;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-  background-color: #e0e0e0;
-  min-height: 45px;
-  overflow-x: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+/* Display sin scroll lateral */
+.display { grid-column: 1 / 5; font-size: 1.4em; padding: 10px; text-align: right; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; background-color: #e0e0e0; min-height: 45px; overflow-x: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* Botones base */
-button {
-  padding: 15px;
-  font-size: 1.1em;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
+button { padding: 15px; font-size: 1.1em; border-radius: 5px; border: none; cursor: pointer; transition: background-color 0.2s; }
 
 /* Números y 0/C/= */
 button.color1 { background-color: #c0c0c0; color: #000; }
@@ -60,41 +29,13 @@ button.color1:hover { filter: brightness(0.9); }
 button.color2 { background-color: #5C6B73; color: #fff; }
 button.color2:hover { background-color: #4A565D; }
 
-/* Botón "=" */
-button#igual { }
-
 /* Switch Hora/Dec debajo */
-.switch-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin: 8px auto 12px auto;
-  max-width: 360px;
-}
+.switch-container { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 8px auto 12px auto; max-width: 360px; }
 .switch-container span { font-weight: normal; }
-.switch-container input {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 50px; height: 24px;
-  background: #ccc;
-  border-radius: 12px;
-  position: relative;
-  cursor: pointer;
-  transition: background 0.2s;
-}
+.switch-container input { appearance: none; -webkit-appearance: none; width: 50px; height: 24px; background: #ccc; border-radius: 12px; position: relative; cursor: pointer; transition: background 0.2s; }
 body.modo-oscuro .switch-container input { background: #555; }
 .switch-container input:checked { background: #5C6B73; }
-.switch-container input::before {
-  content: "";
-  position: absolute;
-  top: 50%; left: 2px;
-  width: 20px; height: 20px;
-  border-radius: 50%;
-  background: #fff;
-  transform: translateY(-50%);
-  transition: left 0.2s;
-}
+.switch-container input::before { content: ""; position: absolute; top: 50%; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transform: translateY(-50%); transition: left 0.2s; }
 .switch-container input:checked::before { left: calc(100% - 22px); }
 .switch-container input:focus { outline: none; }
 
@@ -151,6 +92,12 @@ const display = document.getElementById('display');
 let expression = '';
 let modeDecimal = false;
 
+// Función para ajustar altura del iframe
+function ajustarAltura() {
+  const altura = document.body.scrollHeight;
+  parent.postMessage({ tipo: 'ajustarAlturaCalculadora', altura }, '*');
+}
+
 // Botones numéricos
 document.querySelectorAll('[data-num]').forEach(btn=>{
   btn.addEventListener('click', ()=>{ expression += btn.dataset.num; actualizarDisplay(); });
@@ -193,6 +140,7 @@ switchBtn.addEventListener('change', ()=>{
 // Actualiza display
 function actualizarDisplay(){
   display.value = expression;
+  ajustarAltura(); // ajusta iframe al actualizar
 }
 
 // --- Lógica de cálculo de tiempos ---
@@ -254,6 +202,9 @@ document.addEventListener('keydown', (e)=>{
   else if(e.key==='Backspace') expression = expression.slice(0,-1);
   actualizarDisplay();
 });
+
+// Ajusta altura al cargar
+window.addEventListener('load', ajustarAltura);
 </script>
 </body>
 </html>
