@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculadora de Tiempos</title>
+  <link rel="stylesheet" href="style.css"> <!-- enlaza tu CSS global -->
+  <style>
+    /* Ajustes específicos para la calculadora */
+    .calculadora {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .display {
+      background: var(--fondo-claro);
+      color: var(--texto);
+      padding: 15px;
+      font-size: 1.4rem;
+      border-radius: 8px;
+      text-align: right;
+      min-height: 50px;
+      overflow-x: auto;
+    }
+
+    .botones {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .boton {
+      padding: 15px;
+      font-size: 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    /* Color 1 → botones numéricos y switch (una posición) */
+    .color1 {
+      background-color: #5C6B73;
+      color: #fff;
+    }
+    .color1:hover {
+      background-color: #4A565D;
+    }
+
+    /* Color 2 → estilo "texto azul" (modo claro/oscuro controlado por tu CSS) */
+    .color2 {
+      color: var(--azul);
+      background: transparent;
+      border: 2px solid var(--azul);
+    }
+    .color2:hover {
+      background: var(--azul);
+      color: #fff;
+    }
+
+    /* Switch ocupa toda la fila */
+    .switch {
+      grid-column: span 4;
+    }
+  </style>
+</head>
+<body>
+  <div class="seccion">
+    <h3 class="texto-azul">Calculadora de tiempos</h3>
+    <div class="calculadora">
+      <div class="display" id="display">0</div>
+      <div class="botones">
+        <button class="boton color1">7</button>
+        <button class="boton color1">8</button>
+        <button class="boton color1">9</button>
+        <button class="boton color2">÷</button>
+
+        <button class="boton color1">4</button>
+        <button class="boton color1">5</button>
+        <button class="boton color1">6</button>
+        <button class="boton color2">×</button>
+
+        <button class="boton color1">1</button>
+        <button class="boton color1">2</button>
+        <button class="boton color1">3</button>
+        <button class="boton color2">-</button>
+
+        <button class="boton color1">0</button>
+        <button class="boton color2">.</button>
+        <button class="boton color2">=</button>
+        <button class="boton color2">+</button>
+
+        <button class="boton color2">C</button>
+        <button class="boton color2">h</button>
+        <button class="boton color2">m</button>
+        <button class="boton color2">s</button>
+
+        <button class="boton color1 switch" id="switch">hora / decim.</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
