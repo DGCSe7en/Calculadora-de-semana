@@ -83,20 +83,24 @@ body.modo-oscuro .firma { color: #aaa; }
 #weather-emoji { display: inline-block; width: 30px; height: 30px; line-height: 30px; font-size: 30px; text-align: center; }
 #city-name { font-weight: bold; }
 
+/* --- CONTENEDOR GENERAL --- */
+.fechas-linea { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+
 /* --- BLOQUES DE FECHAS --- */
-.fechas-linea { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
-.fechas-linea button { flex-shrink: 0; }
+.fecha-bloque { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 300px; }
 
-/* Cada bloque label + input */
-.fecha-bloque { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
-.fecha-label { font-weight: normal; text-align: right; flex: 0 0 120px; min-width: 100px; } 
-.fecha-bloque input { flex: 1 1 200px; max-width: 300px; box-sizing: border-box; }
+/* Label de fechas */
+.fecha-label { font-weight: normal; flex: 0 0 auto; }
 
-/* Responsividad específica de fechas */
-@media(max-width:480px) {
-  .fechas-linea { flex-direction: column; gap: 5px; }
-  .fechas-linea button { width: 90%; }
-}
+/* Inputs de fechas */
+.fecha-bloque input { flex: 1 1 auto; max-width: 150px; text-align: center; box-sizing: border-box; }
+
+/* Botón calcular */
+.fechas-linea button { padding: 8px 20px; min-width: 120px; cursor: pointer; }
+
+/* --- RESPONSIVIDAD --- */
+@media (max-width: 480px) { .fecha-bloque input {max-width: 80%; } .fechas-linea { gap: 10px; } }
+
 </style>
 </head>
 <body aria-label="Tiempo360" role="main">
