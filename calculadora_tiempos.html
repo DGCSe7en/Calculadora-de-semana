@@ -1,104 +1,174 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Calculadora de Tiempos</title>
-  <link rel="stylesheet" href="style.css"> <!-- enlaza tu CSS global -->
-  <style>
-    /* Ajustes específicos para la calculadora */
-    .calculadora {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      max-width: 400px;
-      margin: 0 auto;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de tiempos</title>
+<link rel="stylesheet" href="index.css"> <!-- tu CSS global -->
+<style>
+  /* Contenedor principal de la calculadora */
+  .calc-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 15px;
+    border-radius: 12px;
+    background-color: rgba(255,255,255,0.9);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  body.modo-oscuro .calc-container {
+    background-color: rgba(50,50,50,0.9);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
 
-    .display {
-      background: var(--fondo-claro);
-      color: var(--texto);
-      padding: 15px;
-      font-size: 1.4rem;
-      border-radius: 8px;
-      text-align: right;
-      min-height: 50px;
-      overflow-x: auto;
-    }
+  /* Pantalla de la calculadora */
+  #calc-display {
+    width: 95%;
+    font-size: 1.5em;
+    padding: 10px;
+    margin-bottom: 15px;
+    text-align: right;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #f7f7f7;
+  }
+  body.modo-oscuro #calc-display {
+    background-color: #333;
+    color: #e0e0e0;
+    border: 1px solid #666;
+  }
 
-    .botones {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
+  /* Botonera */
+  .calc-buttons {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    width: 100%;
+  }
 
-    .boton {
-      padding: 15px;
-      font-size: 1.2rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
+  /* Botones Color 1: números y switch posición 1 */
+  .btn-num, .btn-switch-1 {
+    background-color: #F4A261;
+    color: #fff;
+  }
+  .btn-num:hover, .btn-switch-1:hover {
+    background-color: #E76F51;
+  }
 
-    /* Color 1 → botones numéricos y switch (una posición) */
-    .color1 {
-      background-color: #5C6B73;
-      color: #fff;
-    }
-    .color1:hover {
-      background-color: #4A565D;
-    }
+  /* Botones Color 2: operaciones y switch posición 2 */
+  .btn-op, .btn-switch-2 {
+    background-color: #4A565D; /* texto azul de tu CSS */
+    color: #fff;
+  }
+  body.modo-claro .btn-op, body.modo-claro .btn-switch-2 {
+    background-color: #4A565D;
+  }
+  body.modo-oscuro .btn-op, body.modo-oscuro .btn-switch-2 {
+    background-color: #5C6B73;
+  }
+  .btn-op:hover, .btn-switch-2:hover {
+    background-color: #3b474f;
+  }
 
-    /* Color 2 → estilo "texto azul" (modo claro/oscuro controlado por tu CSS) */
-    .color2 {
-      color: var(--azul);
-      background: transparent;
-      border: 2px solid var(--azul);
-    }
-    .color2:hover {
-      background: var(--azul);
-      color: #fff;
-    }
-
-    /* Switch ocupa toda la fila */
-    .switch {
-      grid-column: span 4;
-    }
-  </style>
+  button {
+    font-size: 1em;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    user-select: none;
+  }
+</style>
 </head>
 <body>
-  <div class="seccion">
-    <h3 class="texto-azul">Calculadora de tiempos</h3>
-    <div class="calculadora">
-      <div class="display" id="display">0</div>
-      <div class="botones">
-        <button class="boton color1">7</button>
-        <button class="boton color1">8</button>
-        <button class="boton color1">9</button>
-        <button class="boton color2">÷</button>
 
-        <button class="boton color1">4</button>
-        <button class="boton color1">5</button>
-        <button class="boton color1">6</button>
-        <button class="boton color2">×</button>
+<div class="calc-container">
+  <input type="text" id="calc-display" readonly aria-label="Pantalla de la calculadora">
 
-        <button class="boton color1">1</button>
-        <button class="boton color1">2</button>
-        <button class="boton color1">3</button>
-        <button class="boton color2">-</button>
+  <div class="calc-buttons">
+    <!-- Números -->
+    <button class="btn-num" data-val="7">7</button>
+    <button class="btn-num" data-val="8">8</button>
+    <button class="btn-num" data-val="9">9</button>
+    <button class="btn-op" data-op="÷">÷</button>
+    <button class="btn-op" data-op="C">C</button>
 
-        <button class="boton color1">0</button>
-        <button class="boton color2">.</button>
-        <button class="boton color2">=</button>
-        <button class="boton color2">+</button>
+    <button class="btn-num" data-val="4">4</button>
+    <button class="btn-num" data-val="5">5</button>
+    <button class="btn-num" data-val="6">6</button>
+    <button class="btn-op" data-op="x">x</button>
+    <button class="btn-op" data-op="h">h</button>
 
-        <button class="boton color2">C</button>
-        <button class="boton color2">h</button>
-        <button class="boton color2">m</button>
-        <button class="boton color2">s</button>
+    <button class="btn-num" data-val="1">1</button>
+    <button class="btn-num" data-val="2">2</button>
+    <button class="btn-num" data-val="3">3</button>
+    <button class="btn-op" data-op="-">-</button>
+    <button class="btn-op" data-op="m">m</button>
 
-        <button class="boton color1 switch" id="switch">hora / decim.</button>
-      </div>
-    </div>
+    <button class="btn-num" data-val="0">0</button>
+    <button class="btn-num" data-val=".">.</button>
+    <button class="btn-op" data-op="=">=</button>
+    <button class="btn-op" data-op="+">+</button>
+    <button class="btn-op" data-op="s">s</button>
+
+    <!-- Switch hora/decimal -->
+    <button id="switchFormat" class="btn-switch-1">hora/decim.</button>
   </div>
+</div>
+
+<script>
+  const display = document.getElementById('calc-display');
+  let current = '';
+  let isDecimal = false;
+
+  // Botones
+  document.querySelectorAll('.btn-num, .btn-op').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const val = btn.dataset.val || btn.dataset.op;
+      if(val === 'C'){
+        current = '';
+        display.value = '';
+      } else if(val === '='){
+        try {
+          // Lógica futura de cálculo de tiempos
+          display.value = current; // por ahora solo muestra entrada
+        } catch(e){
+          display.value = 'Error';
+        }
+      } else {
+        current += val;
+        display.value = current;
+      }
+    });
+  });
+
+  // Switch hora/decimal
+  document.getElementById('switchFormat').addEventListener('click', () => {
+    isDecimal = !isDecimal;
+    alert(`Formato cambiado a ${isDecimal ? 'decimal' : 'horas:minutos'}`);
+  });
+
+  // Permitir escribir con teclado (solo en PC)
+  if(!/Mobi|Android/i.test(navigator.userAgent)){
+    document.addEventListener('keydown', e => {
+      if(/\d|\./.test(e.key)){
+        current += e.key;
+        display.value = current;
+      } else if(e.key === 'Backspace'){
+        current = current.slice(0,-1);
+        display.value = current;
+      } else if(e.key === 'Enter'){
+        display.value = current; // por ahora
+      } else if(['+','-','*','/'].includes(e.key)){
+        const opMap = {'*':'x','/':'÷'};
+        current += opMap[e.key] || e.key;
+        display.value = current;
+      }
+    });
+  }
+</script>
+
 </body>
 </html>
