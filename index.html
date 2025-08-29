@@ -83,6 +83,17 @@ body.modo-oscuro .firma { color: #aaa; }
 #weather-emoji { display: inline-block; width: 30px; height: 30px; line-height: 30px; font-size: 30px; text-align: center; }
 #city-name { font-weight: bold; }
   
+.fechas-linea { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
+.fechas-linea label { display: flex; align-items: center; gap: 4px; }
+.fechas-linea .a-label { font-weight: bold; }
+.fechas-linea button { flex-shrink: 0; }
+
+@media(max-width:480px) {
+.fechas-linea { flex-direction: column; gap: 5px; }
+.fechas-linea button { width: 90%; }
+}
+
+
 </style>
 </head>
 <body aria-label="Tiempo360" role="main">
@@ -145,10 +156,17 @@ body.modo-oscuro .firma { color: #aaa; }
 
 <div class="seccion" aria-label="Cálculo de días entre dos fechas" role="region">
   <h3 class="texto-azul" id="h3Dias" tabindex="0"></h3>
-  <input type="date" id="fechaInicio" aria-label="Fecha de inicio">
-  <span id="a-label">a</span>
-  <input type="date" id="fechaFin" aria-label="Fecha de fin">
-  <button id="btnCalcularDias" onclick="calcularDias()" aria-label="Calcular días"></button>
+  <div class="fechas-linea">
+    <label>
+      <span class="label-de">De:</span>
+      <input type="date" id="fechaInicio" aria-label="Fecha de inicio">
+    </label>
+    <label>
+      <span class="label-a">a:</span>
+      <input type="date" id="fechaFin" aria-label="Fecha de fin">
+    </label>
+  </div>
+  <button id="btnCalcularDias" aria-label="Calcular días"></button>
   <p class="resultado" id="resultadoDias" aria-live="polite"></p>
   <p class="error" id="errorDias" aria-live="assertive"><span class="icono">⚠️</span></p>
 </div>
@@ -177,6 +195,8 @@ const traducciones = {
     diasEntre: "{total} días ({años} años, {meses} meses, {dias} días)",
     rangoSemana: "Semana {semana}: del {inicio} al {fin}",
     h3Dias: "Tiempo entre dos fechas",
+    labelDe: "De:",
+    labelA: "a:",
     btnCalcularDias: "Calcular",
     h3Rango: "Fechas de una semana",
     labelSemana: "Semana del año (1-53):",
@@ -204,6 +224,8 @@ const traducciones = {
     diasEntre: "{total} dies ({años} anys, {meses} mesos, {dias} dies)",
     rangoSemana: "Setmana {semana}: del {inicio} al {fin}",
     h3Dias: "Temps entre dues dates",
+    labelDe: "De:",
+    labelA: "a:",
     btnCalcularDias: "Calcular",
     h3Rango: "Dates d’una setmana",
     labelSemana: "Setmana de l’any (1-53):",
@@ -231,6 +253,8 @@ const traducciones = {
     diasEntre: "{total} días ({años} anos, {meses} meses, {dias} días)",
     rangoSemana: "Semana {semana}: do {inicio} ao {fin}",
     h3Dias: "Tempo entre dúas datas",
+    labelDe: "De:",
+    labelA: "a:",
     btnCalcularDias: "Calcular",
     h3Rango: "Datas dunha semana",
     labelSemana: "Semana do ano (1-53):",
@@ -258,6 +282,8 @@ const traducciones = {
     diasEntre: "{total} egun ({años} urte, {meses} hilabete, {dias} egun)",
     rangoSemana: "{semana}. astea: {inicio}tik {fin}ra",
     h3Dias: "Bi daten arteko denbora",
+    labelDe: "Hasiera:",
+    labelA: "eta",
     btnCalcularDias: "Kalkulatu",
     h3Rango: "Aste bateko datak",
     labelSemana: "Urteko astea (1-53):",
@@ -429,7 +455,9 @@ function cambiarIdioma(lang) {
   document.getElementById('h3Semana').textContent = t.h3Semana;
   document.getElementById('btnCalcularSemana').textContent = t.btnCalcularSemana;
   document.getElementById('h3Dias').textContent = t.h3Dias;
-  document.getElementById('btnCalcularDias').textContent = t.btnCalcularDias;
+  document.querySelector(".fechas-linea .label-de").textContent = t.labelDe;
+  document.querySelector(".fechas-linea .label-a").textContent = t.labelA;
+  document.getElementById("btnCalcularDias").textContent = t.btnCalcularDias;
   document.getElementById('h3Rango').textContent = t.h3Rango;
   document.getElementById('labelSemana').textContent = t.labelSemana;
   document.getElementById('btnMostrarRango').textContent = t.btnMostrarRango;
@@ -437,7 +465,6 @@ function cambiarIdioma(lang) {
   document.getElementById('fechaInicio').placeholder = t.placeholderInicio;
   document.getElementById('fechaFin').placeholder = t.placeholderFin;
   document.getElementById('semanaInput').placeholder = t.placeholderSemana;
-  document.getElementById('a-label').textContent = (lang === 'ca' || lang === 'gl') ? 'a' : (lang === 'eu') ? 'eta' : 'a';
   mostrarSemanaActual(lang);
   ['resultado', 'resultadoDias', 'resultadoSemana'].forEach(id => {
     if(document.getElementById(id)) document.getElementById(id).textContent = "";
