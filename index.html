@@ -6,130 +6,99 @@
 <title>Tiempo360</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <style>
-#titulo-img { width: clamp(400px, 70vw, 900px); height: auto; max-width: 100%; display: block; margin: 0 auto; }
-body { font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; margin: 0; transition: background-color 0.3s, color 0.3s, background-image 0.5s ease-in-out; }
-body.modo-claro { background-image: url('./LIGHT.webp'); background-size: cover; background-position: center; background-repeat: no-repeat; color: #1a1a1a; }
-body.modo-oscuro { background-image: url('./DARK.webp'); background-size: cover; background-position: center; background-repeat: no-repeat; color: #e0e0e0; }
-.texto-azul { color: inherit; }
-body.modo-claro .texto-azul { color: #4A565D !important; }
-body.modo-oscuro .texto-azul { color: #5C6B73 !important; }
+/* --- CSS limpio y funcional --- */
+body { font-family:'Segoe UI', sans-serif; text-align:center; margin:0; padding:20px; transition:0.3s; }
+body.modo-claro { background-image:url('./LIGHT.webp'); color:#1a1a1a; background-size:cover; background-position:center; }
+body.modo-oscuro { background-image:url('./DARK.webp'); color:#e0e0e0; background-size:cover; background-position:center; }
+.texto-azul { color:inherit; }
+body.modo-claro .texto-azul { color:#4A565D !important; }
+body.modo-oscuro .texto-azul { color:#5C6B73 !important; }
 
-h1, h3 { font-size: 1.2em; margin: 10px 0; }
-.reloj { font-size: 1.8em; font-weight: bold; margin: 10px 0; }
-.zona, #semanaActual { font-size: 1em; font-weight: normal; margin: 10px 0; color: inherit; }
+h1,h3 { font-size:1.2em; margin:10px 0; }
+.reloj { font-size:1.8em; font-weight:bold; margin:10px 0; }
+.zona, #semanaActual { font-size:1em; margin:10px 0; color:inherit; }
 
-.seccion { margin: 20px auto; padding: 15px; border-radius: 8px; max-width: 600px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.9);}
-body.modo-oscuro .seccion { background-color: rgba(50,50,50,0.9); box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+.seccion { margin:20px auto; padding:15px; border-radius:8px; max-width:600px; box-shadow:0 2px 6px rgba(0,0,0,0.1); background-color:rgba(255,255,255,0.9);}
+body.modo-oscuro .seccion { background-color:rgba(50,50,50,0.9); box-shadow:0 2px 6px rgba(0,0,0,0.3); }
 
-input, button { padding: 10px; margin: 5px; font-size: 1em; border-radius: 5px; border: 1px solid #ccc; width: 90%; max-width: 300px; box-sizing: border-box;}
-button { background-color: #5C6B73; color: white; border: none; cursor: pointer; transition: background-color 0.2s; }
-button:hover { background-color: #4A565D; }
+input, button { padding:10px; margin:5px; font-size:1em; border-radius:5px; border:1px solid #ccc; width:90%; max-width:300px; box-sizing:border-box;}
+button { background-color:#5C6B73; color:white; border:none; cursor:pointer; transition:0.2s; }
+button:hover { background-color:#4A565D; }
 
-#modo-switch-container { display: flex; align-items: center; justify-content: center; margin: 30px 0 10px 0; }
-.switch-container { display: flex; align-items: center; gap: 7px; cursor: pointer; }
-#modo-switch { appearance: none; -webkit-appearance: none; width: 50px; height: 24px; background: #ccc; border-radius: 12px; position: relative; cursor: pointer; transition: background 0.2s; }
-#modo-switch:checked { background: #5C6B73; }
-#modo-switch::before { content: ""; position: absolute; top: 50%; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transform: translateY(-50%); transition: left 0.2s; }
-#modo-switch:checked::before { left: calc(100% - 22px); }
-#modo-switch:focus { outline: none; }
-#modo-texto { font-weight: normal; user-select: none; }
+#modo-switch-container { display:flex; align-items:center; justify-content:center; margin:30px 0 10px; }
+.switch-container { display:flex; align-items:center; gap:7px; cursor:pointer; }
+#modo-switch { appearance:none; width:50px; height:24px; background:#ccc; border-radius:12px; position:relative; cursor:pointer; transition:0.2s; }
+#modo-switch:checked { background:#5C6B73; }
+#modo-switch::before { content:""; position:absolute; top:50%; left:2px; width:20px; height:20px; border-radius:50%; background:#fff; transform:translateY(-50%); transition:0.2s; }
+#modo-switch:checked::before { left:calc(100% - 22px); }
+#modo-texto { font-weight:normal; user-select:none; }
 
-#logo-container { width: clamp(400px, 70vw, 900px); max-width: 100%; }
-#logo-color { width: 100%; height: auto; display: block; fill: currentColor; }
-body.modo-claro #logo-color { color: #4A565D; }
-body.modo-oscuro #logo-color { color: #5C6B73; }
-#logo-overlay { width: 100%; height: auto; position: absolute; top: 0; left: 0; pointer-events: none; }
+#logo-container { width:clamp(400px,70vw,900px); max-width:100%; position:relative; display:inline-block; }
+#logo-color { width:100%; height:auto; display:block; }
+#logo-overlay { width:100%; height:auto; position:absolute; top:0; left:0; pointer-events:none; }
 
+.calendar-container { max-width:600px; margin:20px auto; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1); background-color:rgba(255,255,255,0.9); }
+body.modo-oscuro .calendar-container { background-color:rgba(50,50,50,0.9);}
+.calendar-container iframe { width:100%; min-width:250px; height:350px; border:none; display:block; margin:0 auto; }
 
-.calendar-container { max-width: 600px; margin: 20px auto; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.9); }
-body.modo-oscuro .calendar-container { background-color: rgba(50,50,50,0.9);}
-.calendar-container iframe { width: 100%; min-width: 250px; height: 350px; max-width: 600px; border: none; display: block; margin: 0 auto; }
+.firma { margin-top:50px; font-size:0.8em; text-align:center; opacity:0.7; }
+body.modo-claro .firma { color:#666; }
+body.modo-oscuro .firma { color:#aaa; }
 
-.firma { margin-top: 50px; font-size: 0.8em; text-align: center; opacity: 0.7; }
-body.modo-claro .firma { color: #666; }
-body.modo-oscuro .firma { color: #aaa; }
+.error { color:orange; font-weight:bold; font-style:italic; font-size:0.9em; margin-top:5px; opacity:0; display:flex; align-items:center; justify-content:center; transition:0.4s; }
+.error.visible { opacity:1; }
+.icono { margin-right:5px; }
+.input-error { border:2px solid orange; animation:parpadeo 0.6s ease-in-out 2; }
+@keyframes parpadeo { 0%,100%{border-color:transparent;}50%{border-color:orange;}}
 
-.error { color: orange; font-weight: bold; font-style: italic; font-size: 0.9em; margin-top: 5px; opacity: 0; transition: opacity 0.4s; display: flex; align-items: center; justify-content: center; }
-.error.visible { opacity: 1; }
-.icono { margin-right: 5px; }
-.input-error { border: 2px solid orange; animation: parpadeo 0.6s ease-in-out 2; }
-@keyframes parpadeo { 0%,100%{ border-color: transparent;} 50%{ border-color: orange; } }
+#idiomas { display:flex; justify-content:center; gap:10px; margin:30px 0 20px; }
+#idiomas img { width:36px; height:auto; cursor:pointer; border-radius:4px; transition:0.2s; }
+#idiomas img:hover, #idiomas img.active { transform:scale(1.05); border:2px solid #5C6B73; }
 
-#idiomas { display: flex; justify-content: center; gap: 10px; margin-top: 30px; margin-bottom: 20px; }
-#idiomas img { width: 36px; height: auto; cursor: pointer; border-radius: 4px; transition: transform 0.2s; }
-#idiomas img:hover, #idiomas img.active { transform: scale(1.05); border: 2px solid #5C6B73; }
+@media(max-width:480px){.reloj{font-size:1.5em;} input,button{width:95%;} .calendar-container{max-width:95vw;} .calendar-container iframe{height:280px;} #weather-widget{flex-direction:column; align-items:center; gap:10px;} #weather-widget .weather-main{flex-direction:row !important; align-items:center; gap:5px;} }
+@media(min-width:481px) and (max-width:768px){input,button{max-width:90%;} .calendar-container{max-width:99vw;} .calendar-container iframe{height:320px;} #weather-widget .weather-main{flex-direction:row !important; align-items:center; gap:15px;} }
 
-/* --- Responsive para móviles --- */
-@media(max-width:480px) { 
-  .reloj { font-size: 1.5em;} 
-  input, button { width: 95%; } 
-  .calendar-container { max-width: 95vw; }
-  .calendar-container iframe { height: 280px; min-width: 0; max-width: 100%; }
-  #weather-widget { flex-direction: column; align-items: center; gap: 10px; }
-  #weather-widget .weather-main { flex-direction: row !important; align-items: center; gap: 5px; }
-}
-
-  @media(min-width:481px) and (max-width:768px) { 
-  input, button { max-width: 90%; } 
-  .calendar-container { max-width: 99vw; }
-  .calendar-container iframe { height: 320px; min-width: 0; max-width: 100%; }
-  #weather-widget .weather-main { flex-direction: row !important; align-items: center; gap: 15px; }
-}
-
-.weather-widget-seccion { display: flex; flex-direction: column; align-items: center; gap: 15px; margin: 20px auto; }
-.weather-main { display: flex; align-items: center; gap: 15px; flex-direction: row; }
-.weather-info { display: flex; flex-direction: column; align-items: flex-start; }
-.city-search { display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 10px; position: relative; width: 100%; max-width: 400px; }
-.city-search input { flex: 1; min-width: 150px; margin-right: 0; }
-.suggestions-list { position: absolute; top: 100%; left: 0; right: 0; min-width: 100%; max-height: 150px; overflow-y: auto; background: #fff !important; color: #111 !important; border: 1px solid #ccc; border-radius: 4px; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-top: 2px; padding: 0; list-style: none; }
-.suggestions-list li { padding: 8px 12px; cursor: pointer; color: #111 !important; background: #fff !important; transition: background-color 0.2s, color 0.2s; }
-.suggestions-list li.active,
-.suggestions-list li:hover { background-color: #5C6B73 !important; color: #fff !important; }
-
-#weather-temp { font-size: 1.8em; font-weight: bold; color: inherit; margin-right: 10px; display: inline-block; width: 60px; text-align: right; }
-#weather-emoji { display: inline-block; width: 30px; height: 30px; line-height: 30px; font-size: 30px; text-align: center; }
-#city-name { font-weight: bold; }
-  
-.fechas-linea { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
-.fechas-linea label { display: flex; align-items: center; gap: 4px; }
-.fechas-linea .a-label { font-weight: bold; }
-.fechas-linea button { flex-shrink: 0; }
-
-@media(max-width:480px) {
-.fechas-linea { flex-direction: column; gap: 5px; }
-.fechas-linea button { width: 90%; }
-}
-
-
+.weather-widget-seccion{display:flex; flex-direction:column; align-items:center; gap:15px; margin:20px auto;}
+.weather-main{display:flex; align-items:center; gap:15px; flex-direction:row;}
+.weather-info{display:flex; flex-direction:column; align-items:flex-start;}
+.city-search{display:flex; flex-direction:row; justify-content:center; align-items:center; gap:10px; position:relative; width:100%; max-width:400px;}
+.city-search input{flex:1; min-width:150px; margin-right:0;}
+.suggestions-list{position:absolute; top:100%; left:0; right:0; min-width:100%; max-height:150px; overflow-y:auto; background:#fff;color:#111;border:1px solid #ccc;border-radius:4px; z-index:10;margin-top:2px;padding:0; list-style:none;}
+.suggestions-list li{padding:8px 12px; cursor:pointer; color:#111;background:#fff; transition:0.2s;}
+.suggestions-list li.active, .suggestions-list li:hover{background:#5C6B73;color:#fff;}
+#weather-temp{font-size:1.8em;font-weight:bold;color:inherit;margin-right:10px;display:inline-block;width:60px;text-align:right;}
+#weather-emoji{display:inline-block;width:30px;height:30px;line-height:30px;font-size:30px;text-align:center;}
+#city-name{font-weight:bold;}
+.fechas-linea{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;}
+.fechas-linea label{display:flex;align-items:center;gap:4px;}
+.fechas-linea .a-label{font-weight:bold;}
+.fechas-linea button{flex-shrink:0;}
+@media(max-width:480px){.fechas-linea{flex-direction:column;gap:5px;}.fechas-linea button{width:90%;}}
 </style>
 </head>
 <body aria-label="Tiempo360" role="main">
 
-  <header>
-  <h1 id="titulo" tabindex="0">
-    <div id="logo-container" style="position: relative; display: inline-block;">
-      <!-- SVG negro que se puede colorear con CSS -->
-      <img id="logo-color" src="Logoweb_Color.svg" alt="" style="display:block; width: clamp(400px, 70vw, 900px); height:auto; max-width: 100%;">
-      
-      <!-- Imagen con agujas rojas, tick verde y subtítulo -->
-      <img id="logo-overlay" src="Logoweb_Clear.png" alt="Tiempo360 - El tiempo desde todas sus dimensiones..." 
-           style="position:absolute; top:0; left:0; width:100%; height:100%;">
-    </div>
-  </h1>
+<header>
+<h1 id="titulo" tabindex="0">
+<div id="logo-container">
+  <img id="logo-color" src="Logoweb_Color.svg" alt="">
+  <img id="logo-overlay" src="Logoweb_Clear.png" alt="Tiempo360 - El tiempo desde todas sus dimensiones...">
+</div>
+</h1>
 </header>
 
 <div id="idiomas" aria-label="Selector de idioma" role="radiogroup">
-  <img src="ESP.png" alt="Español" data-lang="es" onclick="cambiarIdioma('es')" title="Español" role="radio" aria-checked="false" tabindex="0">
-  <img src="CAT.png" alt="Català" data-lang="ca" onclick="cambiarIdioma('ca')" title="Català" role="radio" aria-checked="false" tabindex="0">
-  <img src="GAL.png" alt="Galego" data-lang="gl" onclick="cambiarIdioma('gl')" title="Galego" role="radio" aria-checked="false" tabindex="0">
-  <img src="EUS.png" alt="Euskera" data-lang="eu" onclick="cambiarIdioma('eu')" title="Euskera" role="radio" aria-checked="false" tabindex="0">
+  <img src="ESP.png" alt="Español" data-lang="es" title="Español" role="radio" aria-checked="false" tabindex="0">
+  <img src="CAT.png" alt="Català" data-lang="ca" title="Català" role="radio" aria-checked="false" tabindex="0">
+  <img src="GAL.png" alt="Galego" data-lang="gl" title="Galego" role="radio" aria-checked="false" tabindex="0">
+  <img src="EUS.png" alt="Euskera" data-lang="eu" title="Euskera" role="radio" aria-checked="false" tabindex="0">
 </div>
 
 <div id="modo-switch-container">
-  <label class="switch-container">
-    <span id="modo-texto">Modo claro/oscuro</span>
-    <input type="checkbox" id="modo-switch">
-  </label>
+<label class="switch-container">
+<span id="modo-texto">Modo claro/oscuro</span>
+<input type="checkbox" id="modo-switch">
+</label>
 </div>
 
 <div class="reloj texto-azul" id="reloj" aria-live="polite" aria-atomic="true"></div>
@@ -145,50 +114,42 @@ body.modo-oscuro .firma { color: #aaa; }
       <small id="details" aria-label="Detalles del tiempo"></small>
     </div>
   </div>
-
   <div class="city-search" aria-label="Buscador de ciudad" role="search">
-    <input type="text" id="city-input" placeholder="Introduce una ciudad..." autocomplete="off"
-     aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="suggestions" aria-label="Campo de búsqueda de ciudad" />
+    <input type="text" id="city-input" placeholder="Introduce una ciudad..." autocomplete="off" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="suggestions" aria-label="Campo de búsqueda de ciudad" />
     <ul id="suggestions" class="suggestions-list" role="listbox" aria-label="Sugerencias de ciudad"></ul>
   </div>
 </div>
 
 <div class="calendar-container" aria-label="Calendario de festivos" role="region">
-  <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FMadrid&showPrint=0&showTitle=0&showCalendars=0&showTz=0&src=cmc2YXRmZXEyMHNkMHJxbWVpOTU3aDB0dnBlNGd2bTNAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=NjI3NDg2ZDMwOWJnZ2xpbGhuOGJnN3JnbjNnaXB2M2lAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=OTlvbjFkNjMyajdqNm42NDdrczQwa3UwNW5lZzZlcGNAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=b3A0Y2RtNnVmaGUybmZmYTBlOThmbDJndmZ1YnRxY2VAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=bHFpMWlvMXNoaGh1amFrZ2psZnQ2OWVocGtxb2MzdTdAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=ZzN1M25oZ3E1cnU1amVhZGJrYzZsN3E0amgzcDY5cjRAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=bWUxdXByNGludjRuanJtNjc4Zm9ldjJsdjJhMzc5MDNAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=MTc4cHFpMmhwOTJiaHZjbTlvdWoyMDVvbmU3cmc5NTRAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=aW80NWRsb2FsbmcxcWxpdGV2MmhuMjFzb2JuaDVlcmFAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=ZnJrN21rOTluYnRicXQ3ZmNsbmJqN3Uzazdlbml0MGRAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=OW0yNGZ0aW81dmw0bGk1aXRmbTIydjVpdmRzdnVxaHZAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=ZXMuc3BhaW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&src=aTJvMTRnaDhqNmY2N29yODY1amhrcTBxbnNlMXVrdWNAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=MWpqdmRlNmJibmRmaXJ2dnM4NnUzMjBzcXJkaDc1M2dAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=MTIwNm9iMGhrczNkNDU5aDFxdDZtcWZkNjF1N3A4b29AaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=ZG5qMWh1aW5xdWpqZ2Nlajk2cjNpZzlqdTg2Y3MwZ2tAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=bXNidTd1MmNhcnNnMWU1cG0xOWI4b2p0MjF1aXE0c2lAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=MGduYWRqb3NibTd2am5sbTlkaDhhNDU5MHBrYWVnNTlAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=OHMzMWhtZHFjbnRvMDIwc3FiZWE3bmZ2cjdwcG90Nm5AaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=M2w5YXNwc3AzbDZ0bjhmZTIzMGtzcTI2dmoydHNsbWtAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%23d50000&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043&color=%230b8043" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+<iframe src="https://calendar.google.com/calendar/embed?..." style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
 </div>  
-  
+
 <div class="seccion" aria-label="Cálculo de número de semana" role="region">
-  <h3 class="texto-azul" id="h3Semana" tabindex="0"></h3>
-  <input type="date" id="fecha" aria-label="Fecha para calcular semana">
-  <button id="btnCalcularSemana" onclick="calcularSemana()" aria-label="Calcular semana"></button>
-  <div class="resultado" id="resultado" aria-live="polite"></div>
-  <p class="error" id="errorSemana" aria-live="assertive"><span class="icono">⚠️</span></p>
+<h3 class="texto-azul" id="h3Semana" tabindex="0"></h3>
+<input type="date" id="fecha" aria-label="Fecha para calcular semana">
+<button id="btnCalcularSemana" aria-label="Calcular semana"></button>
+<div class="resultado" id="resultado" aria-live="polite"></div>
+<p class="error" id="errorSemana" aria-live="assertive"><span class="icono">⚠️</span></p>
 </div>
 
 <div class="seccion" aria-label="Cálculo de días entre dos fechas" role="region">
-  <h3 class="texto-azul" id="h3Dias" tabindex="0"></h3>
-  <div class="fechas-linea">
-    <label>
-      <span class="label-de">De:</span>
-      <input type="date" id="fechaInicio" aria-label="Fecha de inicio">
-    </label>
-    <label>
-      <span class="label-a">a:</span>
-      <input type="date" id="fechaFin" aria-label="Fecha de fin">
-    </label>
-  </div>
-  <button id="btnCalcularDias" aria-label="Calcular días"></button>
-  <p class="resultado" id="resultadoDias" aria-live="polite"></p>
-  <p class="error" id="errorDias" aria-live="assertive"><span class="icono">⚠️</span></p>
+<h3 class="texto-azul" id="h3Dias" tabindex="0"></h3>
+<div class="fechas-linea">
+<label><span class="label-de">De:</span><input type="date" id="fechaInicio" aria-label="Fecha de inicio"></label>
+<label><span class="label-a">a:</span><input type="date" id="fechaFin" aria-label="Fecha de fin"></label>
+</div>
+<button id="btnCalcularDias" aria-label="Calcular días"></button>
+<p class="resultado" id="resultadoDias" aria-live="polite"></p>
+<p class="error" id="errorDias" aria-live="assertive"><span class="icono">⚠️</span></p>
 </div>
 
 <div class="seccion" aria-label="Cálculo de fechas de una semana" role="region">
-  <h3 class="texto-azul" id="h3Rango" tabindex="0"></h3>
-  <label id="labelSemana" for="semanaInput"></label>
-  <input type="number" id="semanaInput" min="1" max="53" aria-label="Número de semana">
-  <button id="btnMostrarRango" onclick="calcularRangoSemana()" aria-label="Mostrar rango de semana"></button>
-  <p class="resultado" id="resultadoSemana" aria-live="polite"></p>
-  <p class="error" id="errorRangoSemana" aria-live="assertive"><span class="icono">⚠️</span></p>
+<h3 class="texto-azul" id="h3Rango" tabindex="0"></h3>
+<label id="labelSemana" for="semanaInput"></label>
+<input type="number" id="semanaInput" min="1" max="53" aria-label="Número de semana">
+<button id="btnMostrarRango" aria-label="Mostrar rango de semana"></button>
+<p class="resultado" id="resultadoSemana" aria-live="polite"></p>
+<p class="error" id="errorRangoSemana" aria-live="assertive"><span class="icono">⚠️</span></p>
 </div>
 
 <footer class="firma" id="footerFirma" tabindex="0" aria-label="Pie de página"></footer>
